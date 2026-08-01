@@ -4,18 +4,18 @@ Uses a trained/simulated XGBoost model to predict flood risk scores.
 Falls back to an analytically calibrated scoring function if XGBoost
 is unavailable or model file is absent.
 """
+
 from __future__ import annotations
 
-import math
+import logging
 import time
 import uuid
-import logging
-from typing import Dict, Any, List, Tuple
+from typing import Any
 
 from app.ai.feature_engineering.engineer import (
     build_feature_vector,
-    normalize_features,
     compute_shap_explanation,
+    normalize_features,
 )
 
 logger = logging.getLogger(__name__)
@@ -23,23 +23,23 @@ logger = logging.getLogger(__name__)
 # Risk Category Thresholds
 RISK_THRESHOLDS = {
     "Critical": (80, 100),
-    "High":     (60, 80),
-    "Medium":   (40, 60),
-    "Low":      (20, 40),
-    "Very Low": (0,  20),
+    "High": (60, 80),
+    "Medium": (40, 60),
+    "Low": (20, 40),
+    "Very Low": (0, 20),
 }
 
 # Alert Color Classification
 ALERT_COLORS = {
     "Critical": "Red",
-    "High":     "Orange",
-    "Medium":   "Yellow",
-    "Low":      "Green",
+    "High": "Orange",
+    "Medium": "Yellow",
+    "Low": "Green",
     "Very Low": "Green",
 }
 
 
-def _analytical_risk_score(features: Dict[str, float]) -> float:
+def _analytical_risk_score(features: dict[str, float]) -> float:
     """
     Analytically calibrated flood risk scoring function.
     Trained on Visakhapatnam GVMC historical monsoon data (2014-2023).
@@ -55,12 +55,12 @@ def _analytical_risk_score(features: Dict[str, float]) -> float:
     hff = features["historical_flood_freq"]
 
     # Primary risk drivers (non-linear)
-    rainfall_risk   = min(1.0, r / 80.0) ** 0.7        # Heavy rain accelerates risk
-    water_risk      = min(1.0, w / 200.0) ** 0.8       # Water level is critical
-    elevation_risk  = max(0.0, 1.0 - e / 20.0) ** 1.2 # Low elevation = high risk
-    drainage_risk   = max(0.0, 1.0 - d) ** 1.1         # Poor drainage = high risk
-    river_risk      = max(0.0, 1.0 - dist / 5.0) ** 0.9
-    history_risk    = hff ** 0.8
+    rainfall_risk = min(1.0, r / 80.0) ** 0.7  # Heavy rain accelerates risk
+    water_risk = min(1.0, w / 200.0) ** 0.8  # Water level is critical
+    elevation_risk = max(0.0, 1.0 - e / 20.0) ** 1.2  # Low elevation = high risk
+    drainage_risk = max(0.0, 1.0 - d) ** 1.1  # Poor drainage = high risk
+    river_risk = max(0.0, 1.0 - dist / 5.0) ** 0.9
+    history_risk = hff**0.8
 
     # Interaction terms (XGBoost learns these)
     rain_water_interaction = rainfall_risk * water_risk * 0.15
@@ -68,24 +68,25 @@ def _analytical_risk_score(features: Dict[str, float]) -> float:
 
     # Weighted ensemble
     score = (
-        rainfall_risk   * 0.32 +
-        water_risk      * 0.28 +
-        elevation_risk  * 0.12 +
-        drainage_risk   * 0.12 +
-        river_risk      * 0.08 +
-        history_risk    * 0.08 +
-        rain_water_interaction +
-        elev_drain_interaction
+        rainfall_risk * 0.32
+        + water_risk * 0.28
+        + elevation_risk * 0.12
+        + drainage_risk * 0.12
+        + river_risk * 0.08
+        + history_risk * 0.08
+        + rain_water_interaction
+        + elev_drain_interaction
     ) * 100.0
 
     return round(min(99.9, max(0.1, score)), 1)
 
 
-def _try_xgboost_predict(feature_vector: List[float]) -> float | None:
+def _try_xgboost_predict(feature_vector: list[float]) -> float | None:
     """Attempt XGBoost prediction; return None if unavailable."""
     try:
-        import xgboost as xgb
         import numpy as np
+        import xgboost as xgb
+
         # In production: load pre-trained model from disk
         # model = xgb.Booster(); model.load_model("app/ai/models/flood_risk_xgb.json")
         # For demonstration: create a model with calibrated weights matching our domain
@@ -99,15 +100,16 @@ def _try_xgboost_predict(feature_vector: List[float]) -> float | None:
         # Generate synthetic training data calibrated to Vizag domain
         np.random.seed(42)
         n = 500
-        X_train = np.random.rand(n, 6)
+        x_train = np.random.rand(n, 6)
         # Label as high-risk if weighted sum exceeds threshold
         weights = np.array([0.32, 0.28, -0.12, -0.12, -0.08, 0.08])
-        scores = X_train @ weights
-        y_train = (scores > 0.05).astype(int)
-        clf.fit(X_train, y_train)
+        scores = x_train.dot(weights)
+        y_train = (scores > np.median(scores)).astype(int)
 
-        X_input = np.array([feature_vector])
-        proba = clf.predict_proba(X_input)[0][1]  # P(high risk)
+        clf.fit(x_train, y_train)
+
+        x_input = np.array([feature_vector])
+        proba = clf.predict_proba(x_input)[0][1]  # P(high risk)
         return round(float(proba) * 100.0, 1)
     except Exception as ex:
         logger.debug(f"XGBoost inference skipped: {ex}")
@@ -120,7 +122,7 @@ def predict_flood_risk(
     ward_number: int = 14,
     elevation_override: float | None = None,
     drainage_score_override: float | None = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Core flood risk prediction function.
     1. Builds feature vector from inputs + ward baselines
@@ -188,40 +190,52 @@ def predict_flood_risk(
 
 def _generate_recommendations(
     risk_category: str,
-    features: Dict[str, float],
+    features: dict[str, float],
     alert_color: str,
-) -> List[str]:
+) -> list[str]:
     recs = []
     if risk_category == "Critical":
-        recs.append("🚨 IMMEDIATE EVACUATION REQUIRED — Activate emergency response protocol.")
+        recs.append(
+            "🚨 IMMEDIATE EVACUATION REQUIRED — Activate emergency response protocol."
+        )
         recs.append("🏥 Open all designated relief shelters at full capacity.")
-        recs.append("📢 Broadcast multilingual emergency SMS & sirens in affected wards.")
+        recs.append(
+            "📢 Broadcast multilingual emergency SMS & sirens in affected wards."
+        )
     elif risk_category == "High":
-        recs.append("⚠️ Pre-position rescue boats and emergency teams in high-risk wards.")
+        recs.append(
+            "⚠️ Pre-position rescue boats and emergency teams in high-risk wards."
+        )
         recs.append("📋 Issue voluntary evacuation advisory for low-lying areas.")
         recs.append("🔔 Alert NDRF / SDRF standby teams for rapid deployment.")
     elif risk_category == "Medium":
         recs.append("📡 Activate enhanced monitoring with 30-minute sensor telemetry.")
         recs.append("🏠 Warn vulnerable populations in flood-prone areas.")
     else:
-        recs.append("✅ Situation under control. Continue standard monitoring protocols.")
+        recs.append(
+            "✅ Situation under control. Continue standard monitoring protocols."
+        )
 
     if features["drainage_score"] < 0.35:
-        recs.append("🚧 Deploy drainage pumping equipment — drainage efficiency critically low.")
+        recs.append(
+            "🚧 Deploy drainage pumping equipment — drainage efficiency critically low."
+        )
     if features["rainfall_mm_hr"] > 80:
-        recs.append("🌧️ Extreme rainfall detected — activate storm water overflow contingency.")
+        recs.append(
+            "🌧️ Extreme rainfall detected — activate storm water overflow contingency."
+        )
     return recs
 
 
-def classify_alert_level(risk_score: float) -> Dict[str, str]:
+def classify_alert_level(risk_score: float) -> dict[str, str]:
     """Classify a risk score into alert level with color and action."""
     if risk_score >= 80:
-        return {"level": "Critical", "color": "Red",    "action": "Immediate Evacuation"}
+        return {"level": "Critical", "color": "Red", "action": "Immediate Evacuation"}
     elif risk_score >= 60:
-        return {"level": "High",     "color": "Orange", "action": "Prepare for Evacuation"}
+        return {"level": "High", "color": "Orange", "action": "Prepare for Evacuation"}
     elif risk_score >= 40:
-        return {"level": "Medium",   "color": "Yellow", "action": "Enhanced Monitoring"}
+        return {"level": "Medium", "color": "Yellow", "action": "Enhanced Monitoring"}
     elif risk_score >= 20:
-        return {"level": "Low",      "color": "Green",  "action": "Standard Monitoring"}
+        return {"level": "Low", "color": "Green", "action": "Standard Monitoring"}
     else:
-        return {"level": "Very Low", "color": "Green",  "action": "No Action Required"}
+        return {"level": "Very Low", "color": "Green", "action": "No Action Required"}

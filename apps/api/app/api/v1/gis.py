@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db
-from app.models.shelter import Shelter
 from app.models.report import FloodReport
 from app.models.risk_zone import RiskZone
+from app.models.shelter import Shelter
 
 logger = logging.getLogger(__name__)
 
@@ -17,39 +18,157 @@ router = APIRouter()
 
 # Fixed GeoJSON polygon coordinates for Visakhapatnam Wards
 WARD_POLYGONS = {
-    14: [[83.210, 17.680], [83.230, 17.680], [83.230, 17.700], [83.210, 17.700], [83.210, 17.680]], # Gajuwaka
-    8:  [[83.295, 17.695], [83.315, 17.695], [83.315, 17.715], [83.295, 17.715], [83.295, 17.695]], # One Town
-    3:  [[83.310, 17.720], [83.330, 17.720], [83.330, 17.740], [83.310, 17.740], [83.310, 17.720]], # Maharanipeta
-    22: [[83.235, 17.690], [83.255, 17.690], [83.255, 17.710], [83.235, 17.710], [83.235, 17.690]], # Sheela Nagar
-    11: [[83.290, 17.730], [83.310, 17.730], [83.310, 17.750], [83.290, 17.750], [83.290, 17.730]], # Seethammadhara
-    16: [[83.325, 17.745], [83.345, 17.745], [83.345, 17.765], [83.325, 17.765], [83.325, 17.745]], # Muralinagar
-    5:  [[83.298, 17.718], [83.318, 17.718], [83.318, 17.738], [83.298, 17.738], [83.298, 17.718]], # Dwaraka Nagar
-    19: [[83.260, 17.720], [83.280, 17.720], [83.280, 17.740], [83.260, 17.740], [83.260, 17.720]], # Gopalapatnam
-    2:  [[83.320, 17.735], [83.340, 17.735], [83.340, 17.755], [83.320, 17.755], [83.320, 17.735]], # MVP Colony
+    14: [
+        [83.210, 17.680],
+        [83.230, 17.680],
+        [83.230, 17.700],
+        [83.210, 17.700],
+        [83.210, 17.680],
+    ],  # Gajuwaka
+    8: [
+        [83.295, 17.695],
+        [83.315, 17.695],
+        [83.315, 17.715],
+        [83.295, 17.715],
+        [83.295, 17.695],
+    ],  # One Town
+    3: [
+        [83.310, 17.720],
+        [83.330, 17.720],
+        [83.330, 17.740],
+        [83.310, 17.740],
+        [83.310, 17.720],
+    ],  # Maharanipeta
+    22: [
+        [83.235, 17.690],
+        [83.255, 17.690],
+        [83.255, 17.710],
+        [83.235, 17.710],
+        [83.235, 17.690],
+    ],  # Sheela Nagar
+    11: [
+        [83.290, 17.730],
+        [83.310, 17.730],
+        [83.310, 17.750],
+        [83.290, 17.750],
+        [83.290, 17.730],
+    ],  # Seethammadhara
+    16: [
+        [83.325, 17.745],
+        [83.345, 17.745],
+        [83.345, 17.765],
+        [83.325, 17.765],
+        [83.325, 17.745],
+    ],  # Muralinagar
+    5: [
+        [83.298, 17.718],
+        [83.318, 17.718],
+        [83.318, 17.738],
+        [83.298, 17.738],
+        [83.298, 17.718],
+    ],  # Dwaraka Nagar
+    19: [
+        [83.260, 17.720],
+        [83.280, 17.720],
+        [83.280, 17.740],
+        [83.260, 17.740],
+        [83.260, 17.720],
+    ],  # Gopalapatnam
+    2: [
+        [83.320, 17.735],
+        [83.340, 17.735],
+        [83.340, 17.755],
+        [83.320, 17.755],
+        [83.320, 17.735],
+    ],  # MVP Colony
 }
 
 # Static Fallbacks
 FALLBACK_SHELTERS = [
-    {"id": "sh1", "name": "AU Engineering College Sports Complex", "ward_name": "MVP Colony", "address": "AU Campus, MVP Colony", "capacity": 800, "current_occupancy": 320, "contact_phone": "+91 891 2844000", "is_accessible": True, "status": "Open", "lat": 17.7326, "lng": 83.3309, "amenities": ["Medical", "Food", "Water"]},
-    {"id": "sh3", "name": "Gajuwaka Sports Stadium", "ward_name": "Gajuwaka", "address": "NH16 Junction, Gajuwaka", "capacity": 1200, "current_occupancy": 950, "contact_phone": "+91 891 2548811", "is_accessible": True, "status": "Open", "lat": 17.6851, "lng": 83.2101, "amenities": ["Medical", "Food", "Water", "Generator"]},
+    {
+        "id": "sh1",
+        "name": "AU Engineering College Sports Complex",
+        "ward_name": "MVP Colony",
+        "address": "AU Campus, MVP Colony",
+        "capacity": 800,
+        "current_occupancy": 320,
+        "contact_phone": "+91 891 2844000",
+        "is_accessible": True,
+        "status": "Open",
+        "lat": 17.7326,
+        "lng": 83.3309,
+        "amenities": ["Medical", "Food", "Water"],
+    },
+    {
+        "id": "sh3",
+        "name": "Gajuwaka Sports Stadium",
+        "ward_name": "Gajuwaka",
+        "address": "NH16 Junction, Gajuwaka",
+        "capacity": 1200,
+        "current_occupancy": 950,
+        "contact_phone": "+91 891 2548811",
+        "is_accessible": True,
+        "status": "Open",
+        "lat": 17.6851,
+        "lng": 83.2101,
+        "amenities": ["Medical", "Food", "Water", "Generator"],
+    },
 ]
 
 FALLBACK_REPORTS = [
-    {"id": "rep-101", "title": "Main Road Submerged Near Bus Station", "reporter_name": "Ramesh Kumar", "ward_name": "Gajuwaka", "description": "Flood water height reaches above knee level.", "severity": "Critical", "status": "Verified", "water_depth_cm": 65.0, "image_url": "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=500", "ai_confidence": 0.94, "lat": 17.6851, "lng": 83.2101, "created_at": "2026-07-31T18:00:00Z"},
+    {
+        "id": "rep-101",
+        "title": "Main Road Submerged Near Bus Station",
+        "reporter_name": "Ramesh Kumar",
+        "ward_name": "Gajuwaka",
+        "description": "Flood water height reaches above knee level.",
+        "severity": "Critical",
+        "status": "Verified",
+        "water_depth_cm": 65.0,
+        "image_url": "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=500",
+        "ai_confidence": 0.94,
+        "lat": 17.6851,
+        "lng": 83.2101,
+        "created_at": "2026-07-31T18:00:00Z",
+    },
 ]
 
 FALLBACK_ZONES = [
-    {"id": "rz14", "ward_number": 14, "ward_name": "Gajuwaka Industrial Zone", "risk_score": 88, "risk_category": "Critical", "population": 84000, "elevation_meters": 3.2, "water_level_cm": 142.0, "rainfall_mm_hr": 68.2, "active_alerts_count": 3},
-    {"id": "rz8",  "ward_number": 8,  "ward_name": "One Town Heritage Zone", "risk_score": 63, "risk_category": "High", "population": 62000, "elevation_meters": 5.1, "water_level_cm": 98.0, "rainfall_mm_hr": 54.8, "active_alerts_count": 1},
+    {
+        "id": "rz14",
+        "ward_number": 14,
+        "ward_name": "Gajuwaka Industrial Zone",
+        "risk_score": 88,
+        "risk_category": "Critical",
+        "population": 84000,
+        "elevation_meters": 3.2,
+        "water_level_cm": 142.0,
+        "rainfall_mm_hr": 68.2,
+        "active_alerts_count": 3,
+    },
+    {
+        "id": "rz8",
+        "ward_number": 8,
+        "ward_name": "One Town Heritage Zone",
+        "risk_score": 63,
+        "risk_category": "High",
+        "population": 62000,
+        "elevation_meters": 5.1,
+        "water_level_cm": 98.0,
+        "rainfall_mm_hr": 54.8,
+        "active_alerts_count": 1,
+    },
 ]
 
 
 @router.get("/shelters")
-async def get_shelters_geojson(db: Optional[AsyncSession] = Depends(get_db)) -> Dict[str, Any]:
+async def get_shelters_geojson(
+    db: AsyncSession | None = Depends(get_db),
+) -> dict[str, Any]:
     features = []
     if db is not None:
         try:
-            stmt = select(Shelter).where(Shelter.is_deleted == False)
+            stmt = select(Shelter).where(not Shelter.is_deleted)
             result = await db.execute(stmt)
             shelters = result.scalars().all()
             features = [
@@ -63,7 +182,9 @@ async def get_shelters_geojson(db: Optional[AsyncSession] = Depends(get_db)) -> 
                         "address": sh.address,
                         "capacity": sh.capacity,
                         "current_occupancy": sh.current_occupancy,
-                        "available_capacity": max(0, sh.capacity - sh.current_occupancy),
+                        "available_capacity": max(
+                            0, sh.capacity - sh.current_occupancy
+                        ),
                         "contact_phone": sh.contact_phone,
                         "is_accessible": sh.is_accessible,
                         "status": sh.status,
@@ -80,7 +201,10 @@ async def get_shelters_geojson(db: Optional[AsyncSession] = Depends(get_db)) -> 
             {
                 "type": "Feature",
                 "geometry": {"type": "Point", "coordinates": [sh["lng"], sh["lat"]]},
-                "properties": {**sh, "available_capacity": sh["capacity"] - sh["current_occupancy"]},
+                "properties": {
+                    **sh,
+                    "available_capacity": sh["capacity"] - sh["current_occupancy"],
+                },
             }
             for sh in FALLBACK_SHELTERS
         ]
@@ -89,11 +213,13 @@ async def get_shelters_geojson(db: Optional[AsyncSession] = Depends(get_db)) -> 
 
 
 @router.get("/reports")
-async def get_reports_geojson(db: Optional[AsyncSession] = Depends(get_db)) -> Dict[str, Any]:
+async def get_reports_geojson(
+    db: AsyncSession | None = Depends(get_db),
+) -> dict[str, Any]:
     features = []
     if db is not None:
         try:
-            stmt = select(FloodReport).where(FloodReport.is_deleted == False)
+            stmt = select(FloodReport).where(not FloodReport.is_deleted)
             result = await db.execute(stmt)
             reports = result.scalars().all()
             features = [
@@ -132,55 +258,78 @@ async def get_reports_geojson(db: Optional[AsyncSession] = Depends(get_db)) -> D
 
 
 @router.get("/risk-zones")
-async def get_risk_zones_geojson(db: Optional[AsyncSession] = Depends(get_db)) -> Dict[str, Any]:
+async def get_risk_zones_geojson(
+    db: AsyncSession | None = Depends(get_db),
+) -> dict[str, Any]:
     features = []
     if db is not None:
         try:
-            stmt = select(RiskZone).where(RiskZone.is_deleted == False)
+            stmt = select(RiskZone).where(not RiskZone.is_deleted)
             result = await db.execute(stmt)
             zones = result.scalars().all()
             for rz in zones:
                 polygon = WARD_POLYGONS.get(
                     rz.ward_number,
-                    [[83.20 + (rz.ward_number * 0.005), 17.68 + (rz.ward_number * 0.005)],
-                     [83.22 + (rz.ward_number * 0.005), 17.68 + (rz.ward_number * 0.005)],
-                     [83.22 + (rz.ward_number * 0.005), 17.70 + (rz.ward_number * 0.005)],
-                     [83.20 + (rz.ward_number * 0.005), 17.70 + (rz.ward_number * 0.005)],
-                     [83.20 + (rz.ward_number * 0.005), 17.68 + (rz.ward_number * 0.005)]]
+                    [
+                        [
+                            83.20 + (rz.ward_number * 0.005),
+                            17.68 + (rz.ward_number * 0.005),
+                        ],
+                        [
+                            83.22 + (rz.ward_number * 0.005),
+                            17.68 + (rz.ward_number * 0.005),
+                        ],
+                        [
+                            83.22 + (rz.ward_number * 0.005),
+                            17.70 + (rz.ward_number * 0.005),
+                        ],
+                        [
+                            83.20 + (rz.ward_number * 0.005),
+                            17.70 + (rz.ward_number * 0.005),
+                        ],
+                        [
+                            83.20 + (rz.ward_number * 0.005),
+                            17.68 + (rz.ward_number * 0.005),
+                        ],
+                    ],
                 )
-                features.append({
-                    "type": "Feature",
-                    "geometry": {"type": "Polygon", "coordinates": [polygon]},
-                    "properties": {
-                        "id": str(rz.id),
-                        "ward_number": rz.ward_number,
-                        "ward_name": rz.ward_name,
-                        "risk_score": rz.risk_score,
-                        "risk_category": rz.risk_category,
-                        "population": rz.population,
-                        "elevation_meters": rz.elevation_meters,
-                        "water_level_cm": rz.water_level_cm,
-                        "rainfall_mm_hr": rz.rainfall_mm_hr,
-                        "active_alerts_count": rz.active_alerts_count,
-                    },
-                })
+                features.append(
+                    {
+                        "type": "Feature",
+                        "geometry": {"type": "Polygon", "coordinates": [polygon]},
+                        "properties": {
+                            "id": str(rz.id),
+                            "ward_number": rz.ward_number,
+                            "ward_name": rz.ward_name,
+                            "risk_score": rz.risk_score,
+                            "risk_category": rz.risk_category,
+                            "population": rz.population,
+                            "elevation_meters": rz.elevation_meters,
+                            "water_level_cm": rz.water_level_cm,
+                            "rainfall_mm_hr": rz.rainfall_mm_hr,
+                            "active_alerts_count": rz.active_alerts_count,
+                        },
+                    }
+                )
         except Exception:
             pass
 
     if not features:
         for rz in FALLBACK_ZONES:
             polygon = WARD_POLYGONS.get(rz["ward_number"], WARD_POLYGONS[14])
-            features.append({
-                "type": "Feature",
-                "geometry": {"type": "Polygon", "coordinates": [polygon]},
-                "properties": rz,
-            })
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": {"type": "Polygon", "coordinates": [polygon]},
+                    "properties": rz,
+                }
+            )
 
     return {"type": "FeatureCollection", "features": features}
 
 
 @router.get("/drainage")
-async def get_drainage_geojson() -> Dict[str, Any]:
+async def get_drainage_geojson() -> dict[str, Any]:
     """
     GeoJSON endpoint serving Visakhapatnam's Stormwater Drainage Network.
     Returns Primary Drains, Secondary Drains, Underground Culverts, Blocked Canals,
@@ -192,7 +341,13 @@ async def get_drainage_geojson() -> Dict[str, Any]:
             "type": "Feature",
             "geometry": {
                 "type": "LineString",
-                "coordinates": [[83.210, 17.680], [83.225, 17.685], [83.245, 17.690], [83.275, 17.695], [83.300, 17.690]],
+                "coordinates": [
+                    [83.210, 17.680],
+                    [83.225, 17.685],
+                    [83.245, 17.690],
+                    [83.275, 17.695],
+                    [83.300, 17.690],
+                ],
             },
             "properties": {
                 "id": "d-prim-1",
@@ -326,4 +481,3 @@ async def get_drainage_geojson() -> Dict[str, Any]:
     ]
 
     return {"type": "FeatureCollection", "features": features}
-

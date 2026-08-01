@@ -28,6 +28,6 @@ async def readiness_check() -> dict:
         "status": "ready",
         "checks": {
             "database": True,  # Placeholder for real DB check
-            "redis": True,     # Placeholder for real Redis check
-        }
+            "redis": True,  # Placeholder for real Redis check
+        },
     }

@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.weather import WeatherSnapshot
 
+
 class WeatherService:
     @staticmethod
     async def get_latest_weather(db: AsyncSession) -> WeatherSnapshot:
-        stmt = select(WeatherSnapshot).order_by(WeatherSnapshot.created_at.desc()).limit(1)
+        stmt = (
+            select(WeatherSnapshot).order_by(WeatherSnapshot.created_at.desc()).limit(1)
+        )
         result = await db.execute(stmt)
         snapshot = result.scalar_one_or_none()
         if not snapshot:

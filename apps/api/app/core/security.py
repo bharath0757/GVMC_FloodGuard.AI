@@ -2,13 +2,16 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from typing import Any
-from jose import JWTError, jwt
+
+from jose import jwt
 from passlib.context import CryptContext
+
 from app.core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 ALGORITHM = "HS256"
+
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
@@ -16,21 +19,27 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     return pwd_context.verify(plain_password, hashed_password)
 
+
 def get_password_hash(password: str) -> str:
     """
     Generate bcrypt hash for a plain text password.
     """
     return pwd_context.hash(password)
 
-def create_access_token(subject: str | Any, role: str, expires_delta: timedelta | None = None) -> str:
+
+def create_access_token(
+    subject: str | Any, role: str, expires_delta: timedelta | None = None
+) -> str:
     """
     Create JWT Access Token (default 30 mins).
     """
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
+
     to_encode = {
         "sub": str(subject),
         "role": role,
@@ -41,15 +50,20 @@ def create_access_token(subject: str | Any, role: str, expires_delta: timedelta 
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def create_refresh_token(subject: str | Any, role: str, expires_delta: timedelta | None = None) -> str:
+
+def create_refresh_token(
+    subject: str | Any, role: str, expires_delta: timedelta | None = None
+) -> str:
     """
     Create JWT Refresh Token (default 7 days).
     """
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
-    
+        expire = datetime.now(timezone.utc) + timedelta(
+            days=settings.REFRESH_TOKEN_EXPIRE_DAYS
+        )
+
     to_encode = {
         "sub": str(subject),
         "role": role,
@@ -59,6 +73,7 @@ def create_refresh_token(subject: str | Any, role: str, expires_delta: timedelta
     }
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 def decode_token(token: str) -> dict[str, Any]:
     """

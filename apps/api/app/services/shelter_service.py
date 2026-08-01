@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import uuid
-from typing import Sequence
+from collections.abc import Sequence
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,16 +10,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.shelter import Shelter
 from app.schemas.shelter import ShelterCreate
 
+
 class ShelterService:
     @staticmethod
     async def get_all_shelters(db: AsyncSession) -> Sequence[Shelter]:
-        stmt = select(Shelter).where(Shelter.is_deleted == False).order_by(Shelter.name)
+        stmt = select(Shelter).where(not Shelter.is_deleted).order_by(Shelter.name)
         result = await db.execute(stmt)
         return result.scalars().all()
 
     @staticmethod
     async def get_shelter_by_id(db: AsyncSession, shelter_id: uuid.UUID) -> Shelter:
-        stmt = select(Shelter).where(Shelter.id == shelter_id, Shelter.is_deleted == False)
+        stmt = select(Shelter).where(Shelter.id == shelter_id, not Shelter.is_deleted)
         result = await db.execute(stmt)
         shelter = result.scalar_one_or_none()
         if not shelter:

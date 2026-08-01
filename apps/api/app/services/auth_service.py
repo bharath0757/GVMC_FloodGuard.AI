@@ -4,15 +4,22 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import create_access_token, create_refresh_token, get_password_hash, verify_password, decode_token
+from app.core.security import (
+    create_access_token,
+    create_refresh_token,
+    decode_token,
+    get_password_hash,
+    verify_password,
+)
 from app.models.user import User
-from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse
+from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse
+
 
 class AuthService:
     @staticmethod
     async def register_user(db: AsyncSession, req: RegisterRequest) -> TokenResponse:
         # Check if email exists
-        stmt = select(User).where(User.email == req.email.lower(), User.is_deleted == False)
+        stmt = select(User).where(User.email == req.email.lower(), not User.is_deleted)
         result = await db.execute(stmt)
         if result.scalar_one_or_none():
             raise HTTPException(
@@ -46,7 +53,7 @@ class AuthService:
 
     @staticmethod
     async def login_user(db: AsyncSession, req: LoginRequest) -> TokenResponse:
-        stmt = select(User).where(User.email == req.email.lower(), User.is_deleted == False)
+        stmt = select(User).where(User.email == req.email.lower(), not User.is_deleted)
         result = await db.execute(stmt)
         user = result.scalar_one_or_none()
 
@@ -81,10 +88,12 @@ class AuthService:
             if payload.get("type") != "refresh":
                 raise HTTPException(status_code=401, detail="Invalid token type")
             user_id = payload.get("sub")
-        except Exception:
-            raise HTTPException(status_code=401, detail="Invalid refresh token")
+        except Exception as e:
+            raise HTTPException(status_code=401, detail="Invalid refresh token") from e
 
-        stmt = select(User).where(User.id == user_id, User.is_active == True, User.is_deleted == False)
+        stmt = select(User).where(
+            User.id == user_id, User.is_active, not User.is_deleted
+        )
         result = await db.execute(stmt)
         user = result.scalar_one_or_none()
         if not user:

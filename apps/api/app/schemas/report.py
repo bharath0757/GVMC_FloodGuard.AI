@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import uuid
-from datetime import datetime
-from typing import Optional, Any, List
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict, Field
+
 
 class FloodReportResponse(BaseModel):
     id: str
@@ -19,17 +19,18 @@ class FloodReportResponse(BaseModel):
     water_depth_cm: float
     lat: float
     lng: float
-    image_url: Optional[str] = None
-    ai_labels: Optional[List[str]] = None
+    image_url: str | None = None
+    ai_labels: list[str] | None = None
     ai_confidence: float = 0.0
-    ai_analysis: Optional[Any] = None
-    internal_notes: Optional[str] = None
-    verified_by: Optional[str] = None
-    verified_at: Optional[str] = None
+    ai_analysis: Any | None = None
+    internal_notes: str | None = None
+    verified_by: str | None = None
+    verified_at: str | None = None
     upvotes: int = 1
     created_at: str
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class FloodReportCreate(BaseModel):
     ward_name: str = Field(default="Gajuwaka")
@@ -39,14 +40,18 @@ class FloodReportCreate(BaseModel):
     water_depth_cm: float = Field(default=30.0, ge=0.0)
     lat: float = Field(default=17.6851)
     lng: float = Field(default=83.2101)
-    image_url: Optional[str] = Field(default=None)
+    image_url: str | None = Field(default=None)
+
 
 class VerifyReportRequest(BaseModel):
     status: str = Field(default="Verified", description="Verified or Rejected")
-    priority: Optional[str] = Field(default="P1", description="P0, P1, P2, P3")
-    internal_notes: Optional[str] = Field(default=None)
-    authority_name: Optional[str] = Field(default="Municipal Officer")
+    priority: str | None = Field(default="P1", description="P0, P1, P2, P3")
+    internal_notes: str | None = Field(default=None)
+    authority_name: str | None = Field(default="Municipal Officer")
+
 
 class ResolveReportRequest(BaseModel):
-    resolution_status: str = Field(default="Resolved", description="In Progress or Resolved")
-    internal_notes: Optional[str] = Field(default=None)
+    resolution_status: str = Field(
+        default="Resolved", description="In Progress or Resolved"
+    )
+    internal_notes: str | None = Field(default=None)

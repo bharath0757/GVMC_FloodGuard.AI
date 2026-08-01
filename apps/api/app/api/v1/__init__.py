@@ -26,7 +26,9 @@ api_router.include_router(weather_router, prefix="/weather", tags=["weather"])
 api_router.include_router(risk_router, prefix="/risk-zones", tags=["risk-zones"])
 api_router.include_router(gis_router, prefix="/gis", tags=["gis"])
 api_router.include_router(ai_router, prefix="/ai", tags=["ai"])
-api_router.include_router(notifications_router, prefix="/notifications", tags=["notifications"])
+api_router.include_router(
+    notifications_router, prefix="/notifications", tags=["notifications"]
+)
 api_router.include_router(assistant_router, prefix="/assistant", tags=["assistant"])
 api_router.include_router(system_router, prefix="/system", tags=["system"])
 

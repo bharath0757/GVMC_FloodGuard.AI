@@ -2,37 +2,125 @@
 FloodGuard AI - Weighted Shelter Recommendation Engine
 Scores shelters using a multi-criteria decision analysis (MCDA) algorithm.
 """
+
 from __future__ import annotations
 
 import math
-from typing import Dict, Any, List, Optional
-
+from typing import Any
 
 # Visakhapatnam Shelter Database (static fallback)
 SHELTER_DB = [
-    {"id": "sh1", "name": "AU Engineering College Sports Complex", "ward": "MVP Colony", "lat": 17.7326, "lng": 83.3309, "capacity": 800, "current_occupancy": 320, "is_accessible": True, "has_medical": True, "has_food": True},
-    {"id": "sh2", "name": "Bheemunipatnam Municipal School", "ward": "Bheemunipatnam", "lat": 17.8933, "lng": 83.4531, "capacity": 400, "current_occupancy": 180, "is_accessible": True, "has_medical": False, "has_food": True},
-    {"id": "sh3", "name": "Gajuwaka Sports Stadium", "ward": "Gajuwaka", "lat": 17.6851, "lng": 83.2101, "capacity": 1200, "current_occupancy": 950, "is_accessible": True, "has_medical": True, "has_food": True},
-    {"id": "sh4", "name": "Simhachalam Temple Dharmasala", "ward": "Simhachalam", "lat": 17.7711, "lng": 83.2544, "capacity": 600, "current_occupancy": 120, "is_accessible": False, "has_medical": False, "has_food": True},
-    {"id": "sh5", "name": "VMRDA City Centre Convention Hall", "ward": "Dwaraka Nagar", "lat": 17.7194, "lng": 83.3177, "capacity": 500, "current_occupancy": 240, "is_accessible": True, "has_medical": True, "has_food": True},
-    {"id": "sh6", "name": "Seethammadhara High School", "ward": "Seethammadhara", "lat": 17.7443, "lng": 83.3108, "capacity": 350, "current_occupancy": 80, "is_accessible": True, "has_medical": False, "has_food": True},
-    {"id": "sh7", "name": "Marripalem Vari Lova Community Hall", "ward": "Marripalem", "lat": 17.7050, "lng": 83.2710, "capacity": 450, "current_occupancy": 210, "is_accessible": True, "has_medical": True, "has_food": True},
-    {"id": "sh8", "name": "Kancharapalem Town Hall", "ward": "Kancharapalem", "lat": 17.6953, "lng": 83.2381, "capacity": 300, "current_occupancy": 260, "is_accessible": False, "has_medical": False, "has_food": False},
+    {
+        "id": "sh1",
+        "name": "AU Engineering College Sports Complex",
+        "ward": "MVP Colony",
+        "lat": 17.7326,
+        "lng": 83.3309,
+        "capacity": 800,
+        "current_occupancy": 320,
+        "is_accessible": True,
+        "has_medical": True,
+        "has_food": True,
+    },
+    {
+        "id": "sh2",
+        "name": "Bheemunipatnam Municipal School",
+        "ward": "Bheemunipatnam",
+        "lat": 17.8933,
+        "lng": 83.4531,
+        "capacity": 400,
+        "current_occupancy": 180,
+        "is_accessible": True,
+        "has_medical": False,
+        "has_food": True,
+    },
+    {
+        "id": "sh3",
+        "name": "Gajuwaka Sports Stadium",
+        "ward": "Gajuwaka",
+        "lat": 17.6851,
+        "lng": 83.2101,
+        "capacity": 1200,
+        "current_occupancy": 950,
+        "is_accessible": True,
+        "has_medical": True,
+        "has_food": True,
+    },
+    {
+        "id": "sh4",
+        "name": "Simhachalam Temple Dharmasala",
+        "ward": "Simhachalam",
+        "lat": 17.7711,
+        "lng": 83.2544,
+        "capacity": 600,
+        "current_occupancy": 120,
+        "is_accessible": False,
+        "has_medical": False,
+        "has_food": True,
+    },
+    {
+        "id": "sh5",
+        "name": "VMRDA City Centre Convention Hall",
+        "ward": "Dwaraka Nagar",
+        "lat": 17.7194,
+        "lng": 83.3177,
+        "capacity": 500,
+        "current_occupancy": 240,
+        "is_accessible": True,
+        "has_medical": True,
+        "has_food": True,
+    },
+    {
+        "id": "sh6",
+        "name": "Seethammadhara High School",
+        "ward": "Seethammadhara",
+        "lat": 17.7443,
+        "lng": 83.3108,
+        "capacity": 350,
+        "current_occupancy": 80,
+        "is_accessible": True,
+        "has_medical": False,
+        "has_food": True,
+    },
+    {
+        "id": "sh7",
+        "name": "Marripalem Vari Lova Community Hall",
+        "ward": "Marripalem",
+        "lat": 17.7050,
+        "lng": 83.2710,
+        "capacity": 450,
+        "current_occupancy": 210,
+        "is_accessible": True,
+        "has_medical": True,
+        "has_food": True,
+    },
+    {
+        "id": "sh8",
+        "name": "Kancharapalem Town Hall",
+        "ward": "Kancharapalem",
+        "lat": 17.6953,
+        "lng": 83.2381,
+        "capacity": 300,
+        "current_occupancy": 260,
+        "is_accessible": False,
+        "has_medical": False,
+        "has_food": False,
+    },
 ]
 
 
 def _haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
     """Haversine formula for great-circle distance in km."""
-    R = 6371.0
+    r = 6371.0
     phi1, phi2 = math.radians(lat1), math.radians(lat2)
     d_phi = math.radians(lat2 - lat1)
-    d_lam = math.radians(lng2 - lng1)
-    a = math.sin(d_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(d_lam / 2) ** 2
-    return 2 * R * math.asin(math.sqrt(a))
+    d_lambda = math.radians(lng2 - lng1)
+    a = math.sin(d_phi / 2.0) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(d_lambda / 2.0) ** 2
+    return r * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
 def _score_shelter(
-    shelter: Dict[str, Any],
+    shelter: dict[str, Any],
     user_lat: float,
     user_lng: float,
     risk_score: float,
@@ -64,11 +152,11 @@ def _score_shelter(
     dist_weight = 0.30 + (risk_weight * 0.10)  # 30-40% weight
 
     total_score = (
-        dist_score    * dist_weight +
-        capacity_score * 0.35 +
-        medical_score  * (0.20 if needs_medical else 0.10) +
-        food_score     * 0.10 +
-        access_score   * (0.15 if needs_accessible else 0.05)
+        dist_score * dist_weight
+        + capacity_score * 0.35
+        + medical_score * (0.20 if needs_medical else 0.10)
+        + food_score * 0.10
+        + access_score * (0.15 if needs_accessible else 0.05)
     )
 
     return round(total_score, 4)
@@ -81,8 +169,8 @@ def recommend_shelters(
     needs_medical: bool = False,
     needs_accessible: bool = False,
     ward_risk_category: str = "Medium",
-    shelters: Optional[List[Dict[str, Any]]] = None,
-) -> Dict[str, Any]:
+    shelters: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """
     Returns ranked shelter recommendations with reasoning.
     """
@@ -96,19 +184,28 @@ def recommend_shelters(
         if score >= 0:
             dist_km = _haversine_km(user_lat, user_lng, sh["lat"], sh["lng"])
             available = sh["capacity"] - sh["current_occupancy"]
-            scored.append({
-                **sh,
-                "recommendation_score": score,
-                "distance_km": round(dist_km, 2),
-                "available_capacity": available,
-                "occupancy_pct": round(sh["current_occupancy"] / max(1, sh["capacity"]) * 100, 1),
-                "estimated_travel_min": round(dist_km * 3.5, 0),  # ~17 km/h evacuation speed
-            })
+            scored.append(
+                {
+                    **sh,
+                    "recommendation_score": score,
+                    "distance_km": round(dist_km, 2),
+                    "available_capacity": available,
+                    "occupancy_pct": round(
+                        sh["current_occupancy"] / max(1, sh["capacity"]) * 100, 1
+                    ),
+                    "estimated_travel_min": round(
+                        dist_km * 3.5, 0
+                    ),  # ~17 km/h evacuation speed
+                }
+            )
 
     scored.sort(key=lambda x: x["recommendation_score"], reverse=True)
 
     if not scored:
-        return {"error": "No suitable shelters found within range.", "recommendations": []}
+        return {
+            "error": "No suitable shelters found within range.",
+            "recommendations": [],
+        }
 
     best = scored[0]
     alternatives = scored[1:4]
@@ -130,11 +227,11 @@ def recommend_shelters(
 
 
 def _generate_reasoning(
-    shelter: Dict[str, Any],
+    shelter: dict[str, Any],
     risk_score: float,
     needs_medical: bool,
     needs_accessible: bool,
-) -> List[str]:
+) -> list[str]:
     reasons = [
         f"📍 Nearest safe shelter: {shelter['name']} at {shelter['distance_km']} km.",
         f"🏠 Available capacity: {shelter['available_capacity']} of {shelter['capacity']} spaces ({100 - shelter['occupancy_pct']:.0f}% free).",
@@ -144,12 +241,16 @@ def _generate_reasoning(
     if shelter.get("has_food"):
         reasons.append("🍲 Food and water supplies available.")
     if risk_score >= 80:
-        reasons.append("🚨 CRITICAL RISK: Prioritize immediate movement to this shelter.")
-    reasons.append(f"⏱️ Estimated evacuation travel: ~{int(shelter['estimated_travel_min'])} minutes on foot.")
+        reasons.append(
+            "🚨 CRITICAL RISK: Prioritize immediate movement to this shelter."
+        )
+    reasons.append(
+        f"⏱️ Estimated evacuation travel: ~{int(shelter['estimated_travel_min'])} minutes on foot."
+    )
     return reasons
 
 
-def _get_priority_criteria(risk_score: float) -> List[str]:
+def _get_priority_criteria(risk_score: float) -> list[str]:
     if risk_score >= 80:
         return ["Speed", "Proximity", "Medical Availability"]
     elif risk_score >= 60:

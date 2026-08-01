@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
+
 
 class RiskZoneResponse(BaseModel):
     id: uuid.UUID

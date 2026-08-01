@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from sqlalchemy import String, Float
+from sqlalchemy import Float, String
 from sqlalchemy.orm import Mapped, mapped_column
+
 from app.db.base import Base
+
 
 class WeatherSnapshot(Base):
     """
     Meteorological sensor telemetry model.
     """
+
     __tablename__ = "weather_snapshots"
 
     temperature_c: Mapped[float] = mapped_column(Float, nullable=False)

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import List, Any
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict
+
 
 class AlertResponse(BaseModel):
     id: uuid.UUID
@@ -17,8 +19,9 @@ class AlertResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class AlertCreate(BaseModel):
     title: str
     severity: str = "Warning"
-    affected_wards: List[str]
+    affected_wards: list[str]
     message: str

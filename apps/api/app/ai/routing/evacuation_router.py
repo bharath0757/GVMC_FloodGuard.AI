@@ -3,39 +3,50 @@ FloodGuard AI - A* Evacuation Route Planning Engine
 Finds safest evacuation paths avoiding flooded / high-risk road segments.
 Graph represents Visakhapatnam GVMC ward road network.
 """
+
 from __future__ import annotations
 
-import math
 import heapq
-from typing import Dict, Any, List, Tuple, Optional
-
+import math
+from typing import Any
 
 # ---------------------------------------------------------------------------
 # Visakhapatnam Ward Road Graph
 # Node = Ward ID | Edge = (neighbor_ward, distance_km, road_type)
 # ---------------------------------------------------------------------------
-WARD_GRAPH: Dict[str, List[Tuple[str, float, str]]] = {
+WARD_GRAPH: dict[str, list[tuple[str, float, str]]] = {
     "w14": [("w22", 2.1, "arterial"), ("w8", 3.4, "arterial"), ("w1", 1.8, "local")],
     "w22": [("w14", 2.1, "arterial"), ("w19", 1.5, "local"), ("w5", 2.8, "arterial")],
     "w19": [("w22", 1.5, "local"), ("w11", 3.2, "arterial"), ("w8", 2.7, "arterial")],
-    "w8":  [("w14", 3.4, "arterial"), ("w19", 2.7, "arterial"), ("w3", 2.0, "highway")],
-    "w3":  [("w8", 2.0, "highway"), ("w11", 1.8, "arterial"), ("w16", 3.1, "arterial")],
-    "w11": [("w3", 1.8, "arterial"), ("w19", 3.2, "arterial"), ("w5", 2.2, "local"), ("w2", 2.9, "highway")],
-    "w5":  [("w22", 2.8, "arterial"), ("w11", 2.2, "local"), ("w2", 1.9, "arterial")],
-    "w2":  [("w5", 1.9, "arterial"), ("w11", 2.9, "highway"), ("w16", 2.0, "highway")],
+    "w8": [("w14", 3.4, "arterial"), ("w19", 2.7, "arterial"), ("w3", 2.0, "highway")],
+    "w3": [("w8", 2.0, "highway"), ("w11", 1.8, "arterial"), ("w16", 3.1, "arterial")],
+    "w11": [
+        ("w3", 1.8, "arterial"),
+        ("w19", 3.2, "arterial"),
+        ("w5", 2.2, "local"),
+        ("w2", 2.9, "highway"),
+    ],
+    "w5": [("w22", 2.8, "arterial"), ("w11", 2.2, "local"), ("w2", 1.9, "arterial")],
+    "w2": [("w5", 1.9, "arterial"), ("w11", 2.9, "highway"), ("w16", 2.0, "highway")],
     "w16": [("w3", 3.1, "arterial"), ("w2", 2.0, "highway")],
-    "w1":  [("w14", 1.8, "local"), ("w22", 2.5, "local")],
+    "w1": [("w14", 1.8, "local"), ("w22", 2.5, "local")],
 }
 
 # Shelter target nodes (safe zones)
 SAFE_ZONES = {"w2", "w16", "w11", "w5"}
 
 # Ward lat/lng centers for heuristic
-WARD_COORDS: Dict[str, Tuple[float, float]] = {
-    "w14": (17.685, 83.210), "w22": (17.690, 83.235), "w19": (17.720, 83.260),
-    "w8":  (17.695, 83.295), "w3":  (17.720, 83.310), "w11": (17.730, 83.290),
-    "w5":  (17.718, 83.298), "w2":  (17.735, 83.320), "w16": (17.745, 83.325),
-    "w1":  (17.680, 83.200),
+WARD_COORDS: dict[str, tuple[float, float]] = {
+    "w14": (17.685, 83.210),
+    "w22": (17.690, 83.235),
+    "w19": (17.720, 83.260),
+    "w8": (17.695, 83.295),
+    "w3": (17.720, 83.310),
+    "w11": (17.730, 83.290),
+    "w5": (17.718, 83.298),
+    "w2": (17.735, 83.320),
+    "w16": (17.745, 83.325),
+    "w1": (17.680, 83.200),
 }
 
 
@@ -48,7 +59,9 @@ def _heuristic(a: str, b: str) -> float:
     return math.sqrt((lat1 - lat2) ** 2 + (lng1 - lng2) ** 2) * 111.0  # approx km
 
 
-def _road_cost_multiplier(road_type: str, flooded_roads: List[str], high_risk_zones: List[str], neighbor: str) -> float:
+def _road_cost_multiplier(
+    road_type: str, flooded_roads: list[str], high_risk_zones: list[str], neighbor: str
+) -> float:
     """Return travel cost multiplier. Flooded/blocked roads get very high cost."""
     if neighbor in high_risk_zones:
         return 5.0  # Strongly avoid high-risk zones
@@ -61,10 +74,10 @@ def _road_cost_multiplier(road_type: str, flooded_roads: List[str], high_risk_zo
 
 def astar_evacuation_route(
     start_ward: str,
-    target_ward: Optional[str],
-    high_risk_wards: List[str],
-    flooded_wards: List[str],
-) -> Optional[Dict[str, Any]]:
+    target_ward: str | None,
+    high_risk_wards: list[str],
+    flooded_wards: list[str],
+) -> dict[str, Any] | None:
     """
     A* algorithm finding safest evacuation path from start_ward to a safe zone.
     Returns path with distance, estimated time, and road segment details.
@@ -73,15 +86,19 @@ def astar_evacuation_route(
     if start_ward not in graph:
         start_ward = "w14"  # Default to Gajuwaka
 
-    goal = target_ward if target_ward else _nearest_safe_zone(start_ward, high_risk_wards, flooded_wards)
+    goal = (
+        target_ward
+        if target_ward
+        else _nearest_safe_zone(start_ward, high_risk_wards, flooded_wards)
+    )
 
     if start_ward == goal:
         return _build_route_response([start_ward], 0.0, goal, "already_safe")
 
     # A* priority queue: (f_score, g_score, current_node, path)
-    open_set: List[Tuple[float, float, str, List[str]]] = []
+    open_set: list[tuple[float, float, str, list[str]]] = []
     heapq.heappush(open_set, (0.0, 0.0, start_ward, [start_ward]))
-    visited: Dict[str, float] = {}
+    visited: dict[str, float] = {}
 
     while open_set:
         f, g, current, path = heapq.heappop(open_set)
@@ -94,7 +111,9 @@ def astar_evacuation_route(
         visited[current] = g
 
         for neighbor, dist_km, road_type in graph.get(current, []):
-            multiplier = _road_cost_multiplier(road_type, flooded_wards, high_risk_wards, neighbor)
+            multiplier = _road_cost_multiplier(
+                road_type, flooded_wards, high_risk_wards, neighbor
+            )
             new_g = g + dist_km * multiplier
             h = _heuristic(neighbor, goal)
             new_f = new_g + h
@@ -105,7 +124,7 @@ def astar_evacuation_route(
     return _build_route_response([start_ward], 0.0, goal, "no_safe_path")
 
 
-def _nearest_safe_zone(start: str, high_risk: List[str], flooded: List[str]) -> str:
+def _nearest_safe_zone(start: str, high_risk: list[str], flooded: list[str]) -> str:
     safe_options = SAFE_ZONES - set(high_risk) - set(flooded)
     if not safe_options:
         return "w16"  # Muralinagar (highest elevation)
@@ -117,11 +136,11 @@ def _nearest_safe_zone(start: str, high_risk: List[str], flooded: List[str]) -> 
 
 
 def _build_route_response(
-    path: List[str],
+    path: list[str],
     total_dist_km: float,
     goal: str,
     status: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     # Actual distance (not cost-weighted)
     actual_dist = 0.0
     segments = []
@@ -130,12 +149,14 @@ def _build_route_response(
         for neighbor, dist_km, road_type in WARD_GRAPH.get(src, []):
             if neighbor == dst:
                 actual_dist += dist_km
-                segments.append({
-                    "from_ward": src,
-                    "to_ward": dst,
-                    "distance_km": dist_km,
-                    "road_type": road_type,
-                })
+                segments.append(
+                    {
+                        "from_ward": src,
+                        "to_ward": dst,
+                        "distance_km": dist_km,
+                        "road_type": road_type,
+                    }
+                )
                 break
 
     estimated_time_min = round((actual_dist / 17.0) * 60, 0)  # 17 km/h evacuation speed
@@ -161,9 +182,9 @@ def _build_route_response(
 
 def compute_safe_routes(
     start_ward: str,
-    high_risk_wards: List[str],
-    flooded_wards: List[str],
-) -> Dict[str, Any]:
+    high_risk_wards: list[str],
+    flooded_wards: list[str],
+) -> dict[str, Any]:
     """
     Compute primary + alternative evacuation routes avoiding floods.
     """
@@ -174,7 +195,9 @@ def compute_safe_routes(
     alt_excluded = high_risk_wards + ([primary["destination_ward"]] if primary else [])
     alt_safe = SAFE_ZONES - set(alt_excluded) - set(flooded_wards)
     alt_goal = next(iter(alt_safe), "w16") if alt_safe else "w16"
-    alternative = astar_evacuation_route(start_ward, alt_goal, high_risk_wards, flooded_wards)
+    alternative = astar_evacuation_route(
+        start_ward, alt_goal, high_risk_wards, flooded_wards
+    )
 
     return {
         "start_ward": start_ward,

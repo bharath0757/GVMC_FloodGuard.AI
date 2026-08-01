@@ -4,20 +4,67 @@ Analyzes report details, description keywords, water depth, and image features.
 Uses vision/keyword models with rule-based fallback to assign category, severity,
 confidence, and suggested priority (P0-P3).
 """
+
 from __future__ import annotations
 
 import logging
-from typing import Dict, Any, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 # Hazard Categories & Keyword Rules
 CATEGORY_KEYWORDS = {
-    "Submerged Road": ["road", "street", "highway", "underpass", "traffic", "vehicle", "car", "bus", "auto", "flooded road"],
-    "Drain Overflow": ["drain", "nullah", "sewer", "overflow", "gutter", "clogged", "manhole", "drainage"],
-    "Building Inundation": ["house", "building", "home", "shop", "basement", "ground floor", "apartment", "residential"],
-    "Flash Flood": ["torrent", "fast current", "surge", "river overflow", "flash", "sweeping", "high speed"],
-    "Structural Damage": ["wall collapse", "bridge", "landslide", "erosion", "power line", "pole", "electric", "hazard"],
+    "Submerged Road": [
+        "road",
+        "street",
+        "highway",
+        "underpass",
+        "traffic",
+        "vehicle",
+        "car",
+        "bus",
+        "auto",
+        "flooded road",
+    ],
+    "Drain Overflow": [
+        "drain",
+        "nullah",
+        "sewer",
+        "overflow",
+        "gutter",
+        "clogged",
+        "manhole",
+        "drainage",
+    ],
+    "Building Inundation": [
+        "house",
+        "building",
+        "home",
+        "shop",
+        "basement",
+        "ground floor",
+        "apartment",
+        "residential",
+    ],
+    "Flash Flood": [
+        "torrent",
+        "fast current",
+        "surge",
+        "river overflow",
+        "flash",
+        "sweeping",
+        "high speed",
+    ],
+    "Structural Damage": [
+        "wall collapse",
+        "bridge",
+        "landslide",
+        "erosion",
+        "power line",
+        "pole",
+        "electric",
+        "hazard",
+    ],
 }
 
 
@@ -26,7 +73,7 @@ def analyze_flood_report(
     description: str,
     water_depth_cm: float,
     image_url: str | None = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Analyzes citizen flood report text & image parameters.
     Returns structured AI hazard analysis:
@@ -65,11 +112,21 @@ def analyze_flood_report(
         detected_labels.append("Citizen Photo Attached")
 
     # 2. Determine Estimated Severity & Priority
-    if water_depth_cm >= 100 or "flash" in text_lower or "collapse" in text_lower or "life risk" in text_lower:
+    if (
+        water_depth_cm >= 100
+        or "flash" in text_lower
+        or "collapse" in text_lower
+        or "life risk" in text_lower
+    ):
         severity = "Critical"
         priority = "P0"
         confidence = 0.94
-    elif water_depth_cm >= 60 or highest_matches >= 2 or "trap" in text_lower or "block" in text_lower:
+    elif (
+        water_depth_cm >= 60
+        or highest_matches >= 2
+        or "trap" in text_lower
+        or "block" in text_lower
+    ):
         severity = "High"
         priority = "P1"
         confidence = 0.89

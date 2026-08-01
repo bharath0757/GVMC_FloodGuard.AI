@@ -3,22 +3,23 @@ FloodGuard AI - Report Management Service
 Handles crowdsourced citizen report creation, AI hazard analysis,
 authority verification, resolution workflows, and notification triggers.
 """
+
 from __future__ import annotations
 
-import uuid
 import time
-from typing import Sequence, Dict, Any, List, Optional
+import uuid
+from typing import Any
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.report import FloodReport
-from app.models.user import User
-from app.schemas.report import FloodReportCreate
 from app.ai.analysis.image_analyzer import analyze_flood_report
+from app.models.report import FloodReport
+from app.schemas.report import FloodReportCreate
 from app.services.notification_service import NotificationService
 
 # In-memory seed store (fallback when DB is uninitialized/offline)
-_IN_MEMORY_REPORTS: List[Dict[str, Any]] = [
+_IN_MEMORY_REPORTS: list[dict[str, Any]] = [
     {
         "id": "rep-101",
         "user_id": "00000000-0000-0000-0000-000000000001",
@@ -45,9 +46,13 @@ _IN_MEMORY_REPORTS: List[Dict[str, Any]] = [
         },
         "internal_notes": "NDRF Team #4 dispatched with 2 pumping units.",
         "verified_by": "Officer Suresh (GVMC)",
-        "verified_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 1200)),
+        "verified_at": time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 1200)
+        ),
         "upvotes": 14,
-        "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 3600)),
+        "created_at": time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 3600)
+        ),
     },
     {
         "id": "rep-102",
@@ -77,7 +82,9 @@ _IN_MEMORY_REPORTS: List[Dict[str, Any]] = [
         "verified_by": None,
         "verified_at": None,
         "upvotes": 8,
-        "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 1800)),
+        "created_at": time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 1800)
+        ),
     },
     {
         "id": "rep-103",
@@ -105,16 +112,20 @@ _IN_MEMORY_REPORTS: List[Dict[str, Any]] = [
         },
         "internal_notes": "Storm drain cleared by municipal sanitation squad.",
         "verified_by": "Officer Suresh (GVMC)",
-        "verified_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 7200)),
+        "verified_at": time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 7200)
+        ),
         "upvotes": 3,
-        "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 9000)),
+        "created_at": time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 9000)
+        ),
     },
 ]
 
 
 class ReportService:
     @staticmethod
-    async def get_all_reports(db: Optional[AsyncSession]) -> List[Dict[str, Any]]:
+    async def get_all_reports(db: AsyncSession | None) -> list[dict[str, Any]]:
         """Retrieve all active flood reports."""
         if db is not None:
             try:
@@ -145,7 +156,9 @@ class ReportService:
                             "verified_by": r.verified_by,
                             "verified_at": r.verified_at,
                             "upvotes": r.upvotes,
-                            "created_at": str(r.created_at) if hasattr(r, 'created_at') else time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                            "created_at": str(r.created_at)
+                            if hasattr(r, "created_at")
+                            else time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                         }
                         for r in db_reports
                     ]
@@ -154,7 +167,9 @@ class ReportService:
         return list(_IN_MEMORY_REPORTS)
 
     @staticmethod
-    async def get_user_reports(db: Optional[AsyncSession], user_id: uuid.UUID) -> List[Dict[str, Any]]:
+    async def get_user_reports(
+        db: AsyncSession | None, user_id: uuid.UUID
+    ) -> list[dict[str, Any]]:
         """Retrieve reports submitted by a specific citizen."""
         all_reps = await ReportService.get_all_reports(db)
         user_str = str(user_id)
@@ -164,10 +179,10 @@ class ReportService:
 
     @staticmethod
     async def create_report(
-        db: Optional[AsyncSession],
+        db: AsyncSession | None,
         user: Any,
         req: FloodReportCreate,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Submit new report & execute AI image/hazard analysis."""
         report_id = f"rep-{int(time.time() * 1000) % 100000}"
         now_str = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
@@ -225,13 +240,13 @@ class ReportService:
 
     @staticmethod
     async def verify_report(
-        db: Optional[AsyncSession],
+        db: AsyncSession | None,
         report_id: str,
         status: str,  # Verified or Rejected
-        priority: Optional[str] = None,
-        internal_notes: Optional[str] = None,
+        priority: str | None = None,
+        internal_notes: str | None = None,
         authority_name: str = "Municipal Officer",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Authority verifies or rejects a report, assigns priority & notes."""
         target = None
         for r in _IN_MEMORY_REPORTS:
@@ -269,11 +284,11 @@ class ReportService:
 
     @staticmethod
     async def resolve_report(
-        db: Optional[AsyncSession],
+        db: AsyncSession | None,
         report_id: str,
         resolution_status: str,  # In Progress or Resolved
-        internal_notes: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        internal_notes: str | None = None,
+    ) -> dict[str, Any]:
         """Update report resolution status."""
         target = None
         for r in _IN_MEMORY_REPORTS:

@@ -10,6 +10,7 @@ from app.services.weather_service import WeatherService
 
 router = APIRouter()
 
+
 @router.get("/latest", response_model=WeatherSnapshotResponse)
 async def get_latest_weather(db: AsyncSession = Depends(get_db)) -> WeatherSnapshot:
     """

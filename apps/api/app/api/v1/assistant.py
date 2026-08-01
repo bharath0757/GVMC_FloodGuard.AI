@@ -3,16 +3,16 @@ FloodGuard AI - REST API Endpoints: /assistant/*
 Domain-specific Flood Assistant endpoints for citizen Q&A, risk queries,
 shelter advice, road blockages, and emergency precautions.
 """
+
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from app.ai.assistant.flood_assistant import (
-    process_assistant_query,
     get_assistant_suggestions,
+    process_assistant_query,
 )
 
 router = APIRouter()
@@ -56,7 +56,9 @@ async def get_suggestions() -> JSONResponse:
     Returns pre-built flood query suggestions for the citizen UI.
     """
     suggestions = get_assistant_suggestions()
-    return JSONResponse(content={
-        "total_suggestions": len(suggestions),
-        "suggestions": suggestions,
-    })
+    return JSONResponse(
+        content={
+            "total_suggestions": len(suggestions),
+            "suggestions": suggestions,
+        }
+    )

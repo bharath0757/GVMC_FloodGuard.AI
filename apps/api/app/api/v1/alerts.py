@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Sequence
+from collections.abc import Sequence
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +11,7 @@ from app.schemas.alert import AlertResponse
 from app.services.alert_service import AlertService
 
 router = APIRouter()
+
 
 @router.get("", response_model=list[AlertResponse])
 async def list_alerts(db: AsyncSession = Depends(get_db)) -> Sequence[Alert]:

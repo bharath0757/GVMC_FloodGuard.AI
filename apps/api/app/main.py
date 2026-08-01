@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import time
-
 import uuid
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator, Callable
+from typing import Callable
 
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,23 +19,25 @@ from app.core.logging import get_logger
 logger = get_logger(__name__)
 settings = get_settings()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """
     Application lifespan context manager for startup and shutdown events.
     """
     logger.info(
-        "Starting up application", 
-        app_name=settings.APP_NAME, 
-        version=settings.APP_VERSION
+        "Starting up application",
+        app_name=settings.APP_NAME,
+        version=settings.APP_VERSION,
     )
     logger.debug(
-        "Configuration settings summary", 
-        debug=settings.DEBUG, 
-        log_level=settings.LOG_LEVEL
+        "Configuration settings summary",
+        debug=settings.DEBUG,
+        log_level=settings.LOG_LEVEL,
     )
     yield
     logger.info("Shutting down application")
+
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -58,8 +60,11 @@ app.add_middleware(
 # GZip middleware for compression
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
+
 @app.middleware("http")
-async def add_request_id_middleware(request: Request, call_next: Callable) -> JSONResponse:
+async def add_request_id_middleware(
+    request: Request, call_next: Callable
+) -> JSONResponse:
     """
     Middleware to add X-Request-ID header to each request.
     """
@@ -68,6 +73,7 @@ async def add_request_id_middleware(request: Request, call_next: Callable) -> JS
     response = await call_next(request)
     response.headers["X-Request-ID"] = request_id
     return response
+
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
@@ -81,6 +87,7 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
         content={"detail": "Internal server error", "request_id": request_id},
     )
 
+
 @app.get("/health", tags=["system"])
 async def health_check() -> dict:
     """
@@ -92,6 +99,7 @@ async def health_check() -> dict:
         "timestamp": time.time(),
     }
 
+
 @app.get("/ready", tags=["system"])
 async def readiness_check() -> dict:
     """
@@ -102,8 +110,9 @@ async def readiness_check() -> dict:
         "checks": {
             "database": True,
             "redis": True,
-        }
+        },
     }
+
 
 @app.get("/", tags=["system"])
 async def root() -> dict:
@@ -115,6 +124,7 @@ async def root() -> dict:
         "version": __version__,
         "docs_url": "/docs",
     }
+
 
 # Include API v1 router
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
