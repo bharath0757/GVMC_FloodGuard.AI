@@ -85,7 +85,9 @@ A full-codebase quality, type safety, and CI/CD audit was performed. No features
 - Added `eval_type_backport` to CI dependencies.
 
 ### 13. `.github/workflows/ci.yml` & `docker/web.Dockerfile`
-- Updated Node.js version specifications from Node 20 to Node 22.
+- Updated all Node.js setup steps across `lint-and-typecheck` and `frontend-build` from Node 20 to Node 22 to eliminate Node 20 deprecation warnings.
+- Added `aiosqlite` to `apps/api/requirements.txt` and `ci.yml` pip installation steps to resolve pytest exit code 4 (`ModuleNotFoundError: No module named 'aiosqlite'`).
+- Added `PYTHONPATH: .` environment variable and updated test command to `python -m pytest -v` to ensure robust package resolution during test collection in GitHub Actions.
 
 ---
 
