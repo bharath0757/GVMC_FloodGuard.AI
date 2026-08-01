@@ -54,7 +54,7 @@ export const DemoSimulationBanner: React.FC<Props> = ({ onSimulationUpdate }) =>
     { title: '8. Emergency Alert Broadcast', desc: 'Broadcasting multilingual siren notification & SMS to 45,000 residents', icon: <Bell className="h-4 w-4 text-red-500 animate-bounce" /> },
   ];
 
-  const timerRef = React.useRef<any>(null);
+  const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
 
   const startSimulation = () => {
     setSimState({
@@ -81,8 +81,7 @@ export const DemoSimulationBanner: React.FC<Props> = ({ onSimulationUpdate }) =>
           ...prev,
           step: currentStep,
         }));
-      } else {
-        clearInterval(timerRef.current);
+        if (timerRef.current) clearInterval(timerRef.current);
         setSimState((prev) => ({
           ...prev,
           step: 8,

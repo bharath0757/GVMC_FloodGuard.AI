@@ -72,25 +72,25 @@ export interface ShelterRecommendation {
     recommendation_score: number;
     occupancy_pct: number;
   };
-  alternative_shelters: any[];
+  alternative_shelters: Array<Record<string, unknown>>;
   reasoning: string[];
   total_shelters_evaluated: number;
   shelters_in_range: number;
-  risk_context: any;
+  risk_context: Record<string, unknown>;
 }
 
 export interface SafeRoute {
   start_ward: string;
   primary_route: {
     path: string[];
-    segments: any[];
+    segments: Array<Record<string, unknown>>;
     destination_ward: string;
     total_distance_km: number;
     estimated_time_min: number;
     route_status: string;
     waypoints: Array<{ ward_id: string; lat: number; lng: number }>;
   };
-  alternative_route: any;
+  alternative_route: Record<string, unknown> | null;
   routing_algorithm: string;
 }
 

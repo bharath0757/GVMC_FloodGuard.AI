@@ -160,7 +160,7 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
 
   const [activePopup, setActivePopup] = React.useState<{
     type: 'shelter' | 'report' | 'riskZone' | 'drainage';
-    data: any;
+    data: Record<string, unknown>;
   } | null>(null);
 
   // ─── Init map ───────────────────────────────────────────────────────────
@@ -233,7 +233,7 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
       });
       polygon.on('click', () => {
         if (onSelectWard) onSelectWard(w.id);
-        setActivePopup({ type: 'riskZone', data: w });
+        setActivePopup({ type: 'riskZone', data: w as unknown as Record<string, unknown> });
       });
       polygonLayerGroupRef.current?.addLayer(polygon);
 
@@ -247,7 +247,7 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
       const lm = L.marker([cLat, cLng], { icon: lbl });
       lm.on('click', () => {
         if (onSelectWard) onSelectWard(w.id);
-        setActivePopup({ type: 'riskZone', data: w });
+        setActivePopup({ type: 'riskZone', data: w as unknown as Record<string, unknown> });
       });
       polygonLayerGroupRef.current?.addLayer(lm);
     });
@@ -328,7 +328,7 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
         iconSize: [90, 26], iconAnchor: [45, 13],
       });
       const m = L.marker([sh.lat, sh.lng], { icon });
-      m.on('click', () => setActivePopup({ type: 'shelter', data: sh }));
+      m.on('click', () => setActivePopup({ type: 'shelter', data: sh as unknown as Record<string, unknown> }));
       shelterLayerGroupRef.current?.addLayer(m);
     });
   }, [layers.shelters]);
@@ -340,15 +340,16 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
     if (!layers.reports) return;
     MOCK_CROWD_REPORTS
       .filter((r) => severityFilter === 'ALL' || r.severity === severityFilter)
-      .forEach((rep: any) => {
+      .forEach((rep) => {
         const col = rep.severity === 'Critical' ? '#EF4444' : rep.severity === 'High' ? '#F97316' : '#F59E0B';
         const icon = L.divIcon({
           className: '',
           html: `<div style="background:${col};border:2px solid white;color:white;border-radius:50%;width:22px;height:22px;font-weight:bold;font-size:11px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,0.4);">!</div>`,
           iconSize: [22, 22], iconAnchor: [11, 11],
         });
-        const m = L.marker([rep.lat ?? 17.685, rep.lng ?? 83.21], { icon });
-        m.on('click', () => setActivePopup({ type: 'report', data: rep }));
+        const repItem = rep as typeof rep & { lat?: number; lng?: number };
+        const m = L.marker([repItem.lat ?? 17.685, repItem.lng ?? 83.21], { icon });
+        m.on('click', () => setActivePopup({ type: 'report', data: rep as unknown as Record<string, unknown> }));
         reportLayerGroupRef.current?.addLayer(m);
       });
   }, [layers.reports, severityFilter]);

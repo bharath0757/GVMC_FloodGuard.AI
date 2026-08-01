@@ -9,7 +9,7 @@ export interface NotificationItem {
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
   is_read: boolean;
   created_at: string;
-  meta_data?: Record<string, any>;
+  meta_data?: Record<string, unknown>;
 }
 
 export interface AssistantResponse {
@@ -18,7 +18,7 @@ export interface AssistantResponse {
   target_ward_number: number;
   target_ward_name: string;
   response_text: string;
-  cards: Array<{ type: string; title: string; data: any }>;
+  cards: Array<{ type: string; title: string; data: Record<string, unknown> }>;
   suggested_actions: Array<{ label: string; query: string }>;
 }
 

@@ -8,7 +8,7 @@ interface Message {
   id: string;
   sender: 'user' | 'assistant';
   text: string;
-  cards?: any[];
+  cards?: Array<{ type: string; title: string; data: Record<string, unknown> }>;
   actions?: Array<{ label: string; query: string }>;
   timestamp: string;
 }
@@ -133,23 +133,31 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
                 {/* Render Cards if attached */}
                 {msg.cards && msg.cards.length > 0 && (
                   <div className="mt-2 w-[85%] space-y-2">
-                    {msg.cards.map((card, idx) => (
-                      <div key={idx} className="p-3 rounded-xl border border-teal-500/30 bg-teal-950/20 text-xs font-mono">
-                        <span className="text-[10px] uppercase font-bold text-teal-400 block mb-1">{card.title}</span>
-                        {card.type === 'risk_card' && (
-                          <div className="space-y-1 text-slate-300">
-                            <div>Score: <span className="font-bold text-red-400">{card.data.risk_score}/100</span> ({card.data.risk_category})</div>
-                            <div>Alert Level: <Badge variant="destructive">{card.data.alert_color}</Badge></div>
-                          </div>
-                        )}
-                        {card.type === 'shelter_card' && (
-                          <div className="space-y-1 text-slate-300">
-                            <div>Primary: <span className="font-bold text-emerald-400">{card.data.primary_shelter?.name}</span></div>
-                            <div>Available: {card.data.primary_shelter?.available_capacity} free spaces</div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                    {msg.cards.map((card, idx) => {
+                      const d = card.data as {
+                        risk_score?: number;
+                        risk_category?: string;
+                        alert_color?: string;
+                        primary_shelter?: { name?: string; available_capacity?: number };
+                      };
+                      return (
+                        <div key={idx} className="p-3 rounded-xl border border-teal-500/30 bg-teal-950/20 text-xs font-mono">
+                          <span className="text-[10px] uppercase font-bold text-teal-400 block mb-1">{card.title}</span>
+                          {card.type === 'risk_card' && (
+                            <div className="space-y-1 text-slate-300">
+                              <div>Score: <span className="font-bold text-red-400">{d.risk_score}/100</span> ({d.risk_category})</div>
+                              <div>Alert Level: <Badge variant="destructive">{d.alert_color}</Badge></div>
+                            </div>
+                          )}
+                          {card.type === 'shelter_card' && (
+                            <div className="space-y-1 text-slate-300">
+                              <div>Primary: <span className="font-bold text-emerald-400">{d.primary_shelter?.name}</span></div>
+                              <div>Available: {d.primary_shelter?.available_capacity} free spaces</div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
 

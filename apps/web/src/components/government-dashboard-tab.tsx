@@ -16,14 +16,13 @@ export const GovernmentDashboardTab: React.FC = () => {
   const [selectedReport, setSelectedReport] = React.useState<DetailedReport | null>(null);
   const [modalOpen, setModalOpen] = React.useState(false);
 
-  // Cast reports to detailed format
-  const reports: DetailedReport[] = (rawReports as any[]).map((r) => ({
-    id: r.id,
+  const reports: DetailedReport[] = (rawReports as unknown as Array<Partial<DetailedReport> & { ward?: string }>).map((r) => ({
+    id: r.id || 'rep-default',
     user_id: r.user_id || '00000000-0000-0000-0000-000000000001',
     reporter_name: r.reporter_name || 'Citizen',
     ward_name: r.ward_name || r.ward || 'Gajuwaka',
-    title: r.title,
-    description: r.description,
+    title: r.title || 'Incident Report',
+    description: r.description || 'Reported inundation',
     severity: r.severity || 'Medium',
     status: r.status || 'Pending',
     priority: r.priority || 'P2',

@@ -36,10 +36,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         });
       }
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { response?: { data?: { detail?: string } } };
       toast({
         title: 'Authentication Failed',
-        message: err.response?.data?.detail || 'Invalid credentials or request error.',
+        message: errorObj.response?.data?.detail || 'Invalid credentials or request error.',
         type: 'error',
       });
     }

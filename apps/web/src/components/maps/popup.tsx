@@ -2,9 +2,38 @@ import * as React from 'react';
 import { X, Building2, AlertTriangle, ShieldCheck, Droplets, ArrowRight } from 'lucide-react';
 import { Badge, Button } from '@floodguard/ui';
 
+interface PopupData {
+  name?: string;
+  title?: string;
+  ward_name?: string;
+  ward?: string;
+  number?: number;
+  capacity?: number | string;
+  current_occupancy?: number;
+  contact_phone?: string;
+  water_depth_cm?: number;
+  severity?: string;
+  description?: string;
+  riskCategory?: string;
+  riskScore?: number;
+  waterLevelCm?: number;
+  surgeDepth?: number;
+  population?: number;
+  drainType?: string;
+  status?: string;
+  connectedWards?: string;
+  flowDirection?: string;
+  maintenanceStatus?: string;
+  capacityStatus?: string;
+  congestionLevel?: string;
+  overflowProbability?: string;
+  aiReason?: string;
+  [key: string]: unknown;
+}
+
 interface PopupProps {
   type: 'shelter' | 'report' | 'riskZone' | 'drainage';
-  data: any;
+  data: PopupData;
   onClose: () => void;
 }
 
@@ -38,7 +67,7 @@ export const Popup: React.FC<PopupProps> = ({ type, data, onClose }) => {
         <div className="space-y-2">
           <div className="font-bold text-sm text-white">{data.name}</div>
           <div className="text-slate-400">Ward: <span className="text-slate-200">{data.ward_name}</span></div>
-          <div className="text-slate-400">Capacity: <span className="text-emerald-400 font-bold">{data.capacity - (data.current_occupancy || 0)} free spaces</span></div>
+          <div className="text-slate-400">Capacity: <span className="text-emerald-400 font-bold">{Number(data.capacity || 0) - (data.current_occupancy || 0)} free spaces</span></div>
           <div className="text-slate-400">Phone: <span className="text-teal-400 font-bold">{data.contact_phone}</span></div>
           <div className="pt-2">
             <Button size="sm" variant="secondary" className="w-full">Get Evacuation Directions →</Button>
@@ -59,7 +88,7 @@ export const Popup: React.FC<PopupProps> = ({ type, data, onClose }) => {
       {type === 'riskZone' && (
         <div className="space-y-2">
           <div className="font-bold text-sm text-white">{data.name} (Ward #{data.number})</div>
-          <div className="text-slate-400">Risk Category: <Badge variant={data.riskScore >= 75 ? 'destructive' : 'warning'}>{data.riskCategory}</Badge></div>
+          <div className="text-slate-400">Risk Category: <Badge variant={(data.riskScore ?? 0) >= 75 ? 'destructive' : 'warning'}>{data.riskCategory}</Badge></div>
           <div className="text-slate-400">Flood Risk Score: <span className="text-red-400 font-bold">{data.riskScore}/100</span></div>
           <div className="text-slate-400">Water Depth: <span className="text-teal-400 font-bold">{data.waterLevelCm} cm</span></div>
           {data.surgeDepth && <div className="text-slate-400">Storm Surge Depth: <span className="text-amber-400 font-bold">{data.surgeDepth} m</span></div>}

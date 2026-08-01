@@ -37,10 +37,11 @@ export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({ isOpen, on
         type: 'success',
       });
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { response?: { data?: { detail?: string } } };
       toast({
         title: 'Submission Failed',
-        message: err.response?.data?.detail || 'Failed to submit report.',
+        message: errorObj.response?.data?.detail || 'Failed to submit report.',
         type: 'error',
       });
     }

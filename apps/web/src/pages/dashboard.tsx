@@ -33,6 +33,10 @@ import { AnalyticsTab } from '@/components/analytics-tab';
 import {
   MOCK_CITY_OVERVIEW,
   MOCK_ACTIVITY_FEED,
+  type WardData,
+  type AlertData,
+  type ShelterData,
+  type CrowdReportData,
 } from '@/data/mockData';
 import { useAuth } from '@/context/auth-context';
 import { useShelters, useReports, useAlerts, useWeather, useRiskZones } from '@/hooks/use-api-queries';
@@ -97,7 +101,7 @@ export const DashboardPage: React.FC = () => {
   const [reportModalOpen, setReportModalOpen] = React.useState(false);
   const [assistantModalOpen, setAssistantModalOpen] = React.useState(false);
 
-  const rawSelectedWard: any = wards.find((w: any) => w.id === selectedWardId || w.ward_number === 14) || wards[0] || {};
+  const rawSelectedWard = (wards as unknown as Array<WardData & { ward_number?: number; ward_name?: string; risk_category?: string; water_level_cm?: number; rainfall_mm_hr?: number; elevation_meters?: number }>).find((w) => w.id === selectedWardId || w.number === 14 || w.ward_number === 14) || (wards[0] as unknown as WardData & { ward_number?: number; ward_name?: string; risk_category?: string; water_level_cm?: number; rainfall_mm_hr?: number; elevation_meters?: number }) || {};
   const selectedWard = {
     name: rawSelectedWard.name || rawSelectedWard.ward_name || 'Gajuwaka Industrial Zone',
     number: rawSelectedWard.number || rawSelectedWard.ward_number || 14,
@@ -291,7 +295,7 @@ export const DashboardPage: React.FC = () => {
                       <Badge variant="destructive">{alerts.length} Active</Badge>
                     </div>
                     <div className="space-y-2 text-xs">
-                      {alerts.map((alt: any) => (
+                      {(alerts as unknown as Array<AlertData & { message?: string }>).map((alt) => (
                         <div key={alt.id || alt.title} className="p-2 rounded bg-muted/50 border border-border/60">
                           <div className="font-semibold text-red-500">{alt.title}</div>
                           <div className="text-muted-foreground mt-0.5">{alt.message}</div>
@@ -370,7 +374,7 @@ export const DashboardPage: React.FC = () => {
             />
             <StatisticsCard
               title="Active Critical Wards"
-              value={`${wards.filter((w: any) => w.risk_category === 'Critical' || w.riskCategory === 'Critical').length || 4} Wards`}
+              value={`${(wards as unknown as Array<WardData & { risk_category?: string }>).filter((w) => w.risk_category === 'Critical' || w.riskCategory === 'Critical').length || 4} Wards`}
               subtitle="Gajuwaka, One Town, Maharanipeta, Sheela Nagar"
               trend="Immediate Evacuation"
               trendDirection="down"
@@ -595,7 +599,7 @@ export const DashboardPage: React.FC = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {shelters.map((sh: any) => (
+                          {(shelters as unknown as Array<ShelterData & { ward_name?: string; current_occupancy?: number; contact_phone?: string; is_accessible?: boolean }>).map((sh) => (
                             <TableRow key={sh.id}>
                               <TableCell className="font-semibold">
                                 {sh.name}
@@ -654,7 +658,7 @@ export const DashboardPage: React.FC = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {reports.map((rep: any) => (
+                      {(reports as unknown as Array<CrowdReportData & { reporter_name?: string; ward_name?: string; water_depth_cm?: number; created_at?: string; ai_labels?: string[]; ai_confidence?: number }>).map((rep) => (
                         <TableRow key={rep.id}>
                           <TableCell className="font-semibold">
                             {rep.title}
