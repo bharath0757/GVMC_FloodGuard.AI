@@ -1,10 +1,13 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI — REST API Endpoints: /ai/*
 Exposes AI prediction, shelter recommendation, evacuation routing,
 high-risk zone queries, and dashboard summary.
 """
 
-from __future__ import annotations
 
 import time
 from typing import Any
@@ -60,8 +63,8 @@ class RiskPredictionRequest(BaseModel):
     ward_number: int = Field(default=14, ge=1, le=72, description="GVMC Ward number")
     rainfall_mm_hr: float = Field(default=42.8, ge=0.0, le=300.0)
     water_level_cm: float = Field(default=98.0, ge=0.0, le=500.0)
-    elevation_override: float | None = Field(default=None)
-    drainage_score_override: float | None = Field(default=None, ge=0.0, le=1.0)
+    elevation_override: Optional[float] = Field(default=None)
+    drainage_score_override: Optional[float] = Field(default=None, ge=0.0, le=1.0)
 
 
 class ShelterRecommendationRequest(BaseModel):

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Optional
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
@@ -163,7 +163,7 @@ FALLBACK_ZONES = [
 
 @router.get("/shelters")
 async def get_shelters_geojson(
-    db: AsyncSession | None = Depends(get_db),
+    db: Optional[AsyncSession] = Depends(get_db),
 ) -> dict[str, Any]:
     features = []
     if db is not None:
@@ -214,7 +214,7 @@ async def get_shelters_geojson(
 
 @router.get("/reports")
 async def get_reports_geojson(
-    db: AsyncSession | None = Depends(get_db),
+    db: Optional[AsyncSession] = Depends(get_db),
 ) -> dict[str, Any]:
     features = []
     if db is not None:
@@ -259,7 +259,7 @@ async def get_reports_geojson(
 
 @router.get("/risk-zones")
 async def get_risk_zones_geojson(
-    db: AsyncSession | None = Depends(get_db),
+    db: Optional[AsyncSession] = Depends(get_db),
 ) -> dict[str, Any]:
     features = []
     if db is not None:

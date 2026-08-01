@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI - Citizen Report Image & Hazard Analyzer
 Analyzes report details, description keywords, water depth, and image features.
@@ -5,7 +9,6 @@ Uses vision/keyword models with rule-based fallback to assign category, severity
 confidence, and suggested priority (P0-P3).
 """
 
-from __future__ import annotations
 
 import logging
 from typing import Any
@@ -72,7 +75,7 @@ def analyze_flood_report(
     title: str,
     description: str,
     water_depth_cm: float,
-    image_url: str | None = None,
+    image_url: Optional[str] = None,
 ) -> dict[str, Any]:
     """
     Analyzes citizen flood report text & image parameters.

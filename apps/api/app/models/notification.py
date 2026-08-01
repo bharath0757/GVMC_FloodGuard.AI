@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -21,7 +21,7 @@ class Notification(Base):
 
     __tablename__ = "notifications"
 
-    user_id: Mapped[uuid.UUID | None] = mapped_column(
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=True, index=True
     )
     notification_type: Mapped[str] = mapped_column(
@@ -35,6 +35,6 @@ class Notification(Base):
     is_read: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False, index=True
     )
-    meta_data: Mapped[Any | None] = mapped_column(JSON, nullable=True)
+    meta_data: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
 
-    user: Mapped[User | None] = relationship("User")
+    user: Mapped[Optional[User]] = relationship("User")

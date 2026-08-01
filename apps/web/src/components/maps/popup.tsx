@@ -71,7 +71,7 @@ export const Popup: React.FC<PopupProps> = ({ type, data, onClose }) => {
             <div className="text-slate-300">Drainage Capacity: <strong className="text-amber-400">88% Capacity Utilization</strong></div>
             <div className="text-slate-300">Drain Congestion: <strong className="text-red-400">High (Junction J-4 Blocked)</strong></div>
             <div className="text-slate-300">Overflow Probability: <strong className="text-red-400">82% High Risk</strong></div>
-            <p className="text-slate-400 text-[10px] italic">"Rainfall 68.2mm/h exceeds canal design capacity of 45.0mm/h."</p>
+            <p className="text-slate-400 text-[10px] italic">&quot;Rainfall 68.2mm/h exceeds canal design capacity of 45.0mm/h.&quot;</p>
           </div>
         </div>
       )}

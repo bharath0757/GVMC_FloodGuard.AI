@@ -27,7 +27,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         working-directory: apps/api
         run: |
-          pip install ruff mypy
+          pip install ruff mypy eval_type_backport
           pip install -r requirements.txt
       - name: Lint
         working-directory: apps/api
@@ -76,7 +76,7 @@ jobs:
           python-version: '3.9'
       - name: Install dependencies
         working-directory: apps/api
-        run: pip install -r requirements.txt pytest pytest-asyncio httpx
+        run: pip install -r requirements.txt pytest pytest-asyncio httpx eval_type_backport
       - name: Run tests
         working-directory: apps/api
         env:

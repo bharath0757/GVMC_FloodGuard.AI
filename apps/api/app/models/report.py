@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -44,15 +44,15 @@ class FloodReport(Base):
     water_depth_cm: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     lat: Mapped[float] = mapped_column(Float, nullable=False)
     lng: Mapped[float] = mapped_column(Float, nullable=False)
-    image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    ai_labels: Mapped[Any | None] = mapped_column(JSON, nullable=True)
+    image_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    ai_labels: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
     ai_confidence: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
-    ai_analysis: Mapped[Any | None] = mapped_column(
+    ai_analysis: Mapped[Optional[Any]] = mapped_column(
         JSON, nullable=True
     )  # Full AI analysis object
-    internal_notes: Mapped[str | None] = mapped_column(String(2000), nullable=True)
-    verified_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    verified_at: Mapped[Any | None] = mapped_column(JSON, nullable=True)
+    internal_notes: Mapped[Optional[str]] = mapped_column(String(2000), nullable=True)
+    verified_by: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    verified_at: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
     upvotes: Mapped[int] = mapped_column(default=0, nullable=False)
 
     user: Mapped[User] = relationship("User")

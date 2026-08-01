@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -9,7 +11,7 @@ class RegisterRequest(BaseModel):
     full_name: str = Field(..., min_length=2)
     role: str = Field("citizen", pattern="^(citizen|government|admin)$")
     language_pref: str = Field("en", pattern="^(en|te|hi)$")
-    phone: str | None = None
+    phone: Optional[str] = None
 
 
 class LoginRequest(BaseModel):

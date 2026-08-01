@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Any
+from typing import Any, Optional
 
 from jose import jwt
 from passlib.context import CryptContext
@@ -28,7 +28,7 @@ def get_password_hash(password: str) -> str:
 
 
 def create_access_token(
-    subject: str | Any, role: str, expires_delta: timedelta | None = None
+    subject: str | Any, role: str, expires_delta: Optional[timedelta] = None
 ) -> str:
     """
     Create JWT Access Token (default 30 mins).
@@ -52,7 +52,7 @@ def create_access_token(
 
 
 def create_refresh_token(
-    subject: str | Any, role: str, expires_delta: timedelta | None = None
+    subject: str | Any, role: str, expires_delta: Optional[timedelta] = None
 ) -> str:
     """
     Create JWT Refresh Token (default 7 days).

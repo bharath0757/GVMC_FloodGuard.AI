@@ -1,10 +1,13 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI - System Notification Service
 Manages automated creation, persistence, and querying of system notifications
 for high-risk predictions, verified reports, shelter capacity warnings, and emergency alerts.
 """
 
-from __future__ import annotations
 
 import time
 import uuid
@@ -71,13 +74,13 @@ _NOTIFICATION_STORE: list[dict[str, Any]] = [
 class NotificationService:
     @staticmethod
     async def create_notification(
-        db: AsyncSession | None,
+        db: Optional[AsyncSession],
         notification_type: str,
         title: str,
         message: str,
         severity: str = "Medium",
-        user_id: uuid.UUID | None = None,
-        meta_data: dict[str, Any] | None = None,
+        user_id: Optional[uuid.UUID] = None,
+        meta_data: dict[str, Optional[Any]] = None,
     ) -> dict[str, Any]:
         """Creates a new notification in DB and in-memory fallback list."""
         notif_id = str(uuid.uuid4())
@@ -120,8 +123,8 @@ class NotificationService:
 
     @staticmethod
     async def get_notifications(
-        db: AsyncSession | None,
-        notification_type: str | None = None,
+        db: Optional[AsyncSession],
+        notification_type: Optional[str] = None,
         unread_only: bool = False,
     ) -> list[dict[str, Any]]:
         """Retrieve system notifications."""
@@ -159,7 +162,7 @@ class NotificationService:
         return items
 
     @staticmethod
-    async def mark_as_read(db: AsyncSession | None, notification_id: str) -> bool:
+    async def mark_as_read(db: Optional[AsyncSession], notification_id: str) -> bool:
         """Mark a notification as read."""
         for i in _NOTIFICATION_STORE:
             if i["id"] == notification_id:
@@ -168,7 +171,7 @@ class NotificationService:
         return True
 
     @staticmethod
-    async def mark_all_read(db: AsyncSession | None) -> bool:
+    async def mark_all_read(db: Optional[AsyncSession]) -> bool:
         """Mark all notifications as read."""
         for i in _NOTIFICATION_STORE:
             i["is_read"] = True

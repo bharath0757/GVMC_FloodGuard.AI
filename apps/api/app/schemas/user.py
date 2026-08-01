@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr
 
@@ -12,7 +13,7 @@ class UserResponse(BaseModel):
     full_name: str
     role: str
     language_pref: str
-    phone: str | None = None
+    phone: Optional[str] = None
     is_active: bool
     created_at: datetime
 
@@ -20,6 +21,6 @@ class UserResponse(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    full_name: str | None = None
-    language_pref: str | None = None
-    phone: str | None = None
+    full_name: Optional[str] = None
+    language_pref: Optional[str] = None
+    phone: Optional[str] = None

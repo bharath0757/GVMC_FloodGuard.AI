@@ -1,9 +1,12 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI - Feature Engineering Module
 Transforms raw sensor & contextual data into ML-ready feature vectors.
 """
 
-from __future__ import annotations
 
 from typing import Any
 
@@ -119,8 +122,8 @@ def build_feature_vector(
     rainfall_mm_hr: float,
     water_level_cm: float,
     ward_number: int = 14,
-    elevation_override: float | None = None,
-    drainage_score_override: float | None = None,
+    elevation_override: Optional[float] = None,
+    drainage_score_override: Optional[float] = None,
 ) -> dict[str, float]:
     """
     Constructs the 6-feature vector used by the XGBoost risk model.

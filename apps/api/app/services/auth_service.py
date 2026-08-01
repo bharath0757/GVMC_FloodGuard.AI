@@ -19,7 +19,7 @@ class AuthService:
     @staticmethod
     async def register_user(db: AsyncSession, req: RegisterRequest) -> TokenResponse:
         # Check if email exists
-        stmt = select(User).where(User.email == req.email.lower(), not User.is_deleted)
+        stmt = select(User).where(User.email == req.email.lower(), User.is_deleted == False)
         result = await db.execute(stmt)
         if result.scalar_one_or_none():
             raise HTTPException(
@@ -53,7 +53,7 @@ class AuthService:
 
     @staticmethod
     async def login_user(db: AsyncSession, req: LoginRequest) -> TokenResponse:
-        stmt = select(User).where(User.email == req.email.lower(), not User.is_deleted)
+        stmt = select(User).where(User.email == req.email.lower(), User.is_deleted == False)
         result = await db.execute(stmt)
         user = result.scalar_one_or_none()
 
@@ -92,7 +92,7 @@ class AuthService:
             raise HTTPException(status_code=401, detail="Invalid refresh token") from e
 
         stmt = select(User).where(
-            User.id == user_id, User.is_active, not User.is_deleted
+            User.id == user_id, User.is_active, User.is_deleted == False
         )
         result = await db.execute(stmt)
         user = result.scalar_one_or_none()

@@ -1,10 +1,13 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI - REST API Endpoints: /reports/*
 Handles citizen report creation, image uploads, citizen history ('my'),
 and government authority verification/resolution workflows.
 """
 
-from __future__ import annotations
 
 import uuid
 
@@ -25,7 +28,7 @@ router = APIRouter()
 
 
 @router.get("", summary="Get all flood incident reports")
-async def list_reports(db: AsyncSession | None = Depends(get_db)) -> JSONResponse:
+async def list_reports(db: Optional[AsyncSession] = Depends(get_db)) -> JSONResponse:
     """List all crowdsourced flood incident reports."""
     reports = await ReportService.get_all_reports(db)
     return JSONResponse(content=reports)
@@ -33,8 +36,8 @@ async def list_reports(db: AsyncSession | None = Depends(get_db)) -> JSONRespons
 
 @router.get("/my", summary="Get reports submitted by current user")
 async def list_my_reports(
-    current_user: User | None = Depends(get_current_user_optional),
-    db: AsyncSession | None = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+    db: Optional[AsyncSession] = Depends(get_db),
 ) -> JSONResponse:
     """Get citizen's own submitted flood reports."""
     user_id = (
@@ -54,8 +57,8 @@ async def list_my_reports(
 )
 async def create_report(
     req: FloodReportCreate,
-    current_user: User | None = Depends(get_current_user_optional),
-    db: AsyncSession | None = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+    db: Optional[AsyncSession] = Depends(get_db),
 ) -> JSONResponse:
     """Submit a new crowdsourced flood report & trigger AI analysis."""
     dummy_user = (
@@ -97,7 +100,7 @@ async def upload_report_image(
 async def verify_report(
     report_id: str,
     payload: VerifyReportRequest,
-    db: AsyncSession | None = Depends(get_db),
+    db: Optional[AsyncSession] = Depends(get_db),
 ) -> JSONResponse:
     """Government authority verifies/rejects a report, assigns priority & notes."""
     result = await ReportService.verify_report(
@@ -115,7 +118,7 @@ async def verify_report(
 async def resolve_report(
     report_id: str,
     payload: ResolveReportRequest,
-    db: AsyncSession | None = Depends(get_db),
+    db: Optional[AsyncSession] = Depends(get_db),
 ) -> JSONResponse:
     """Update resolution status (In Progress or Resolved)."""
     result = await ReportService.resolve_report(

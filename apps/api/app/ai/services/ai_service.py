@@ -1,10 +1,13 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI - AI Orchestrator Service
 Central service that aggregates predictions, recommendations & dashboard summaries.
 Uses an in-memory cache to prevent redundant ML inference.
 """
 
-from __future__ import annotations
 
 import logging
 import time
@@ -21,7 +24,7 @@ _CACHE: dict[str, dict[str, Any]] = {}
 _CACHE_TTL = 300  # seconds
 
 
-def _cache_get(key: str) -> dict[str, Any] | None:
+def _cache_get(key: str) -> dict[str, Optional[Any]]:
     entry = _CACHE.get(key)
     if entry and (time.time() - entry["_cached_at"]) < _CACHE_TTL:
         return entry

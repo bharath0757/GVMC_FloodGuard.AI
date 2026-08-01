@@ -1,9 +1,12 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI - Weighted Shelter Recommendation Engine
 Scores shelters using a multi-criteria decision analysis (MCDA) algorithm.
 """
 
-from __future__ import annotations
 
 import math
 from typing import Any
@@ -169,7 +172,7 @@ def recommend_shelters(
     needs_medical: bool = False,
     needs_accessible: bool = False,
     ward_risk_category: str = "Medium",
-    shelters: list[dict[str, Any]] | None = None,
+    shelters: list[dict[str, Optional[Any]]] = None,
 ) -> dict[str, Any]:
     """
     Returns ranked shelter recommendations with reasoning.

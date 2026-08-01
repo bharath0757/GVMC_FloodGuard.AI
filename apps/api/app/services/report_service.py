@@ -1,10 +1,13 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI - Report Management Service
 Handles crowdsourced citizen report creation, AI hazard analysis,
 authority verification, resolution workflows, and notification triggers.
 """
 
-from __future__ import annotations
 
 import time
 import uuid
@@ -125,7 +128,7 @@ _IN_MEMORY_REPORTS: list[dict[str, Any]] = [
 
 class ReportService:
     @staticmethod
-    async def get_all_reports(db: AsyncSession | None) -> list[dict[str, Any]]:
+    async def get_all_reports(db: Optional[AsyncSession]) -> list[dict[str, Any]]:
         """Retrieve all active flood reports."""
         if db is not None:
             try:
@@ -168,7 +171,7 @@ class ReportService:
 
     @staticmethod
     async def get_user_reports(
-        db: AsyncSession | None, user_id: uuid.UUID
+        db: Optional[AsyncSession], user_id: uuid.UUID
     ) -> list[dict[str, Any]]:
         """Retrieve reports submitted by a specific citizen."""
         all_reps = await ReportService.get_all_reports(db)
@@ -179,7 +182,7 @@ class ReportService:
 
     @staticmethod
     async def create_report(
-        db: AsyncSession | None,
+        db: Optional[AsyncSession],
         user: Any,
         req: FloodReportCreate,
     ) -> dict[str, Any]:
@@ -240,11 +243,11 @@ class ReportService:
 
     @staticmethod
     async def verify_report(
-        db: AsyncSession | None,
+        db: Optional[AsyncSession],
         report_id: str,
         status: str,  # Verified or Rejected
-        priority: str | None = None,
-        internal_notes: str | None = None,
+        priority: Optional[str] = None,
+        internal_notes: Optional[str] = None,
         authority_name: str = "Municipal Officer",
     ) -> dict[str, Any]:
         """Authority verifies or rejects a report, assigns priority & notes."""
@@ -284,10 +287,10 @@ class ReportService:
 
     @staticmethod
     async def resolve_report(
-        db: AsyncSession | None,
+        db: Optional[AsyncSession],
         report_id: str,
         resolution_status: str,  # In Progress or Resolved
-        internal_notes: str | None = None,
+        internal_notes: Optional[str] = None,
     ) -> dict[str, Any]:
         """Update report resolution status."""
         target = None

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from sqlalchemy import JSON, Boolean, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
@@ -22,7 +22,7 @@ class Shelter(Base):
     current_occupancy: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     contact_phone: Mapped[str] = mapped_column(String(50), nullable=False)
     is_accessible: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    amenities: Mapped[Any | None] = mapped_column(JSON, nullable=True)
+    amenities: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
     status: Mapped[str] = mapped_column(
         String(50), default="Open", nullable=False, index=True
     )

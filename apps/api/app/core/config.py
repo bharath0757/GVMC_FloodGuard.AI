@@ -39,8 +39,9 @@ class Settings(BaseSettings):
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
     )
 
+    @classmethod
     @field_validator("ALLOWED_ORIGINS", mode="before")
-    def assemble_cors_origins(self, v: str | list[str]) -> list[str]:
+    def assemble_cors_origins(cls, v: str | list[str]) -> list[str]:
         """
         Parse comma-separated string to list of origins.
         """

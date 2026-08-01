@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import AsyncGenerator
-from typing import Callable
+from typing import Callable, Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -77,10 +77,10 @@ def require_role(allowed_roles: list[str]) -> Callable:
 
 async def get_current_user_optional(
     db: AsyncSession = Depends(get_db),
-    token: str | None = Depends(
+    token: Optional[str] = Depends(
         OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
     ),
-) -> User | None:
+) -> Optional[User]:
     """
     Optional user dependency returning User if token present and valid, otherwise None.
     """

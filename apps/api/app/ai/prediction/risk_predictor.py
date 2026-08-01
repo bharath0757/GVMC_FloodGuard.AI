@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI - XGBoost Flood Risk Prediction Model
 Uses a trained/simulated XGBoost model to predict flood risk scores.
@@ -5,7 +9,6 @@ Falls back to an analytically calibrated scoring function if XGBoost
 is unavailable or model file is absent.
 """
 
-from __future__ import annotations
 
 import logging
 import time
@@ -81,7 +84,7 @@ def _analytical_risk_score(features: dict[str, float]) -> float:
     return round(min(99.9, max(0.1, score)), 1)
 
 
-def _try_xgboost_predict(feature_vector: list[float]) -> float | None:
+def _try_xgboost_predict(feature_vector: list[float]) -> Optional[float]:
     """Attempt XGBoost prediction; return None if unavailable."""
     try:
         import numpy as np
@@ -120,8 +123,8 @@ def predict_flood_risk(
     rainfall_mm_hr: float,
     water_level_cm: float,
     ward_number: int = 14,
-    elevation_override: float | None = None,
-    drainage_score_override: float | None = None,
+    elevation_override: Optional[float] = None,
+    drainage_score_override: Optional[float] = None,
 ) -> dict[str, Any]:
     """
     Core flood risk prediction function.

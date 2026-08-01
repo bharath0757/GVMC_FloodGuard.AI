@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -16,7 +16,7 @@ class ShelterResponse(BaseModel):
     current_occupancy: int
     contact_phone: str
     is_accessible: bool
-    amenities: Any | None = None
+    amenities: Optional[Any] = None
     status: str
     lat: float
     lng: float
@@ -32,6 +32,6 @@ class ShelterCreate(BaseModel):
     capacity: int
     contact_phone: str
     is_accessible: bool = True
-    amenities: list[str] | None = None
+    amenities: Optional[list[str]] = None
     lat: float
     lng: float

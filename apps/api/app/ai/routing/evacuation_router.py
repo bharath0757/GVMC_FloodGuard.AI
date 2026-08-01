@@ -1,10 +1,13 @@
+from __future__ import annotations
+
+from typing import Optional
+
 """
 FloodGuard AI - A* Evacuation Route Planning Engine
 Finds safest evacuation paths avoiding flooded / high-risk road segments.
 Graph represents Visakhapatnam GVMC ward road network.
 """
 
-from __future__ import annotations
 
 import heapq
 import math
@@ -74,10 +77,10 @@ def _road_cost_multiplier(
 
 def astar_evacuation_route(
     start_ward: str,
-    target_ward: str | None,
+    target_ward: Optional[str],
     high_risk_wards: list[str],
     flooded_wards: list[str],
-) -> dict[str, Any] | None:
+) -> dict[str, Optional[Any]]:
     """
     A* algorithm finding safest evacuation path from start_ward to a safe zone.
     Returns path with distance, estimated time, and road segment details.
