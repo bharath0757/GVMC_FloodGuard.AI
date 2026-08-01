@@ -1,7 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { MOCK_RISK_DISTRIBUTION } from '@/data/mockData';
-import { ChartContainer } from '@floodguard/ui';
-export const RiskDistributionChart = () => {
-    return (_jsx(ChartContainer, { height: 260, children: _jsxs("div", { className: "flex flex-col h-full justify-between pt-2", children: [_jsx("div", { className: "w-full flex h-6 rounded-lg overflow-hidden border border-border", children: MOCK_RISK_DISTRIBUTION.map((item) => (_jsx("div", { className: "h-full transition-all hover:brightness-110", style: { width: `${item.percentage}%`, backgroundColor: item.color }, title: `${item.category}: ${item.count} Wards (${item.percentage}%)` }, item.category))) }), _jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4", children: MOCK_RISK_DISTRIBUTION.map((item) => (_jsxs("div", { className: "flex items-center space-x-2 p-2 rounded bg-muted/40 border border-border/50", children: [_jsx("span", { className: "h-3 w-3 rounded-full shrink-0", style: { backgroundColor: item.color } }), _jsxs("div", { children: [_jsx("div", { className: "text-xs font-semibold text-foreground", children: item.category }), _jsxs("div", { className: "text-[10px] text-muted-foreground font-mono", children: [item.count, " Wards (", item.percentage, "%)"] })] })] }, item.category))) })] }) }));
-};
-//# sourceMappingURL=risk-distribution-chart.js.map
