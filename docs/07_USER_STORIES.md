@@ -1,0 +1,100 @@
+# FloodGuard AI: User Stories
+
+This document contains the comprehensive user stories for the FloodGuard AI platform, organized by epic.
+
+## Epic 1: Registration & Onboarding
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-101-001 | As a Citizen, I want to register using my mobile number and OTP, so that I can quickly access the platform without remembering a password. | Given I enter a valid mobile number, When I request an OTP, Then I receive an SMS and can log in successfully. | Must | 3 | SMS Gateway |
+| US-101-002 | As a Citizen, I want to select my preferred language (English/Telugu/Hindi) during onboarding, so that I can use the app comfortably. | Given I am a new user, When I complete OTP verification, Then I am prompted to select my language, and the UI updates immediately. | Must | 2 | None |
+| US-101-003 | As a Citizen, I want to set my home and work locations, so that I receive targeted alerts for areas I care about. | Given I am in settings, When I search and select locations for Home and Work, Then those locations are saved to my profile. | Must | 3 | Maps API |
+| US-101-004 | As a Gov Officer, I want to log in using my official credentials (SSO), so that I have secure access to the dashboard. | Given I am an official, When I enter my SSO credentials, Then I am authenticated and routed to the Gov Dashboard. | Must | 5 | SSO Integration |
+| US-101-005 | As an Elderly Citizen, I want to flag my profile as 'Requires Evacuation Assistance', so that responders know I need physical help during a crisis. | Given I am setting up my profile, When I toggle 'Requires Assistance', Then my profile is marked for priority rescue in the backend. | Should | 2 | None |
+
+## Epic 2: Flood Risk Awareness
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-102-001 | As a Citizen, I want to view a real-time color-coded map of my city, so that I can instantly see which areas are currently flooded. | Given I open the app, When I view the map, Then I see flood risks depicted in green (safe), yellow (warning), and red (danger) zones. | Must | 8 | Map Layering, Risk API |
+| US-102-002 | As a Citizen, I want to search for a specific street or landmark, so that I can check its current flood status. | Given I use the search bar, When I enter "MVP Colony", Then the map centers on that location and displays its risk score. | Must | 3 | Search/Geocoding |
+| US-102-003 | As a Citizen, I want to see a 24-hour flood forecast for my saved locations, so that I can plan my day. | Given I view my dashboard, When I check my Home location, Then I see a timeline predicting water levels over the next 24 hours. | Must | 5 | Prediction Engine |
+| US-102-004 | As a Volunteer, I want to see the AI Flood Risk Score for a region, so that I can understand the severity based on multiple data points. | Given I tap on a region, When the details panel opens, Then I see a risk score (0-100) with a brief explanation (e.g., "High tide + Heavy rain"). | Should | 5 | AI Scoring Model |
+
+## Epic 3: Real-time Alerts & Warnings
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-103-001 | As a Citizen in a risk zone, I want to receive a push notification when flood risk becomes 'High', so that I can prepare immediately. | Given my location is intersecting a high-risk polygon, When the risk level updates, Then I receive a push notification within 1 minute. | Must | 8 | Push Notifications |
+| US-103-002 | As a Daily Wage Worker, I want to receive SMS warnings in Telugu, so that I can understand them without a smartphone or data connection. | Given my preference is Telugu and I am in a risk zone, When an alert is broadcast, Then I receive a localized SMS. | Must | 5 | SMS Gateway, Localization |
+| US-103-003 | As a Gov Officer, I want to manually broadcast an emergency alert to a specific polygon on the map, so that I can warn residents of a sudden danger. | Given I have broadcast permissions, When I draw a polygon and type a message, Then an alert is sent to all users in that area. | Must | 8 | Geo-fencing |
+| US-103-004 | As an Elderly Citizen, I want critical alerts to bypass my phone's silent mode, so that I don't miss life-saving information. | Given an alert is marked 'Critical', When it is received on the app, Then it plays a loud alarm sound regardless of volume settings. | Should | 5 | Mobile OS APIs |
+
+## Epic 4: Evacuation & Safety
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-104-001 | As a Citizen, I want to generate a safe route from my current location to the nearest shelter, so that I can evacuate without hitting flooded roads. | Given I request evacuation, When I tap 'Find Route', Then a path is drawn that explicitly routes around known flooded streets. | Must | 13 | Routing Engine, Flood Data |
+| US-104-002 | As a Citizen, I want to view details of recommended shelters (capacity, facilities), so that I know what to expect before arriving. | Given I view a shelter on the map, When I tap it, Then I see available beds, medical facilities, and contact info. | Must | 3 | Shelter Database |
+| US-104-003 | As an Emergency Responder, I want to see routes optimized for heavy rescue vehicles, so that my truck doesn't get stuck. | Given I am in Responder mode, When I request a route, Then the algorithm factors in vehicle clearance and weight limits against water depth. | Should | 8 | Routing Engine |
+| US-104-004 | As a Citizen, I want to trigger an SOS beacon, so that responders know my exact location if I am trapped. | Given I am trapped, When I hold the SOS button for 3 seconds, Then my GPS coordinates and profile are sent to the Gov Dashboard. | Must | 5 | SOS Service |
+| US-104-005 | As a Citizen, I want turn-by-turn voice navigation for my evacuation route, so that I can keep my eyes on the road. | Given I start navigation, When I approach a turn, Then I hear voice instructions in my chosen language. | Could | 8 | Mobile OS Routing |
+
+## Epic 5: Crowd Reporting
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-105-001 | As a Citizen, I want to upload a photo of a flooded street, so that authorities are aware of the situation. | Given I am in the report flow, When I take a photo and confirm location, Then the report is submitted to the platform. | Must | 5 | Cloud Storage |
+| US-105-002 | As the System, I want to use AI to analyze user-uploaded photos to estimate water depth, so that reports are automatically prioritized. | Given a photo is uploaded, When the Image AI processes it, Then it tags the report with an estimated severity (e.g., Ankle-deep, Knee-deep). | Must | 13 | Computer Vision Model |
+| US-105-003 | As a Gov Officer, I want to view a feed of verified citizen reports on the map, so that I have ground-truth data. | Given I view the dashboard, When I toggle 'Citizen Reports', Then icons appear on the map containing photos and AI severity tags. | Must | 5 | Dashboard UI |
+| US-105-004 | As a Citizen, I want to upvote or confirm another user's report, so that the data becomes more reliable through crowdsourcing. | Given I view a nearby report, When I tap 'Confirm', Then the report's reliability score increases. | Should | 3 | None |
+
+## Epic 6: Voice Interaction
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-106-001 | As a Citizen, I want to ask the app "Is my area safe?" using my voice, so that I don't have to navigate menus. | Given I tap the mic icon, When I speak my query, Then the app transcribes, processes, and speaks back the risk status of my location. | Must | 8 | NLP / Speech-to-Text |
+| US-106-002 | As a Citizen, I want to interact with the voice assistant in Telugu, so that it is accessible to me. | Given my language is Telugu, When I speak in Telugu, Then the assistant understands and replies in Telugu. | Must | 8 | Indic NLP Models |
+| US-106-003 | As a Citizen, I want to report a flood using only voice commands, so that I can report quickly while moving. | Given I say "Report a flood here", When the assistant confirms, Then a report is created at my current GPS location. | Should | 5 | NLP |
+
+## Epic 7: Government Situational Awareness
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-107-001 | As a Gov Officer, I want a high-level dashboard summarizing active alerts, total citizens affected, and active SOS calls, so that I can grasp the situation immediately. | Given I open the dashboard, When the page loads, Then I see summary widgets with real-time aggregates. | Must | 8 | Analytics Engine |
+| US-107-002 | As a Ward Councilor, I want to filter the dashboard data by my specific ward, so that I focus only on my jurisdiction. | Given I am on the dashboard, When I select 'Ward 14' from the dropdown, Then all metrics and map views update to show only Ward 14 data. | Must | 5 | None |
+| US-107-003 | As a Gov Officer, I want to view live feeds from city CCTV cameras integrated into the map, so that I can visually verify water levels. | Given I click a camera icon on the map, When the modal opens, Then a live video stream from that location is displayed. | Should | 8 | CCTV Integration |
+| US-107-004 | As a Gov Officer, I want to see the location of all active field responders, so that I can coordinate their movements. | Given responders have their app active, When I toggle 'Responder Layer', Then I see their live GPS markers on the dashboard map. | Must | 8 | Real-time tracking |
+
+## Epic 8: Resource Management
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-108-001 | As a Gov Officer, I want to track the inventory of rescue boats and pumps, so that I know what assets are available. | Given I view the Resources tab, When I check 'Boats', Then I see a list of boats, their current location, and status (Available/Deployed). | Must | 5 | None |
+| US-108-002 | As a Gov Officer, I want to dispatch a rescue team to an SOS location, so that the team receives the assignment on their device. | Given an active SOS, When I click 'Dispatch' and select a team, Then the team's app receives a notification with the location and route. | Must | 8 | Push Notifications |
+| US-108-003 | As a Shelter Manager, I want to update the current occupancy of my shelter, so that the central dashboard reflects accurate capacity. | Given I am logged in as Shelter Admin, When I update the 'Occupied Beds' number, Then the public app and Gov Dashboard update immediately. | Must | 3 | None |
+
+## Epic 9: Digital Twin & Simulation
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-109-001 | As a Disaster Manager, I want to view a 3D model of the city terrain, so that I can visualize low-lying vulnerability. | Given I access the Digital Twin module, When it loads, Then I can pan, zoom, and tilt a 3D topographical map of the city. | Must | 13 | 3D Mapping Engine |
+| US-109-002 | As a Disaster Manager, I want to simulate a specific rainfall event (e.g., 200mm in 2 hours), so that I can predict which areas will flood. | Given I input rainfall parameters, When I run the simulation, Then the 3D map visually fills with water, highlighting affected buildings and streets. | Must | 21 | Hydrological AI Model |
+| US-109-003 | As a Disaster Manager, I want to simulate the impact of a blocked major drain, so that I can prioritize infrastructure maintenance. | Given I select a drain node and mark it 'Blocked', When I run a simulation, Then I see the localized flooding impact compared to a clean drain. | Should | 13 | Digital Twin Logic |
+
+## Epic 10: Historical Analysis
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-110-001 | As a Gov Officer, I want to view heatmaps of flood incidents from previous years, so that I can identify chronic problem areas. | Given I navigate to Analytics, When I select 'Historical Heatmap', Then I see a map showing the frequency of floods over the last 5 years. | Must | 5 | Data Warehouse |
+| US-110-002 | As a Gov Officer, I want to generate a post-event report summarizing response times, damages, and reports, so that I can submit it for state review. | Given an event is marked 'Closed', When I click 'Generate Report', Then a PDF is created with key metrics, maps, and timeline of events. | Should | 8 | PDF Generator |
+| US-110-003 | As a Data Scientist, I want to export raw historical sensor and report data via API, so that I can train external models. | Given I have API access, When I query the historical endpoint, Then I receive a structured JSON/CSV of requested data. | Could | 5 | API Gateway |
+
+## Epic 11: System Administration
+
+| Story ID | User Story | Acceptance Criteria | Priority | Points | Dependencies |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-111-001 | As a System Admin, I want to create and manage user roles (Admin, Officer, Responder, Manager), so that I can enforce access control. | Given I am in User Management, When I create a role and assign permissions, Then users with that role are restricted accordingly. | Must | 5 | Auth Provider |
+| US-111-002 | As a System Admin, I want to view a system health dashboard (CPU, DB load, API latency), so that I can detect outages before they affect users. | Given I access the Admin panel, When I view 'System Health', Then I see live graphs of core infrastructure metrics. | Must | 5 | Monitoring Tools |
+| US-111-003 | As a System Admin, I want to configure the thresholds for automatic AI alerts, so that I can tune the system to prevent false positives. | Given I am in Alert Settings, When I adjust the 'Risk Score Threshold' for SMS from 80 to 85, Then future automated SMS alerts follow the new rule. | Must | 3 | Alert Engine |
+| US-111-004 | As a System Admin, I want to view an audit log of all manual alerts sent by Gov Officers, so that I can ensure accountability. | Given I view Audit Logs, When I filter by 'Alert Sent', Then I see the timestamp, user, message content, and targeted area. | Should | 3 | Logging System |

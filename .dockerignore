@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.turbo
+__pycache__
+.venv
+.env
+*.md
+.vscode
+.github
+coverage
+docs
