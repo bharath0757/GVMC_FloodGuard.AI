@@ -8,7 +8,6 @@ import {
   Bell,
   Sun,
   Moon,
-  CloudRain,
   AlertTriangle,
   CheckCircle2,
   XCircle,
@@ -30,14 +29,15 @@ import { GovernmentDashboardTab } from '@/components/government-dashboard-tab';
 import { FloodAssistantWidget } from '@/components/flood-assistant-widget';
 import { CommandCenterTab } from '@/components/command-center-tab';
 import { AnalyticsTab } from '@/components/analytics-tab';
+import { RightIntelligencePanel } from '@/components/right-intelligence-panel';
 import {
   MOCK_CITY_OVERVIEW,
-  MOCK_ACTIVITY_FEED,
   type WardData,
   type AlertData,
   type ShelterData,
   type CrowdReportData,
 } from '@/data/mockData';
+
 import { useAuth } from '@/context/auth-context';
 import { useShelters, useReports, useAlerts, useWeather, useRiskZones } from '@/hooks/use-api-queries';
 import { AuthModal } from '@/components/auth-modal';
@@ -347,415 +347,389 @@ export const DashboardPage: React.FC = () => {
           }
         />
 
-        {/* 3. DASHBOARD MAIN CONTENT */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-          {/* Emergency Alert Callout Banner */}
-          {mode === 'emergency' && (
-            <Alert variant="emergency">
-              <AlertTitle className="text-base font-extrabold flex items-center">
-                <AlertTriangle className="mr-2 h-5 w-5" /> CRITICAL EMERGENCY BROADCAST ACTIVATED FOR GVMC
-              </AlertTitle>
-              <AlertDescription className="text-sm mt-1">
-                Flash flood warning issued for Wards 14 (Gajuwaka) and 8 (One Town). All disaster response units dispatched. Non-essential traffic prohibited on coastal roads.
-              </AlertDescription>
-            </Alert>
-          )}
+        {/* 3. DASHBOARD BODY SPLIT */}
+        <div className="flex-1 flex overflow-hidden">
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+            {/* Emergency Alert Callout Banner */}
+            {mode === 'emergency' && (
+              <Alert variant="emergency">
+                <AlertTitle className="text-base font-extrabold flex items-center">
+                  <AlertTriangle className="mr-2 h-5 w-5" /> CRITICAL EMERGENCY BROADCAST ACTIVATED FOR GVMC
+                </AlertTitle>
+                <AlertDescription className="text-sm mt-1">
+                  Flash flood warning issued for Wards 14 (Gajuwaka) and 8 (One Town). All disaster response units dispatched. Non-essential traffic prohibited on coastal roads.
+                </AlertDescription>
+              </Alert>
+            )}
 
-          {/* TOP KPI STATS ROW */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatisticsCard
-              title="Overall City Flood Risk"
-              value={`${MOCK_CITY_OVERVIEW.overallRiskScore} / 100`}
-              subtitle="Visakhapatnam GVMC Region"
-              trend="+14% since 08:00"
-              trendDirection="up"
-              variant="danger"
-              icon={<ShieldAlert className="h-5 w-5 text-red-500" />}
-            />
-            <StatisticsCard
-              title="Active Critical Wards"
-              value={`${(wards as unknown as Array<WardData & { risk_category?: string }>).filter((w) => w.risk_category === 'Critical' || w.riskCategory === 'Critical').length || 4} Wards`}
-              subtitle="Gajuwaka, One Town, Maharanipeta, Sheela Nagar"
-              trend="Immediate Evacuation"
-              trendDirection="down"
-              variant="warning"
-              icon={<AlertTriangle className="h-5 w-5 text-amber-500" />}
-            />
-            <StatisticsCard
-              title="Open Relief Shelters (DB)"
-              value={`${shelters.length} Shelters`}
-              subtitle={`Active relief capacity in PostgreSQL DB`}
-              trend="18,500 Max Capacity"
-              trendDirection="neutral"
-              variant="safe"
-              icon={<Building2 className="h-5 w-5 text-emerald-500" />}
-            />
-            <StatisticsCard
-              title="Crowd Reports Queue (DB)"
-              value={`${reports.length} Reports`}
-              subtitle="PostgreSQL DB Verified Queue"
-              trend="Realtime Sync"
-              trendDirection="up"
-              icon={<Camera className="h-5 w-5 text-cyan-500" />}
-            />
-          </div>
-
-          {/* MAIN TAB SWITCHER */}
-          <Tabs defaultValue="overview" value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <TabsList>
-                <TabsTrigger value="overview" icon={<Activity className="h-4 w-4" />}>
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger value="command" icon={<Shield className="h-4 w-4 text-red-400" />}>
-                  Command Center
-                </TabsTrigger>
-                <TabsTrigger value="map" icon={<Map className="h-4 w-4" />}>
-                  GIS Map
-                </TabsTrigger>
-                <TabsTrigger value="shelters" icon={<Building2 className="h-4 w-4" />}>
-                  Shelters ({shelters.length})
-                </TabsTrigger>
-                <TabsTrigger value="reports" icon={<Camera className="h-4 w-4" />}>
-                  Crowd Reports ({reports.length})
-                </TabsTrigger>
-                <TabsTrigger value="analytics" icon={<BarChart3 className="h-4 w-4" />}>
-                  TFT Analytics
-                </TabsTrigger>
-                <TabsTrigger value="ai" icon={<Brain className="h-4 w-4" />}>
-                  AI Engine
-                </TabsTrigger>
-                <TabsTrigger value="citizen" icon={<Bot className="h-4 w-4" />}>
-                  Citizen Portal
-                </TabsTrigger>
-                <TabsTrigger value="government" icon={<UserCheck className="h-4 w-4" />}>
-                  Gov Verification
-                </TabsTrigger>
-              </TabsList>
-
-              <div className="hidden sm:flex items-center space-x-2">
-                <Button variant="outline" size="sm" onClick={() => setReportModalOpen(true)} leftIcon={<PlusCircle className="h-3.5 w-3.5" />}>
-                  New DB Report
-                </Button>
-                <Button variant="outline" size="sm" leftIcon={<Download className="h-3.5 w-3.5" />}>
-                  Export Report
-                </Button>
-              </div>
+            {/* TOP KPI STATS ROW */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatisticsCard
+                title="Overall City Flood Risk"
+                value={`${MOCK_CITY_OVERVIEW.overallRiskScore} / 100`}
+                subtitle="Visakhapatnam GVMC Region"
+                trend="+14% since 08:00"
+                trendDirection="up"
+                variant="danger"
+                icon={<ShieldAlert className="h-5 w-5 text-red-500" />}
+              />
+              <StatisticsCard
+                title="Active Critical Wards"
+                value={`${(wards as unknown as Array<WardData & { risk_category?: string }>).filter((w) => w.risk_category === 'Critical' || w.riskCategory === 'Critical').length || 4} Wards`}
+                subtitle="Gajuwaka, One Town, Maharanipeta, Sheela Nagar"
+                trend="Immediate Evacuation"
+                trendDirection="down"
+                variant="warning"
+                icon={<AlertTriangle className="h-5 w-5 text-amber-500" />}
+              />
+              <StatisticsCard
+                title="Open Relief Shelters (DB)"
+                value={`${shelters.length} Shelters`}
+                subtitle={`Active relief capacity in PostgreSQL DB`}
+                trend="18,500 Max Capacity"
+                trendDirection="neutral"
+                variant="safe"
+                icon={<Building2 className="h-5 w-5 text-emerald-500" />}
+              />
+              <StatisticsCard
+                title="Crowd Reports Queue (DB)"
+                value={`${reports.length} Reports`}
+                subtitle="PostgreSQL DB Verified Queue"
+                trend="Realtime Sync"
+                trendDirection="up"
+                icon={<Camera className="h-5 w-5 text-cyan-500" />}
+              />
             </div>
 
-            {/* TAB 1: OVERVIEW */}
-            <TabsContent value="overview" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left 2 Cols: Interactive Map & Selected Ward Details */}
-                <div className="lg:col-span-2 space-y-6">
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+            {/* MAIN TAB SWITCHER */}
+            <Tabs defaultValue="overview" value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3 overflow-x-auto">
+                <TabsList>
+                  <TabsTrigger value="overview" icon={<Activity className="h-4 w-4" />}>
+                    Overview
+                  </TabsTrigger>
+                  <TabsTrigger value="command" icon={<Shield className="h-4 w-4 text-red-400" />}>
+                    Command Center
+                  </TabsTrigger>
+                  <TabsTrigger value="map" icon={<Map className="h-4 w-4" />}>
+                    GIS Map
+                  </TabsTrigger>
+                  <TabsTrigger value="shelters" icon={<Building2 className="h-4 w-4" />}>
+                    Shelters ({shelters.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="reports" icon={<Camera className="h-4 w-4" />}>
+                    Crowd Reports ({reports.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="analytics" icon={<BarChart3 className="h-4 w-4" />}>
+                    TFT Analytics
+                  </TabsTrigger>
+                  <TabsTrigger value="ai" icon={<Brain className="h-4 w-4" />}>
+                    AI Engine
+                  </TabsTrigger>
+                  <TabsTrigger value="citizen" icon={<Bot className="h-4 w-4" />}>
+                    Citizen Portal
+                  </TabsTrigger>
+                  <TabsTrigger value="government" icon={<UserCheck className="h-4 w-4" />}>
+                    Gov Verification
+                  </TabsTrigger>
+                </TabsList>
+
+                <div className="hidden xl:flex items-center space-x-2">
+                  <Button variant="outline" size="sm" onClick={() => setReportModalOpen(true)} leftIcon={<PlusCircle className="h-3.5 w-3.5" />}>
+                    New DB Report
+                  </Button>
+                  <Button variant="outline" size="sm" leftIcon={<Download className="h-3.5 w-3.5" />}>
+                    Export Report
+                  </Button>
+                </div>
+              </div>
+
+              {/* TAB 1: OVERVIEW */}
+              <TabsContent value="overview" className="space-y-6">
+                <div className="grid grid-cols-1 gap-6">
+                  {/* Interactive Map Card */}
+                  <Card className="border-slate-800 bg-slate-900/60 shadow-2xl">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-slate-800">
                       <div>
-                        <CardTitle className="text-base">Live GIS Spatial Risk Map</CardTitle>
-                        <CardDescription>Visakhapatnam Wards • Realtime Water Depth & AI TFT Prediction Overlay</CardDescription>
+                        <CardTitle className="text-base font-extrabold text-white flex items-center gap-2">
+                          <Map className="h-4 w-4 text-cyan-400" /> Live GIS Spatial Risk Map
+                        </CardTitle>
+                        <CardDescription className="text-xs text-slate-400">
+                          Visakhapatnam Wards • Realtime Water Depth & AI TFT Prediction Overlay
+                        </CardDescription>
                       </div>
-                      <Badge variant="risk_critical">LIVE GIS STREAM</Badge>
+                      <Badge variant="risk_critical" className="font-mono text-[10px]">
+                        LIVE GIS STREAM
+                      </Badge>
                     </CardHeader>
-                    <CardContent className="pt-0">
+                    <CardContent className="pt-4">
                       <MapPlaceholder
                         selectedWardId={selectedWardId}
                         onSelectWard={(id) => setSelectedWardId(id)}
-                        height="440px"
+                        height="480px"
                       />
                     </CardContent>
                   </Card>
 
                   {/* Ward Selected Inspector */}
-                  <Card className="border-teal-500/30 bg-teal-500/5">
+                  <Card className="border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-slate-900/90 to-slate-900/90 shadow-xl">
                     <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div>
                         <div className="flex items-center space-x-2">
-                          <span className="text-xs font-mono font-bold uppercase text-teal-400">SELECTED WARD #{selectedWard.number}</span>
+                          <span className="text-xs font-mono font-bold uppercase text-cyan-400">
+                            SELECTED WARD #{selectedWard.number}
+                          </span>
                           <Badge variant={selectedWard.riskCategory === 'Critical' ? 'risk_critical' : 'warning'}>
                             {selectedWard.riskCategory} Risk
                           </Badge>
                         </div>
-                        <h4 className="text-lg font-bold text-foreground mt-0.5">{selectedWard.name}</h4>
-                        <div className="text-xs text-muted-foreground mt-1 flex flex-wrap gap-3 font-mono">
-                          <span>Water Level: <strong>{selectedWard.waterLevelCm} cm</strong></span>
-                          <span>Rainfall: <strong>{selectedWard.rainfallMmHr} mm/h</strong></span>
+                        <h4 className="text-xl font-extrabold text-white mt-0.5">{selectedWard.name}</h4>
+                        <div className="text-xs text-slate-300 mt-2 flex flex-wrap gap-4 font-mono">
+                          <span>Water Level: <strong className="text-red-400">{selectedWard.waterLevelCm} cm</strong></span>
+                          <span>Rainfall: <strong className="text-cyan-400">{selectedWard.rainfallMmHr} mm/h</strong></span>
                           <span>Elevation: <strong>{selectedWard.elevationMeters}m</strong></span>
                           <span>Population: <strong>{selectedWard.population.toLocaleString()}</strong></span>
                         </div>
                       </div>
 
-                      <Button size="sm" variant="secondary" rightIcon={<ArrowUpRight className="h-4 w-4" />}>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        rightIcon={<ArrowUpRight className="h-4 w-4" />}
+                        onClick={() => {
+                          toast({
+                            title: 'Rescue Team Dispatched',
+                            message: `NDMA First Responders routed to Ward #${selectedWard.number} (${selectedWard.name}).`,
+                            type: 'success',
+                          });
+                        }}
+                      >
                         Dispatch Rescue Team
                       </Button>
                     </CardContent>
                   </Card>
                 </div>
 
-                {/* Right 1 Col: Weather & Activity Feed */}
-                <div className="space-y-6">
-                  {/* Weather Telemetry Card */}
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base flex items-center justify-between">
-                        <span>Weather Telemetry (DB)</span>
-                        <CloudRain className="h-4 w-4 text-cyan-400" />
-                      </CardTitle>
-                      <CardDescription>PostgreSQL Weather Snapshot</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4 text-xs">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="p-2.5 rounded-lg bg-muted/50 border border-border/60">
-                          <span className="text-muted-foreground block text-[10px] uppercase">Current Rain Rate</span>
-                          <span className="text-lg font-bold font-mono text-cyan-400">{weather?.rainfall_mm_hr || weather?.rainfallMmHr || 42.8} mm/h</span>
-                        </div>
-                        <div className="p-2.5 rounded-lg bg-muted/50 border border-border/60">
-                          <span className="text-muted-foreground block text-[10px] uppercase">24h Rain Total</span>
-                          <span className="text-lg font-bold font-mono text-cyan-400">{weather?.rainfall_cumulative_24h || weather?.rainfallCumulative24h || 184.2} mm</span>
-                        </div>
-                        <div className="p-2.5 rounded-lg bg-muted/50 border border-border/60">
-                          <span className="text-muted-foreground block text-[10px] uppercase">Wind Speed</span>
-                          <span className="text-base font-bold font-mono">{weather?.wind_speed_kmh || 34.5} km/h</span>
-                        </div>
-                        <div className="p-2.5 rounded-lg bg-muted/50 border border-border/60">
-                          <span className="text-muted-foreground block text-[10px] uppercase">Tide Height</span>
-                          <span className="text-base font-bold font-mono text-red-400">{weather?.tide_level_m || 2.15} m</span>
-                        </div>
-                      </div>
+                {/* BOTTOM ROW CHARTS */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <AnalyticsCard title="Rainfall Trend & TFT Forecast (24h)" description="Historical observed rainfall vs TFT neural prediction horizon">
+                    <RainfallChart />
+                  </AnalyticsCard>
 
-                      <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200">
-                        <span className="font-semibold block">Forecast Summary:</span>
-                        <p className="mt-0.5">{weather?.forecast_summary || weather?.forecast6h}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Activity Feed */}
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">Realtime Activity Feed</CardTitle>
-                      <CardDescription>Live Event Stream</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-3 text-xs">
-                      {MOCK_ACTIVITY_FEED.map((act) => (
-                        <div key={act.id} className="flex items-start space-x-2.5 pb-2 border-b border-border/50 last:border-0">
-                          <span className="h-2 w-2 rounded-full bg-cyan-400 mt-1 shrink-0" />
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                              <span className="font-semibold text-foreground">{act.type}</span>
-                              <span>{act.timestamp}</span>
-                            </div>
-                            <p className="text-muted-foreground mt-0.5">{act.text}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-
-              {/* BOTTOM ROW CHARTS */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <AnalyticsCard title="Rainfall Trend & TFT Forecast (24h)" description="Historical observed rainfall vs TFT neural prediction horizon">
-                  <RainfallChart />
-                </AnalyticsCard>
-
-                <AnalyticsCard title="Ward Risk Distribution Breakdown" description="Categorization of all 15 GVMC wards by flood severity score">
-                  <RiskDistributionChart />
-                </AnalyticsCard>
-              </div>
-            </TabsContent>
-
-            {/* TAB 2: GIS MAP */}
-            <TabsContent value="map">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Full Screen GIS Command Map</CardTitle>
-                  <CardDescription>Multi-layer geospatial visualization for Visakhapatnam</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <MapPlaceholder height="650px" />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* TAB 3: SHELTERS */}
-            <TabsContent value="shelters" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Active Relief Shelters Directory (PostgreSQL DB)</CardTitle>
-                      <CardDescription>Live capacity, medical amenities, and emergency contacts</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Shelter Name</TableHead>
-                            <TableHead>Ward</TableHead>
-                            <TableHead>Capacity</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Action</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {(shelters as unknown as Array<ShelterData & { ward_name?: string; current_occupancy?: number; contact_phone?: string; is_accessible?: boolean }>).map((sh) => (
-                            <TableRow key={sh.id}>
-                              <TableCell className="font-semibold">
-                                {sh.name}
-                                <span className="block text-[10px] text-muted-foreground font-normal">{sh.address}</span>
-                              </TableCell>
-                              <TableCell>{sh.ward_name || sh.wardName}</TableCell>
-                              <TableCell className="font-mono">
-                                {sh.current_occupancy ?? sh.currentOccupancy ?? 0} / {sh.capacity}
-                              </TableCell>
-                              <TableCell>
-                                <Badge variant={sh.status === 'Near Capacity' ? 'warning' : 'safe'}>
-                                  {sh.status || 'Open'}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                <Button size="sm" variant="outline">Directions</Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div>
-                  <AnalyticsCard title="Shelter Capacity Allocation" description="Occupancy rate per shelter">
-                    <ShelterCapacityChart />
+                  <AnalyticsCard title="Ward Risk Distribution Breakdown" description="Categorization of all 15 GVMC wards by flood severity score">
+                    <RiskDistributionChart />
                   </AnalyticsCard>
                 </div>
-              </div>
-            </TabsContent>
+              </TabsContent>
 
-            {/* TAB 4: CROWD REPORTS */}
-            <TabsContent value="reports" className="space-y-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle>Crowd Report Verification Queue (PostgreSQL DB)</CardTitle>
-                    <CardDescription>AI-Assisted Photo Verification (YOLOv11 + BLIP-2 Vision Models)</CardDescription>
+              {/* TAB 2: GIS MAP */}
+              <TabsContent value="map">
+                <Card className="border-slate-800 bg-slate-900/60 shadow-2xl">
+                  <CardHeader className="border-b border-slate-800">
+                    <CardTitle className="text-white">Full Screen GIS Command Map</CardTitle>
+                    <CardDescription className="text-slate-400">Multi-layer geospatial visualization for Visakhapatnam</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <MapPlaceholder height="680px" />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* TAB 3: SHELTERS */}
+              <TabsContent value="shelters" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="lg:col-span-2">
+                    <Card className="border-slate-800 bg-slate-900/60 shadow-xl">
+                      <CardHeader className="border-b border-slate-800">
+                        <CardTitle className="text-white">Active Relief Shelters Directory (PostgreSQL DB)</CardTitle>
+                        <CardDescription className="text-slate-400">Live capacity, medical amenities, and emergency contacts</CardDescription>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Shelter Name</TableHead>
+                              <TableHead>Ward</TableHead>
+                              <TableHead>Capacity</TableHead>
+                              <TableHead>Status</TableHead>
+                              <TableHead>Action</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {(shelters as unknown as Array<ShelterData & { ward_name?: string; current_occupancy?: number; contact_phone?: string; is_accessible?: boolean }>).map((sh) => (
+                              <TableRow key={sh.id}>
+                                <TableCell className="font-semibold text-white">
+                                  {sh.name}
+                                  <span className="block text-[10px] text-slate-400 font-normal">{sh.address}</span>
+                                </TableCell>
+                                <TableCell className="text-slate-300">{sh.ward_name || sh.wardName}</TableCell>
+                                <TableCell className="font-mono text-cyan-300">
+                                  {sh.current_occupancy ?? sh.currentOccupancy ?? 0} / {sh.capacity}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge variant={sh.status === 'Near Capacity' ? 'warning' : 'safe'}>
+                                    {sh.status || 'Open'}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>
+                                  <Button size="sm" variant="outline">Directions</Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                    </Card>
                   </div>
-                  <Button variant="danger" size="sm" onClick={() => setReportModalOpen(true)} leftIcon={<PlusCircle className="h-4 w-4" />}>
-                    Submit Report
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Report Title</TableHead>
-                        <TableHead>Reporter & Ward</TableHead>
-                        <TableHead>Est. Water Depth</TableHead>
-                        <TableHead>AI Label & Confidence</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Verification Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {(reports as unknown as Array<CrowdReportData & { reporter_name?: string; ward_name?: string; water_depth_cm?: number; created_at?: string; ai_labels?: string[]; ai_confidence?: number }>).map((rep) => (
-                        <TableRow key={rep.id}>
-                          <TableCell className="font-semibold">
-                            {rep.title}
-                            <span className="block text-[10px] text-muted-foreground font-normal">{rep.description}</span>
-                          </TableCell>
-                          <TableCell>
-                            {rep.reporter_name || rep.reporterName || 'Anonymous Citizen'}
-                            <span className="block text-[10px] text-muted-foreground">{rep.ward_name || rep.wardName}</span>
-                          </TableCell>
-                          <TableCell className="font-mono font-bold text-red-500">
-                            {rep.water_depth_cm ?? rep.waterDepthEst} cm
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-xs font-mono text-cyan-400 block">
-                              {Array.isArray(rep.ai_labels) ? rep.ai_labels.join(', ') : rep.ai_labels || 'Submerged Road'}
-                            </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">
-                              Conf: {Math.round((rep.ai_confidence || 0.92) * 100)}%
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={
-                                rep.status === 'Verified' ? 'safe' : rep.status === 'Rejected' ? 'destructive' : 'warning'
-                              }
-                            >
-                              {rep.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {rep.status === 'Pending' ? (
-                              <div className="flex items-center space-x-2">
-                                <Button
-                                  size="sm"
-                                  variant="safe"
-                                  onClick={() => handleVerifyReport(rep.id)}
-                                  leftIcon={<CheckCircle2 className="h-3.5 w-3.5" />}
-                                >
-                                  Verify
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="danger"
-                                  onClick={() => handleRejectReport(rep.id)}
-                                  leftIcon={<XCircle className="h-3.5 w-3.5" />}
-                                >
-                                  Reject
-                                </Button>
-                              </div>
-                            ) : (
-                              <span className="text-xs text-muted-foreground italic">Processed</span>
-                            )}
-                          </TableCell>
+
+                  <div>
+                    <AnalyticsCard title="Shelter Capacity Allocation" description="Occupancy rate per shelter">
+                      <ShelterCapacityChart />
+                    </AnalyticsCard>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* TAB 4: CROWD REPORTS */}
+              <TabsContent value="reports" className="space-y-6">
+                <Card className="border-slate-800 bg-slate-900/60 shadow-xl">
+                  <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800">
+                    <div>
+                      <CardTitle className="text-white">Crowd Report Verification Queue (PostgreSQL DB)</CardTitle>
+                      <CardDescription className="text-slate-400">AI-Assisted Photo Verification (YOLOv11 + BLIP-2 Vision Models)</CardDescription>
+                    </div>
+                    <Button variant="danger" size="sm" onClick={() => setReportModalOpen(true)} leftIcon={<PlusCircle className="h-4 w-4" />}>
+                      Submit Report
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Report Title</TableHead>
+                          <TableHead>Reporter & Ward</TableHead>
+                          <TableHead>Est. Water Depth</TableHead>
+                          <TableHead>AI Label & Confidence</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Verification Action</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                      </TableHeader>
+                      <TableBody>
+                        {(reports as unknown as Array<CrowdReportData & { reporter_name?: string; ward_name?: string; water_depth_cm?: number; created_at?: string; ai_labels?: string[]; ai_confidence?: number }>).map((rep) => (
+                          <TableRow key={rep.id}>
+                            <TableCell className="font-semibold text-white">
+                              {rep.title}
+                              <span className="block text-[10px] text-slate-400 font-normal">{rep.description}</span>
+                            </TableCell>
+                            <TableCell className="text-slate-300">
+                              {rep.reporter_name || rep.reporterName || 'Anonymous Citizen'}
+                              <span className="block text-[10px] text-slate-400">{rep.ward_name || rep.wardName}</span>
+                            </TableCell>
+                            <TableCell className="font-mono font-bold text-red-400">
+                              {rep.water_depth_cm ?? rep.waterDepthEst} cm
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-xs font-mono text-cyan-300 block">
+                                {Array.isArray(rep.ai_labels) ? rep.ai_labels.join(', ') : rep.ai_labels || 'Submerged Road'}
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-mono">
+                                Conf: {Math.round((rep.ai_confidence || 0.92) * 100)}%
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  rep.status === 'Verified' ? 'safe' : rep.status === 'Rejected' ? 'destructive' : 'warning'
+                                }
+                              >
+                                {rep.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {rep.status === 'Pending' ? (
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    size="sm"
+                                    variant="safe"
+                                    onClick={() => handleVerifyReport(rep.id)}
+                                    leftIcon={<CheckCircle2 className="h-3.5 w-3.5" />}
+                                  >
+                                    Verify
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="danger"
+                                    onClick={() => handleRejectReport(rep.id)}
+                                    leftIcon={<XCircle className="h-3.5 w-3.5" />}
+                                  >
+                                    Reject
+                                  </Button>
+                                </div>
+                              ) : (
+                                <span className="text-xs text-slate-400 italic">Processed</span>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </TabsContent>
 
-            {/* TAB 5: ANALYTICS */}
-            <TabsContent value="analytics" className="space-y-0 pt-2">
-              <AnalyticsTab />
-            </TabsContent>
+              {/* TAB 5: ANALYTICS */}
+              <TabsContent value="analytics" className="space-y-0 pt-2">
+                <AnalyticsTab />
+              </TabsContent>
 
-            {/* TAB 6: AI ENGINE */}
-            <TabsContent value="ai" className="space-y-0 pt-2">
-              <AIDashboard />
-            </TabsContent>
+              {/* TAB 6: AI ENGINE */}
+              <TabsContent value="ai" className="space-y-0 pt-2">
+                <AIDashboard />
+              </TabsContent>
 
-            {/* TAB 9: COMMAND CENTER */}
-            <TabsContent value="command" className="space-y-0 pt-2">
-              <CommandCenterTab />
-            </TabsContent>
+              {/* TAB 9: COMMAND CENTER */}
+              <TabsContent value="command" className="space-y-0 pt-2">
+                <CommandCenterTab />
+              </TabsContent>
 
-            {/* TAB 7: CITIZEN PORTAL */}
-            <TabsContent value="citizen" className="space-y-0 pt-2">
-              <CitizenPortalTab
-                onOpenReportModal={() => setReportModalOpen(true)}
-                onOpenAssistant={() => setAssistantModalOpen(true)}
-              />
-            </TabsContent>
+              {/* TAB 7: CITIZEN PORTAL */}
+              <TabsContent value="citizen" className="space-y-0 pt-2">
+                <CitizenPortalTab
+                  onOpenReportModal={() => setReportModalOpen(true)}
+                  onOpenAssistant={() => setAssistantModalOpen(true)}
+                />
+              </TabsContent>
 
-            {/* TAB 8: GOVERNMENT VERIFICATION */}
-            <TabsContent value="government" className="space-y-0 pt-2">
-              <GovernmentDashboardTab />
-            </TabsContent>
-          </Tabs>
+              {/* TAB 8: GOVERNMENT VERIFICATION */}
+              <TabsContent value="government" className="space-y-0 pt-2">
+                <GovernmentDashboardTab />
+              </TabsContent>
+            </Tabs>
 
-          {/* Flood Assistant Floating Chat Widget Modal */}
-          <FloodAssistantWidget
-            isOpen={assistantModalOpen}
-            onClose={() => setAssistantModalOpen(false)}
+            {/* Flood Assistant Floating Chat Widget Modal */}
+            <FloodAssistantWidget
+              isOpen={assistantModalOpen}
+              onClose={() => setAssistantModalOpen(false)}
+            />
+          </main>
+
+          {/* Right Intelligence Panel */}
+          <RightIntelligencePanel
+            selectedWard={selectedWard}
+            weather={weather}
+            sheltersCount={shelters.length}
+            reportsCount={reports.length}
+            onDispatchTeam={() => {
+              toast({
+                title: 'Evacuation Order Dispatched',
+                message: `NDMA First Responders routed for Ward #${selectedWard.number}.`,
+                type: 'error',
+              });
+            }}
           />
-        </main>
+        </div>
       </div>
     </div>
   );
 };
+

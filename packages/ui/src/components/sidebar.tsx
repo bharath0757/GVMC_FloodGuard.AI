@@ -2,14 +2,6 @@ import * as React from 'react';
 import { cn } from '@floodguard/utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-/**
- * Storybook & Component Documentation: Sidebar Navigation
- * 
- * **Purpose:** Persistent vertical navigation panel for government officers, emergency responders, and administrators.
- * **Usage:** `<Sidebar collapsed={collapsed} onToggle={toggle}><SidebarNav><SidebarNavItem icon={<Map />} label="Live Flood Map" active /></SidebarNav></Sidebar>`
- * **Accessibility Notes:** `<nav aria-label="Main Navigation">`, full keyboard tab support.
- */
-
 export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
@@ -23,30 +15,37 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       <aside
         ref={ref}
         className={cn(
-          'relative flex flex-col h-screen border-r border-border bg-card text-card-foreground transition-all duration-300 select-none z-30',
+          'relative flex flex-col h-screen border-r border-slate-800/90 bg-slate-950/95 text-slate-100 transition-all duration-300 select-none z-30 shadow-2xl backdrop-blur-xl shrink-0',
           collapsed ? 'w-16' : 'w-64',
           className
         )}
         {...props}
       >
         {/* Header */}
-        <div className="flex h-16 items-center justify-between px-4 border-b border-border/60">
+        <div className="flex h-16 items-center justify-between px-4 border-b border-slate-800/80">
           <div className="flex items-center space-x-3 overflow-hidden">
             {brandLogo ? (
               <div className="shrink-0">{brandLogo}</div>
             ) : (
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg shrink-0">
+              <div className="h-8 w-8 rounded-lg bg-cyan-600 flex items-center justify-center text-white font-extrabold text-lg shrink-0 shadow-md">
                 F
               </div>
             )}
             {!collapsed && (
-              <span className="font-bold text-base tracking-tight text-foreground truncate">{brandName}</span>
+              <div className="truncate">
+                <span className="font-extrabold text-base tracking-tight text-white block">
+                  {brandName}
+                </span>
+                <span className="text-[10px] text-cyan-400 font-mono block tracking-wider uppercase">
+                  EOC Operations
+                </span>
+              </div>
             )}
           </div>
           {onToggleCollapse && !collapsed && (
             <button
               onClick={onToggleCollapse}
-              className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
               aria-label="Collapse sidebar"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -59,10 +58,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
         {/* Footer / Toggle when collapsed */}
         {onToggleCollapse && collapsed && (
-          <div className="p-3 border-t border-border/60 flex justify-center">
+          <div className="p-3 border-t border-slate-800 flex justify-center">
             <button
               onClick={onToggleCollapse}
-              className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
               aria-label="Expand sidebar"
             >
               <ChevronRight className="h-4 w-4" />
@@ -76,7 +75,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 Sidebar.displayName = 'Sidebar';
 
 const SidebarNav: React.FC<React.HTMLAttributes<HTMLElement>> = ({ className, ...props }) => (
-  <nav className={cn('space-y-1', className)} {...props} />
+  <nav className={cn('space-y-1.5', className)} {...props} />
 );
 
 export interface SidebarNavItemProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -93,18 +92,18 @@ const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItemProps>(
       <a
         ref={ref}
         className={cn(
-          'flex items-center space-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors cursor-pointer',
+          'flex items-center space-x-3 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border',
           active
-            ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
-            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+            ? 'bg-cyan-950/70 border-cyan-500/50 text-white font-bold shadow-lg shadow-cyan-950/50 text-cyan-300'
+            : 'border-transparent text-slate-400 hover:bg-slate-900/80 hover:text-white hover:border-slate-800',
           collapsed && 'justify-center px-0',
           className
         )}
         title={collapsed ? label : undefined}
         {...props}
       >
-        {icon && <span className="shrink-0">{icon}</span>}
-        {!collapsed && <span className="truncate flex-1">{label}</span>}
+        {icon && <span className={cn('shrink-0', active ? 'text-cyan-400' : 'text-slate-400')}>{icon}</span>}
+        {!collapsed && <span className="truncate flex-1 font-sans">{label}</span>}
         {!collapsed && badge && <span className="shrink-0">{badge}</span>}
       </a>
     );
@@ -115,10 +114,11 @@ SidebarNavItem.displayName = 'SidebarNavItem';
 const SidebarSectionTitle: React.FC<{ title: string; collapsed?: boolean }> = ({ title, collapsed }) => {
   if (collapsed) return null;
   return (
-    <div className="px-3 pt-4 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+    <div className="px-3 pt-4 pb-1.5 text-[9px] font-bold uppercase tracking-widest text-slate-500 font-mono">
       {title}
     </div>
   );
 };
 
 export { Sidebar, SidebarNav, SidebarNavItem, SidebarSectionTitle };
+
