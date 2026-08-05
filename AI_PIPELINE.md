@@ -87,12 +87,14 @@ graph TD
 The data pipeline processes raw data into features suitable for model training and real-time inference.
 
 ### 3.1 Data Collection & Sources
+
 - **User Profiles:** Demographics, self-reported skills, university, interests.
 - **Platform Activity:** Problems viewed, hackathons participated in, teams joined, clickstream data.
 - **Historical Performance:** Scores from past hackathons, peer reviews, code quality metrics.
 - **GVMC Data:** Problem statement descriptions, tags, required technical domains, civic impact goals.
 
 ### 3.2 Preprocessing & Feature Engineering
+
 - **Text Data (Profiles, Problem Statements):**
   - Tokenization, stop-word removal.
   - Embedding generation using pre-trained sentence transformers (e.g., `all-MiniLM-L6-v2`) to create dense vector representations of skills and problem descriptions.
@@ -100,6 +102,7 @@ The data pipeline processes raw data into features suitable for model training a
 - **Behavioral Data:** TF-IDF or Matrix Factorization on user-problem interaction matrices to build collaborative filtering features.
 
 ### 3.3 Feature Store
+
 We utilize a Vector Database (e.g., Pinecone or Milvus) to store user skill embeddings and problem statement embeddings for fast similarity search during real-time inference.
 
 ---
@@ -107,6 +110,7 @@ We utilize a Vector Database (e.g., Pinecone or Milvus) to store user skill embe
 ## 4. Model Selection and Training Strategy
 
 ### 4.1 Smart Team Matching
+
 - **Objective:** Maximize team compatibility and skill complementarity.
 - **Input:** User skill vectors, interests, availability, past performance, and specified team roles.
 - **Algorithm:**
@@ -115,6 +119,7 @@ We utilize a Vector Database (e.g., Pinecone or Milvus) to store user skill embe
 - **Training Strategy:** The embeddings are pre-trained but fine-tuned periodically using Triplet Loss based on successful past team formations (teams that scored highly).
 
 ### 4.2 Hackathon/Problem Recommendation Engine
+
 - **Objective:** Increase user engagement by showing relevant problems.
 - **Algorithm:** Hybrid approach.
   - **Content-Based:** Cosine similarity between the user's skill/interest embedding and the problem statement embedding.
@@ -123,6 +128,7 @@ We utilize a Vector Database (e.g., Pinecone or Milvus) to store user skill embe
 - **Training Strategy:** Batch training weekly on the interaction matrix.
 
 ### 4.3 AI Project Idea Generator
+
 - **Objective:** Brainstorm starting points for GVMC problems.
 - **Algorithm:** Large Language Model (LLM) orchestration (e.g., Google Gemini Pro or OpenAI GPT-4).
 - **Pipeline:**
@@ -131,6 +137,7 @@ We utilize a Vector Database (e.g., Pinecone or Milvus) to store user skill embe
   - **Scoring:** The LLM is prompted to self-score the generated ideas based on Feasibility, Impact, and Innovation before presenting them to the user.
 
 ### 4.4 AI-Assisted Code Review / Submission Analysis
+
 - **Objective:** Provide automated preliminary scoring and feedback.
 - **Pipeline:**
   - **Static Analysis:** Run tools (e.g., SonarQube, ESLint, Pylint) to extract cyclomatic complexity, code smells, and security vulnerabilities.
@@ -175,12 +182,12 @@ graph LR
 
 ## 7. Evaluation Metrics
 
-| AI Feature | Offline Metrics | Online Business Metrics |
-| :--- | :--- | :--- |
-| **Team Matching** | Hit Rate, MRR (Mean Reciprocal Rank) | % of matched teams that submit a project, Average team score |
-| **Recommendation** | NDCG, Precision@K | Click-Through Rate (CTR) on problems, Hackathon signup rate |
-| **Idea Generator** | ROUGE/BLEU (vs human ideas), LLM-as-a-judge score | Idea adoption rate (users selecting generated ideas) |
-| **Code Review** | Precision/Recall of bug detection | Correlation of AI score with final Human Judge score |
+| AI Feature         | Offline Metrics                                   | Online Business Metrics                                      |
+| :----------------- | :------------------------------------------------ | :----------------------------------------------------------- |
+| **Team Matching**  | Hit Rate, MRR (Mean Reciprocal Rank)              | % of matched teams that submit a project, Average team score |
+| **Recommendation** | NDCG, Precision@K                                 | Click-Through Rate (CTR) on problems, Hackathon signup rate  |
+| **Idea Generator** | ROUGE/BLEU (vs human ideas), LLM-as-a-judge score | Idea adoption rate (users selecting generated ideas)         |
+| **Code Review**    | Precision/Recall of bug detection                 | Correlation of AI score with final Human Judge score         |
 
 ---
 
@@ -215,6 +222,7 @@ graph LR
 ## 11. Fallback Strategies
 
 To ensure platform resilience when AI services degrade:
+
 - **Matching Fallback:** Revert to simple SQL-based filtering (e.g., exact match on self-reported tags) if the Vector DB or Embedding service is down.
 - **Recommendation Fallback:** Display the most popular or recently added hackathons.
 - **LLM Fallback:** Display a curated, static list of generic project ideas for the problem domain.

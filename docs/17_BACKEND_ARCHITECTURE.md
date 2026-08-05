@@ -33,10 +33,10 @@ graph TD
     Routers --> Service Layer
     Service Layer --> Data Access Layer
     Data Access Layer --> DB
-    
+
     Service Layer --> Cache
     Cache --> Redis
-    
+
     Service Layer --> TaskDispatch
     TaskDispatch --> Workers
     Workers --> AIModels
@@ -90,7 +90,7 @@ Background processing is handled by Celery 5.
 - **Queues:** Tasks are routed to specific queues based on resource needs: `ai_queue` (GPU bound), `notification_queue` (I/O bound), `data_queue` (CPU bound).
 - **Task Categories:** AI inference, external API polling, report generation, and automated database cleanup.
 - **Reliability:** Strict retry policies with exponential backoff and a Dead Letter Queue (DLQ) for failed tasks.
-- **Periodic Tasks (Celery Beat):** 
+- **Periodic Tasks (Celery Beat):**
   - Weather API sync (every 15 mins)
   - Flood risk model recalculation (hourly)
   - Stale data archival (daily)
@@ -116,7 +116,7 @@ Background processing is handled by Celery 5.
 - **Adapter Pattern:** External services are wrapped in adapter classes to standardize interfaces and mock them during testing.
 - **Weather APIs:** Integrations with IMD / OpenWeatherMap.
 - **Mapping:** Mapbox API for routing and reverse geocoding.
-- **Communications:** 
+- **Communications:**
   - SMS: Twilio / MSG91 (India)
   - Email: AWS SES
   - Push: Firebase Cloud Messaging (FCM)

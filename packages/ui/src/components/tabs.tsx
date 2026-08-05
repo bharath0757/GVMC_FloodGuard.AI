@@ -3,7 +3,7 @@ import { cn } from '@floodguard/utils';
 
 /**
  * Storybook & Component Documentation: Tabs Suite
- * 
+ *
  * **Purpose:** Switch between view perspectives (e.g., Live Map / Data Table / Analytics).
  * **Usage:** `<Tabs defaultValue="map"><TabsList><TabsTrigger value="map">Map</TabsTrigger><TabsTrigger value="table">Table</TabsTrigger></TabsList><TabsContent value="map">...</TabsContent></Tabs>`
  * **Accessibility Notes:** ARIA `tablist`, `tab`, `tabpanel` with keyboard arrow key support.
@@ -14,7 +14,9 @@ interface TabsContextValue {
   onValueChange: (value: string) => void;
 }
 
-const TabsContext = React.createContext<TabsContextValue | undefined>(undefined);
+const TabsContext = React.createContext<TabsContextValue | undefined>(
+  undefined,
+);
 
 export interface TabsProps {
   defaultValue?: string;
@@ -24,10 +26,19 @@ export interface TabsProps {
   className?: string;
 }
 
-const Tabs: React.FC<TabsProps> = ({ defaultValue, value: controlledValue, onValueChange, children, className }) => {
-  const [selectedTab, setSelectedTab] = React.useState(controlledValue || defaultValue || '');
+const Tabs: React.FC<TabsProps> = ({
+  defaultValue,
+  value: controlledValue,
+  onValueChange,
+  children,
+  className,
+}) => {
+  const [selectedTab, setSelectedTab] = React.useState(
+    controlledValue || defaultValue || '',
+  );
 
-  const currentTab = controlledValue !== undefined ? controlledValue : selectedTab;
+  const currentTab =
+    controlledValue !== undefined ? controlledValue : selectedTab;
 
   const handleTabChange = React.useCallback(
     (newValue: string) => {
@@ -36,26 +47,32 @@ const Tabs: React.FC<TabsProps> = ({ defaultValue, value: controlledValue, onVal
       }
       onValueChange?.(newValue);
     },
-    [controlledValue, onValueChange]
+    [controlledValue, onValueChange],
   );
 
   return (
-    <TabsContext.Provider value={{ value: currentTab, onValueChange: handleTabChange }}>
+    <TabsContext.Provider
+      value={{ value: currentTab, onValueChange: handleTabChange }}
+    >
       <div className={cn('w-full', className)}>{children}</div>
     </TabsContext.Provider>
   );
 };
 
-const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      role="tablist"
-      className={cn('inline-flex h-10 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground', className)}
-      {...props}
-    />
-  )
-);
+const TabsList = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    role="tablist"
+    className={cn(
+      'bg-muted text-muted-foreground inline-flex h-10 items-center justify-center rounded-lg p-1',
+      className,
+    )}
+    {...props}
+  />
+));
 TabsList.displayName = 'TabsList';
 
 export interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -77,11 +94,11 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
         aria-selected={isActive}
         onClick={() => context.onValueChange(value)}
         className={cn(
-          'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none',
+          'ring-offset-background focus-visible:ring-ring inline-flex select-none items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
           isActive
-            ? 'bg-background text-foreground shadow-sm font-semibold'
+            ? 'bg-background text-foreground font-semibold shadow-sm'
             : 'hover:bg-background/50 hover:text-foreground/80',
-          className
+          className,
         )}
         {...props}
       >
@@ -89,7 +106,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
         {children}
       </button>
     );
-  }
+  },
 );
 TabsTrigger.displayName = 'TabsTrigger';
 
@@ -108,13 +125,16 @@ const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
       <div
         ref={ref}
         role="tabpanel"
-        className={cn('mt-4 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 animate-in fade-in-50 duration-200', className)}
+        className={cn(
+          'ring-offset-background focus-visible:ring-ring animate-in fade-in-50 mt-4 duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+          className,
+        )}
         {...props}
       >
         {children}
       </div>
     );
-  }
+  },
 );
 TabsContent.displayName = 'TabsContent';
 

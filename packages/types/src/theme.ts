@@ -6,6 +6,7 @@ export interface ThemeConfig {
   setTheme: (theme: Theme) => void;
 }
 
-export type ColorVariant = 'primary' | 'secondary' | 'danger' | 'warning' | 'safe' | 'neutral';
+export type ColorVariant =
+  'primary' | 'secondary' | 'danger' | 'warning' | 'safe' | 'neutral';
 
 export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';

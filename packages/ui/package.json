@@ -33,7 +33,6 @@
     "@types/react-dom": "^18.3.0",
     "@floodguard/config": "workspace:*",
     "react": "^18.3.0",
-
     "react-dom": "^18.3.0",
     "typescript": "^5.5.0"
   }

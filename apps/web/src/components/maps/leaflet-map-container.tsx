@@ -23,15 +23,60 @@ interface LeafletMapProps {
 }
 
 const VIZAG_WARD_POLYGONS: Record<number, [number, number][]> = {
-  14: [[17.680, 83.210], [17.680, 83.230], [17.700, 83.230], [17.700, 83.210]],
-  8:  [[17.695, 83.295], [17.695, 83.315], [17.715, 83.315], [17.715, 83.295]],
-  3:  [[17.720, 83.310], [17.720, 83.330], [17.740, 83.330], [17.740, 83.310]],
-  22: [[17.690, 83.235], [17.690, 83.255], [17.710, 83.255], [17.710, 83.235]],
-  11: [[17.730, 83.290], [17.730, 83.310], [17.750, 83.310], [17.750, 83.290]],
-  16: [[17.745, 83.325], [17.745, 83.345], [17.765, 83.345], [17.765, 83.325]],
-  5:  [[17.718, 83.298], [17.718, 83.318], [17.738, 83.318], [17.738, 83.298]],
-  19: [[17.720, 83.260], [17.720, 83.280], [17.740, 83.280], [17.740, 83.260]],
-  2:  [[17.735, 83.320], [17.735, 83.340], [17.755, 83.340], [17.755, 83.320]],
+  14: [
+    [17.68, 83.21],
+    [17.68, 83.23],
+    [17.7, 83.23],
+    [17.7, 83.21],
+  ],
+  8: [
+    [17.695, 83.295],
+    [17.695, 83.315],
+    [17.715, 83.315],
+    [17.715, 83.295],
+  ],
+  3: [
+    [17.72, 83.31],
+    [17.72, 83.33],
+    [17.74, 83.33],
+    [17.74, 83.31],
+  ],
+  22: [
+    [17.69, 83.235],
+    [17.69, 83.255],
+    [17.71, 83.255],
+    [17.71, 83.235],
+  ],
+  11: [
+    [17.73, 83.29],
+    [17.73, 83.31],
+    [17.75, 83.31],
+    [17.75, 83.29],
+  ],
+  16: [
+    [17.745, 83.325],
+    [17.745, 83.345],
+    [17.765, 83.345],
+    [17.765, 83.325],
+  ],
+  5: [
+    [17.718, 83.298],
+    [17.718, 83.318],
+    [17.738, 83.318],
+    [17.738, 83.298],
+  ],
+  19: [
+    [17.72, 83.26],
+    [17.72, 83.28],
+    [17.74, 83.28],
+    [17.74, 83.26],
+  ],
+  2: [
+    [17.735, 83.32],
+    [17.735, 83.34],
+    [17.755, 83.34],
+    [17.755, 83.32],
+  ],
 };
 
 const SURGE_COLORS: Record<string, string> = {
@@ -54,21 +99,22 @@ function drainStatusForId(id: number): 'clear' | 'partial' | 'blocked' {
 }
 
 const STATUS_COLOR = {
-  clear:   '#3B82F6',  // blue
-  partial: '#F59E0B',  // amber
-  blocked: '#EF4444',  // red
+  clear: '#3B82F6', // blue
+  partial: '#F59E0B', // amber
+  blocked: '#EF4444', // red
 } as const;
 
 const STATUS_LABEL = {
-  clear:   'Clear — flowing normally',
+  clear: 'Clear — flowing normally',
   partial: 'Partially Clogged',
   blocked: 'Blocked — overflow risk',
 } as const;
 
 const STATUS_CAUSE: Record<string, string> = {
-  clear:   'No obstructions detected. Inlet grates clear.',
+  clear: 'No obstructions detected. Inlet grates clear.',
   partial: 'Plastic carry bags, silt and leaf debris partially blocking flow.',
-  blocked: 'Solid waste blockage: polythene, thermocol, bottle caps. Road inundation risk.',
+  blocked:
+    'Solid waste blockage: polythene, thermocol, bottle caps. Road inundation risk.',
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -84,7 +130,9 @@ interface OverpassElement {
   tags?: Record<string, string>;
 }
 
-async function fetchVizagRoads(): Promise<{ coords: [number, number][]; id: number }[]> {
+async function fetchVizagRoads(): Promise<
+  { coords: [number, number][]; id: number }[]
+> {
   const query = `[out:json][timeout:30];
 (
   way["highway"~"^(primary|secondary|tertiary|residential|trunk|unclassified|service|living_street)$"]
@@ -101,7 +149,7 @@ out skel qt;`;
   });
 
   if (!res.ok) throw new Error('Overpass fetch failed');
-  const json = await res.json() as { elements: OverpassElement[] };
+  const json = (await res.json()) as { elements: OverpassElement[] };
 
   // Build node lookup
   const nodes = new Map<number, [number, number]>();
@@ -115,7 +163,10 @@ out skel qt;`;
   const ways: { coords: [number, number][]; id: number }[] = [];
   for (const el of json.elements) {
     if (el.type === 'way' && el.nodes && el.nodes.length >= 2) {
-      const coords = el.nodes.map(nid => nodes.get(nid)).filter(Boolean) as [number, number][];
+      const coords = el.nodes.map((nid) => nodes.get(nid)).filter(Boolean) as [
+        number,
+        number,
+      ][];
       if (coords.length >= 2) ways.push({ coords, id: el.id });
     }
   }
@@ -135,8 +186,8 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
   const reportLayerGroupRef = React.useRef<L.LayerGroup | null>(null);
   const drainageLayerGroupRef = React.useRef<L.LayerGroup | null>(null);
 
-  const [lat, setLat] = React.useState(17.720);
-  const [lng, setLng] = React.useState(83.290);
+  const [lat, setLat] = React.useState(17.72);
+  const [lng, setLng] = React.useState(83.29);
   const [zoom, setZoom] = React.useState(13);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedStyle, setSelectedStyle] = React.useState('dark');
@@ -153,7 +204,7 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
 
   // ─── Flood Simulation State ───────────────────────────────────────────
   const [simState, setSimState] = React.useState<SimulationState>(() =>
-    initSimulation(MOCK_WARDS, 68)
+    initSimulation(MOCK_WARDS, 68),
   );
   const simRafRef = React.useRef<number>(0);
   const lastFrameRef = React.useRef<number>(0);
@@ -168,16 +219,19 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
     const map = L.map(mapContainerRef.current, {
-      center: [17.720, 83.290],
+      center: [17.72, 83.29],
       zoom: 13,
       zoomControl: false,
       attributionControl: true,
-      preferCanvas: true,  // canvas renderer = much faster for hundreds of polylines
+      preferCanvas: true, // canvas renderer = much faster for hundreds of polylines
     });
 
     const tileLayer = L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-      { maxZoom: 19, attribution: '© OpenStreetMap contributors, CARTO | GVMC Drainage Data' }
+      {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors, CARTO | GVMC Drainage Data',
+      },
     ).addTo(map);
     tileLayerRef.current = tileLayer;
 
@@ -194,7 +248,11 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
     });
 
     mapInstanceRef.current = map;
-    return () => { map.remove(); mapInstanceRef.current = null; cancelAnimationFrame(simRafRef.current); };
+    return () => {
+      map.remove();
+      mapInstanceRef.current = null;
+      cancelAnimationFrame(simRafRef.current);
+    };
   }, []);
 
   // ─── Tile switcher ──────────────────────────────────────────────────────
@@ -202,12 +260,15 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
     if (!mapInstanceRef.current || !tileLayerRef.current) return;
     mapInstanceRef.current.removeLayer(tileLayerRef.current);
     const urls: Record<string, string> = {
-      dark:      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-      streets:   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      light:     'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+      dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      streets: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      satellite:
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
     };
-    tileLayerRef.current = L.tileLayer(urls[selectedStyle] || urls.dark, { maxZoom: 19 }).addTo(mapInstanceRef.current);
+    tileLayerRef.current = L.tileLayer(urls[selectedStyle] || urls.dark, {
+      maxZoom: 19,
+    }).addTo(mapInstanceRef.current);
   }, [selectedStyle]);
 
   // ─── Risk Zone Polygons ──────────────────────────────────────────────────
@@ -218,22 +279,26 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
 
     MOCK_WARDS.forEach((w) => {
       const fallback: [number, number][] = [
-        [17.680 + (w.number * 0.003), 83.210 + (w.number * 0.003)],
-        [17.680 + (w.number * 0.003), 83.230 + (w.number * 0.003)],
-        [17.700 + (w.number * 0.003), 83.230 + (w.number * 0.003)],
-        [17.700 + (w.number * 0.003), 83.210 + (w.number * 0.003)],
+        [17.68 + w.number * 0.003, 83.21 + w.number * 0.003],
+        [17.68 + w.number * 0.003, 83.23 + w.number * 0.003],
+        [17.7 + w.number * 0.003, 83.23 + w.number * 0.003],
+        [17.7 + w.number * 0.003, 83.21 + w.number * 0.003],
       ];
       const coords = VIZAG_WARD_POLYGONS[w.number] || fallback;
       const isSelected = w.id === selectedWardId;
 
       const polygon = L.polygon(coords, {
-        color: '#D32F2F', weight: isSelected ? 3.5 : 2,
+        color: '#D32F2F',
+        weight: isSelected ? 3.5 : 2,
         fillColor: SURGE_COLORS[w.riskCategory] || '#FFB74D',
         fillOpacity: isSelected ? 0.85 : 0.65,
       });
       polygon.on('click', () => {
         if (onSelectWard) onSelectWard(w.id);
-        setActivePopup({ type: 'riskZone', data: w as unknown as Record<string, unknown> });
+        setActivePopup({
+          type: 'riskZone',
+          data: w as unknown as Record<string, unknown>,
+        });
       });
       polygonLayerGroupRef.current?.addLayer(polygon);
 
@@ -242,12 +307,16 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
       const lbl = L.divIcon({
         className: '',
         html: `<div style="color:#111;background:rgba(255,255,255,0.9);font-weight:bold;font-size:10px;padding:2px 5px;border-radius:4px;border:1px solid #D32F2F;white-space:nowrap;font-family:sans-serif;cursor:pointer;">${w.name.toUpperCase()}</div>`,
-        iconSize: [80, 20], iconAnchor: [40, 10],
+        iconSize: [80, 20],
+        iconAnchor: [40, 10],
       });
       const lm = L.marker([cLat, cLng], { icon: lbl });
       lm.on('click', () => {
         if (onSelectWard) onSelectWard(w.id);
-        setActivePopup({ type: 'riskZone', data: w as unknown as Record<string, unknown> });
+        setActivePopup({
+          type: 'riskZone',
+          data: w as unknown as Record<string, unknown>,
+        });
       });
       polygonLayerGroupRef.current?.addLayer(lm);
     });
@@ -289,19 +358,27 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
                 status: STATUS_LABEL[status],
                 capacity: '0.5–1.0 m wide × 0.4–0.8 m deep',
                 connectedWards: 'GVMC Municipal Zone',
-                flowDirection: 'Road runoff → Nearest nallah / underground outlet',
-                maintenanceStatus: status === 'blocked'
-                  ? '🚨 Emergency desilting required. GVMC team required.'
-                  : status === 'partial'
-                  ? '⚠️ Scheduled desilting pending.'
-                  : '✅ Pre-monsoon cleaning completed.',
-                capacityStatus: status === 'blocked'
-                  ? '100% Blocked — Overflow onto road surface'
-                  : status === 'partial'
-                  ? '70–85% Utilization — Reduced capacity'
-                  : '30–55% Normal flow',
+                flowDirection:
+                  'Road runoff → Nearest nallah / underground outlet',
+                maintenanceStatus:
+                  status === 'blocked'
+                    ? '🚨 Emergency desilting required. GVMC team required.'
+                    : status === 'partial'
+                      ? '⚠️ Scheduled desilting pending.'
+                      : '✅ Pre-monsoon cleaning completed.',
+                capacityStatus:
+                  status === 'blocked'
+                    ? '100% Blocked — Overflow onto road surface'
+                    : status === 'partial'
+                      ? '70–85% Utilization — Reduced capacity'
+                      : '30–55% Normal flow',
                 congestionLevel: STATUS_CAUSE[status],
-                overflowProbability: status === 'blocked' ? '92%' : status === 'partial' ? '55%' : '14%',
+                overflowProbability:
+                  status === 'blocked'
+                    ? '92%'
+                    : status === 'partial'
+                      ? '55%'
+                      : '14%',
                 aiReason: STATUS_CAUSE[status],
               },
             });
@@ -325,10 +402,16 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
       const icon = L.divIcon({
         className: '',
         html: `<div style="background:#059669;border:2px solid #34D399;color:white;border-radius:8px;padding:3px 6px;font-weight:bold;font-size:11px;box-shadow:0 4px 6px rgba(0,0,0,0.3);">🏠 ${sh.name.split(' ')[0]}</div>`,
-        iconSize: [90, 26], iconAnchor: [45, 13],
+        iconSize: [90, 26],
+        iconAnchor: [45, 13],
       });
       const m = L.marker([sh.lat, sh.lng], { icon });
-      m.on('click', () => setActivePopup({ type: 'shelter', data: sh as unknown as Record<string, unknown> }));
+      m.on('click', () =>
+        setActivePopup({
+          type: 'shelter',
+          data: sh as unknown as Record<string, unknown>,
+        }),
+      );
       shelterLayerGroupRef.current?.addLayer(m);
     });
   }, [layers.shelters]);
@@ -338,24 +421,43 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
     if (!mapInstanceRef.current || !reportLayerGroupRef.current) return;
     reportLayerGroupRef.current.clearLayers();
     if (!layers.reports) return;
-    MOCK_CROWD_REPORTS
-      .filter((r) => severityFilter === 'ALL' || r.severity === severityFilter)
-      .forEach((rep) => {
-        const col = rep.severity === 'Critical' ? '#EF4444' : rep.severity === 'High' ? '#F97316' : '#F59E0B';
-        const icon = L.divIcon({
-          className: '',
-          html: `<div style="background:${col};border:2px solid white;color:white;border-radius:50%;width:22px;height:22px;font-weight:bold;font-size:11px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,0.4);">!</div>`,
-          iconSize: [22, 22], iconAnchor: [11, 11],
-        });
-        const repItem = rep as typeof rep & { lat?: number; lng?: number };
-        const m = L.marker([repItem.lat ?? 17.685, repItem.lng ?? 83.21], { icon });
-        m.on('click', () => setActivePopup({ type: 'report', data: rep as unknown as Record<string, unknown> }));
-        reportLayerGroupRef.current?.addLayer(m);
+    MOCK_CROWD_REPORTS.filter(
+      (r) => severityFilter === 'ALL' || r.severity === severityFilter,
+    ).forEach((rep) => {
+      const col =
+        rep.severity === 'Critical'
+          ? '#EF4444'
+          : rep.severity === 'High'
+            ? '#F97316'
+            : '#F59E0B';
+      const icon = L.divIcon({
+        className: '',
+        html: `<div style="background:${col};border:2px solid white;color:white;border-radius:50%;width:22px;height:22px;font-weight:bold;font-size:11px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,0.4);">!</div>`,
+        iconSize: [22, 22],
+        iconAnchor: [11, 11],
       });
+      const repItem = rep as typeof rep & { lat?: number; lng?: number };
+      const m = L.marker([repItem.lat ?? 17.685, repItem.lng ?? 83.21], {
+        icon,
+      });
+      m.on('click', () =>
+        setActivePopup({
+          type: 'report',
+          data: rep as unknown as Record<string, unknown>,
+        }),
+      );
+      reportLayerGroupRef.current?.addLayer(m);
+    });
   }, [layers.reports, severityFilter]);
 
-  const handleFlyTo = (targetLat: number, targetLng: number, targetZoom = 14.5) => {
-    mapInstanceRef.current?.flyTo([targetLat, targetLng], targetZoom, { duration: 1.5 });
+  const handleFlyTo = (
+    targetLat: number,
+    targetLng: number,
+    targetZoom = 14.5,
+  ) => {
+    mapInstanceRef.current?.flyTo([targetLat, targetLng], targetZoom, {
+      duration: 1.5,
+    });
   };
 
   // ─── Simulation RAF step loop ────────────────────────────────────────
@@ -365,19 +467,26 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
       return;
     }
     const step = (timestamp: number) => {
-      const dt = lastFrameRef.current === 0 ? 16 : Math.min(timestamp - lastFrameRef.current, 100);
+      const dt =
+        lastFrameRef.current === 0
+          ? 16
+          : Math.min(timestamp - lastFrameRef.current, 100);
       lastFrameRef.current = timestamp;
       setSimState((prev) => stepSimulation(prev, dt));
       simRafRef.current = requestAnimationFrame(step);
     };
     simRafRef.current = requestAnimationFrame(step);
-    return () => { cancelAnimationFrame(simRafRef.current); lastFrameRef.current = 0; };
+    return () => {
+      cancelAnimationFrame(simRafRef.current);
+      lastFrameRef.current = 0;
+    };
   }, [layers.floodSimulation, simState.isPlaying]);
 
-  const handleSimPlay  = () => setSimState((s) => ({ ...s, isPlaying: true }));
+  const handleSimPlay = () => setSimState((s) => ({ ...s, isPlaying: true }));
   const handleSimPause = () => setSimState((s) => ({ ...s, isPlaying: false }));
   const handleSimReset = () => setSimState((s) => resetSimulation(s));
-  const handleSimSpeed = (sp: 0.5 | 1 | 2) => setSimState((s) => ({ ...s, speed: sp }));
+  const handleSimSpeed = (sp: 0.5 | 1 | 2) =>
+    setSimState((s) => ({ ...s, speed: sp }));
   const handleSimScrub = (hour: number) => {
     setSimState((s) => ({
       ...s,
@@ -389,7 +498,10 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
   };
 
   return (
-    <div style={{ height }} className="relative w-full rounded-2xl border border-slate-800 bg-slate-950 overflow-hidden select-none font-sans">
+    <div
+      style={{ height }}
+      className="relative w-full select-none overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 font-sans"
+    >
       <MapToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -398,8 +510,15 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
         severityFilter={severityFilter}
         onSeverityFilterChange={setSeverityFilter}
         onSearchSelect={(q: string) => {
-          const ward = MOCK_WARDS.find((w) => w.name.toLowerCase().includes(q.toLowerCase()));
-          if (ward) handleFlyTo(17.6868 + ward.number * 0.003, 83.2185 + ward.number * 0.003, 14);
+          const ward = MOCK_WARDS.find((w) =>
+            w.name.toLowerCase().includes(q.toLowerCase()),
+          );
+          if (ward)
+            handleFlyTo(
+              17.6868 + ward.number * 0.003,
+              83.2185 + ward.number * 0.003,
+              14,
+            );
         }}
       />
 
@@ -413,7 +532,7 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
       <MapControls
         onZoomIn={() => mapInstanceRef.current?.zoomIn()}
         onZoomOut={() => mapInstanceRef.current?.zoomOut()}
-        onResetPitch={() => mapInstanceRef.current?.setView([17.720, 83.290], 13)}
+        onResetPitch={() => mapInstanceRef.current?.setView([17.72, 83.29], 13)}
         onToggleFullscreen={() => {
           if (document.fullscreenElement) document.exitFullscreen();
           else document.documentElement.requestFullscreen();
@@ -421,7 +540,7 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
         onGeolocate={() => handleFlyTo(17.6868, 83.2185, 13)}
       />
 
-      <div ref={mapContainerRef} className="w-full h-full z-0" />
+      <div ref={mapContainerRef} className="z-0 h-full w-full" />
 
       {/* ── Flood Simulation Canvas Overlay ─────────────────────────── */}
       <FloodSimOverlay
@@ -432,7 +551,7 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
 
       {/* Drain data loading indicator */}
       {drainLoading && layers.stormwaterDrainage && (
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 rounded-full border border-blue-800 bg-slate-950/90 px-4 py-1.5 text-[11px] font-mono text-blue-400 shadow-lg backdrop-blur-md">
+        <div className="absolute bottom-16 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-blue-800 bg-slate-950/90 px-4 py-1.5 font-mono text-[11px] text-blue-400 shadow-lg backdrop-blur-md">
           <span className="h-2 w-2 animate-ping rounded-full bg-blue-400" />
           Loading drain network from OSM…
         </div>
@@ -458,7 +577,13 @@ export const LeafletMapContainer: React.FC<LeafletMapProps> = ({
         />
       )}
 
-      <CoordinateDisplay lat={lat} lng={lng} zoom={zoom} pitch={0} bearing={0} />
+      <CoordinateDisplay
+        lat={lat}
+        lng={lng}
+        zoom={zoom}
+        pitch={0}
+        bearing={0}
+      />
       <Legend activeLayers={layers} />
     </div>
   );

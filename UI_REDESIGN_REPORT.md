@@ -8,6 +8,7 @@ The redesign establishes an enterprise-grade, information-dense, dark-first inte
 
 > [!IMPORTANT]
 > **Strict Scope Compliance Verification**:
+>
 > - **Frontend Only**: No modifications made to FastAPI backend, PostgreSQL database schemas, PostGIS spatial queries, AI models (TFT / GNN / YOLOv11 / BLIP-2), authentication flows, or business logic.
 > - **Zero Regression**: All existing hooks (`useShelters`, `useReports`, `useAlerts`, `useWeather`, `useRiskZones`), map engines (Leaflet / Mapbox), and verification workflows remain operational.
 
@@ -28,41 +29,46 @@ The redesigned UI moves away from standard administrative dashboard templates to
 
 A curated, low-glare dark palette with functional risk level indicators:
 
-| Token Category | Hex / HSL Code | Usage Context |
-| :--- | :--- | :--- |
-| **Canvas Background** | `#030712` | Main EOC workspace backdrop |
-| **Card / Panel** | `#0B132B` / `hsl(222 47% 8%)` | Intelligence cards, drawer panels, HUD overlays |
-| **Primary Blue** | `#3B82F6` | Core interactive actions, primary buttons, system focus |
-| **Accent Cyan** | `#06B6D4` | AI engine indicators, telemetry values, active highlights |
-| **Critical Risk / Alert** | `#EF4444` | High-inundation warnings, critical ward alerts, emergency mode |
-| **Warning / Caution** | `#F59E0B` | Moderate risk wards, near-capacity shelters, pending queue |
-| **Safe / Operational** | `#10B981` | Open shelters, verified reports, online sensor status |
+| Token Category            | Hex / HSL Code                | Usage Context                                                  |
+| :------------------------ | :---------------------------- | :------------------------------------------------------------- |
+| **Canvas Background**     | `#030712`                     | Main EOC workspace backdrop                                    |
+| **Card / Panel**          | `#0B132B` / `hsl(222 47% 8%)` | Intelligence cards, drawer panels, HUD overlays                |
+| **Primary Blue**          | `#3B82F6`                     | Core interactive actions, primary buttons, system focus        |
+| **Accent Cyan**           | `#06B6D4`                     | AI engine indicators, telemetry values, active highlights      |
+| **Critical Risk / Alert** | `#EF4444`                     | High-inundation warnings, critical ward alerts, emergency mode |
+| **Warning / Caution**     | `#F59E0B`                     | Moderate risk wards, near-capacity shelters, pending queue     |
+| **Safe / Operational**    | `#10B981`                     | Open shelters, verified reports, online sensor status          |
 
 ---
 
 ## 3. Core Component Improvements
 
 ### 3.1 Navbar & Header Command Bar
+
 - **Real-Time UTC / IST Clock**: Live digital clock display (`HH:mm:ss IST`) synchronized with Visakhapatnam EOC-1 server time.
 - **System Status Indicator**: Animated pulse badge (`SYSTEM OPERATIONAL` / `STAGE 3 CYCLONE WARNING`).
 - **Quick Action Bar**: Emergency mode override toggle, search input, notification drawer, and user profile management.
 
 ### 3.2 Sidebar Navigation
+
 - **Structured Operations Grouping**: Grouped navigation sections for Command & Control, GIS & Intelligence, Public & Citizen Operations, and Verification.
 - **Cyan Glow Active States**: Framer Motion animated active state highlights with dark border accents.
 - **Responsive Collapse**: Smooth width transitions between collapsed (icon-only) and expanded views.
 
 ### 3.3 EOC Analytics & Telemetry Cards
+
 - **Embedded Sparkline Micro-Charts**: SVG sparkline graphics illustrating 10-point telemetry trends.
 - **Status Pills with Glow Dots**: Instant visual health indicators for wards, rainfall gauges, and DB queues.
 - **DB Sync Timestamps**: Transparent indicators verifying PostgreSQL database synchronization.
 
 ### 3.4 GIS Spatial Risk Map Hero
+
 - **Prominent Display Space**: Maximized canvas area with floating EOC HUD controls.
 - **Interactive Layers**: Layer selector for water depth heatmaps, drain status vectors, relief shelters, and citizen reports.
 - **Ward Inspector HUD**: Floating inspector panel showing water level (cm), rainfall intensity (mm/h), elevation (m), and exposed population.
 
 ### 3.5 Right Intelligence Panel (`RightIntelligencePanel`)
+
 - **Explainable AI Cards**: Displays Temporal Fusion Transformer (TFT) inundation predictions, 94.8% confidence gauge, feature impact breakdown (rainfall, tide lock, drain blockage), and recommended NDMA command actions.
 - **Live Weather Telemetry**: Dedicated sensor readouts for rain rate, 24h cumulative precipitation, wind velocity, and tide gauges.
 - **Chronological Incident Timeline**: Animated event feed tracking system telemetry, crowd report submissions, officer verifications, and alert broadcasts.

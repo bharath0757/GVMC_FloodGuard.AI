@@ -3,6 +3,7 @@
 This document establishes the comprehensive design system and guidelines for the FloodGuard AI platform. Given the critical nature of disaster management, these guidelines prioritize clarity, accessibility, and speed.
 
 ## 1. Design Philosophy
+
 - **Emergency-First Design:** Critical alerts, evacuation routes, and SOS buttons must be immediately visible without scrolling.
 - **Information Density vs. Clarity:** Balance the need for complex GIS data with clear, uncluttered interfaces. Use progressive disclosure.
 - **Mobile-First:** The citizen-facing application is primarily accessed via smartphones, often under duress or poor network conditions.
@@ -12,6 +13,7 @@ This document establishes the comprehensive design system and guidelines for the
 ## 2. Design System
 
 ### Color Palette
+
 - **Primary:** Deep Blue (`#1E3A5F`) — Conveys trust, authority, and stability.
 - **Secondary:** Teal (`#0D9488`) — Represents water and environmental monitoring.
 - **Danger/Critical:** Red (`#DC2626`) — Active flooding, immediate evacuation, critical alerts.
@@ -21,6 +23,7 @@ This document establishes the comprehensive design system and guidelines for the
 - **Background:** Dark (`#0F172A`) — Default primary background (Dark mode is default for reduced glare at night and better map contrast).
 
 ### Risk Level Colors
+
 - **Very Low:** Green
 - **Low:** Lime
 - **Medium:** Amber
@@ -28,10 +31,12 @@ This document establishes the comprehensive design system and guidelines for the
 - **Critical:** Red
 
 ### Typography
+
 - **UI & Content:** `Inter` (sans-serif) for high legibility on digital screens.
 - **Data & Metrics:** `JetBrains Mono` for tabular data, coordinates, and sensor readings to ensure alignment.
 
 ### Spacing & Geometry
+
 - **Spacing System:** 4px base unit (4, 8, 12, 16, 24, 32, 48, 64).
 - **Border Radius:**
   - `sm` (4px): Small inputs, tags.
@@ -43,7 +48,7 @@ This document establishes the comprehensive design system and guidelines for the
 
 ## 3. Component Guidelines
 
-- **Buttons:** 
+- **Buttons:**
   - Variants: Primary (Blue), Secondary (Outline), Destructive (Red), Ghost (Text only).
   - Sizes: `sm`, `md`, `lg`. Touch targets on mobile must be at least 44x44px.
   - Must include clear loading states (spinner inside button) and disabled states.
@@ -54,6 +59,7 @@ This document establishes the comprehensive design system and guidelines for the
 - **Forms:** Labels must be associated with inputs. Use inline validation and provide clear, actionable error messages.
 
 ## 4. Map UI Guidelines
+
 - **Legend:** Must always be visible. On mobile, provide a floating action button to toggle a bottom sheet legend.
 - **Layer Controls:** Housed in a collapsible sidebar (desktop) or a floating panel (mobile).
 - **Markers:** Use clustering at low zoom levels to prevent clutter. Show individual distinct markers at high zoom.
@@ -62,13 +68,15 @@ This document establishes the comprehensive design system and guidelines for the
 - **Attribution:** Ensure Mapbox/OSM attribution is clearly visible.
 
 ## 5. Responsive Breakpoints
+
 - **Mobile:** `0 - 639px` (Stacked layouts, bottom navigation, full-screen map takeovers)
 - **Tablet:** `640 - 1023px` (Two-column layouts possible)
 - **Desktop:** `1024 - 1279px` (Standard dashboard view, sidebars)
 - **Wide:** `1280px+` (Maximized data density, multi-panel views)
 
 ## 6. Animation Guidelines
-- **Duration:** 
+
+- **Duration:**
   - Micro-interactions (hover, press): 150ms.
   - Standard (modals, dropdowns): 300ms.
   - Emphasis (alerts entering): 500ms.
@@ -78,24 +86,29 @@ This document establishes the comprehensive design system and guidelines for the
 - **Accessibility:** Respect system `prefers-reduced-motion` settings and disable non-essential animations if flagged.
 
 ## 7. Iconography
+
 - Use **Lucide React** icons.
 - Maintain consistent stroke width (usually 2px).
 - Develop custom SVGs for specific flood-related icons (e.g., rising water, dam breach, specific shelter types) while adhering to the Lucide style.
 
 ## 8. Voice Assistant UI
+
 - **Visual Feedback:** Provide a waveform or pulsing indicator when listening.
 - **Controls:** Clear language selector toggle.
 - **Feedback:** Display a real-time text transcript of the parsed speech.
 - **Discovery:** Show suggested queries (e.g., "Ask: Where is the nearest shelter?") below the input.
 
 ## 9. Government Dashboard Layout
+
 - **Sidebar:** Persistent vertical navigation for switching between modules (Overview, Map, Sensors, Analytics).
 - **Top Bar:** Quick stats (Active Alerts, Systems Status) and user profile.
 - **Main Content:** Widget-based grid for data visualization.
 - **Filter Panel:** Global context filters (Date range, Region) applied across widgets.
 
 ## 10. Emergency Mode UI
+
 When a **CRITICAL** flood alert is activated for a user's region, the application interface must transform:
+
 - **Contrast:** Switches to ultra-high contrast mode.
 - **Navigation:** Standard navigation is hidden or minimized.
 - **CTA:** The primary view is dominated by Evacuation Instructions, Safe Routes on the Map, and a massive "SOS / Request Rescue" button.

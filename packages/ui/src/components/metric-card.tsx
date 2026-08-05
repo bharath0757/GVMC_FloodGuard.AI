@@ -5,7 +5,7 @@ import { Progress } from './progress';
 
 /**
  * Storybook & Component Documentation: MetricCard
- * 
+ *
  * **Purpose:** Display sensor telemetry or resource metrics with status indicator dots and target thresholds.
  * **Usage:** `<MetricCard label="Ward 12 Rainfall" value="124.5 mm" progress={82} status="critical" timestamp="2 mins ago" />`
  * **Accessibility Notes:** Accessible text descriptions for screen readers.
@@ -44,22 +44,51 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       <CardContent className="p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className={cn('h-2.5 w-2.5 rounded-full shadow-xs', statusDots[status])} />
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{label}</span>
+            <span
+              className={cn(
+                'shadow-xs h-2.5 w-2.5 rounded-full',
+                statusDots[status],
+              )}
+            />
+            <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wide">
+              {label}
+            </span>
           </div>
-          {timestamp && <span className="text-[10px] text-muted-foreground">{timestamp}</span>}
+          {timestamp && (
+            <span className="text-muted-foreground text-[10px]">
+              {timestamp}
+            </span>
+          )}
         </div>
 
         <div className="mt-3 flex items-baseline justify-between">
-          <div className="text-xl font-bold font-mono text-foreground">
-            {value} {unit && <span className="text-xs font-normal text-muted-foreground">{unit}</span>}
+          <div className="text-foreground font-mono text-xl font-bold">
+            {value}{' '}
+            {unit && (
+              <span className="text-muted-foreground text-xs font-normal">
+                {unit}
+              </span>
+            )}
           </div>
-          {target && <div className="text-xs text-muted-foreground">Target: {target}</div>}
+          {target && (
+            <div className="text-muted-foreground text-xs">
+              Target: {target}
+            </div>
+          )}
         </div>
 
         {progress !== undefined && (
           <div className="mt-3">
-            <Progress value={progress} variant={status === 'danger' ? 'danger' : status === 'warning' ? 'warning' : 'default'} />
+            <Progress
+              value={progress}
+              variant={
+                status === 'danger'
+                  ? 'danger'
+                  : status === 'warning'
+                    ? 'warning'
+                    : 'default'
+              }
+            />
           </div>
         )}
       </CardContent>

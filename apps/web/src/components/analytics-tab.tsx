@@ -10,15 +10,18 @@ export const AnalyticsTab: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 flex items-center justify-between">
+      <div className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-4">
         <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/30">
+          <div className="rounded-lg border border-teal-500/30 bg-teal-500/10 p-2 text-teal-400">
             <BarChart3 className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="font-bold text-base text-white">Monsoon Flood Analytics & Predictive Metrics</h2>
-            <span className="text-xs font-mono text-slate-400">
-              Visakhapatnam Historical & Realtime Sensor Telemetry • TFT Time-Series Models
+            <h2 className="text-base font-bold text-white">
+              Monsoon Flood Analytics & Predictive Metrics
+            </h2>
+            <span className="font-mono text-xs text-slate-400">
+              Visakhapatnam Historical & Realtime Sensor Telemetry • TFT
+              Time-Series Models
             </span>
           </div>
         </div>
@@ -26,42 +29,50 @@ export const AnalyticsTab: React.FC = () => {
       </div>
 
       {/* Response Performance Metrics Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl border border-slate-800 bg-slate-950 space-y-1">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="space-y-1 rounded-xl border border-slate-800 bg-slate-950 p-4">
           <div className="flex items-center justify-between text-teal-400">
             <Clock className="h-4 w-4" />
-            <span className="font-mono font-bold text-xl">&lt; 4.2 min</span>
+            <span className="font-mono text-xl font-bold">&lt; 4.2 min</span>
           </div>
-          <span className="text-xs font-mono text-slate-400">Avg Report Verification Time</span>
+          <span className="font-mono text-xs text-slate-400">
+            Avg Report Verification Time
+          </span>
         </div>
 
-        <div className="p-4 rounded-xl border border-slate-800 bg-slate-950 space-y-1">
+        <div className="space-y-1 rounded-xl border border-slate-800 bg-slate-950 p-4">
           <div className="flex items-center justify-between text-emerald-400">
             <Award className="h-4 w-4" />
-            <span className="font-mono font-bold text-xl">94.2%</span>
+            <span className="font-mono text-xl font-bold">94.2%</span>
           </div>
-          <span className="text-xs font-mono text-slate-400">AI Hazard Model Accuracy</span>
+          <span className="font-mono text-xs text-slate-400">
+            AI Hazard Model Accuracy
+          </span>
         </div>
 
-        <div className="p-4 rounded-xl border border-slate-800 bg-slate-950 space-y-1">
+        <div className="space-y-1 rounded-xl border border-slate-800 bg-slate-950 p-4">
           <div className="flex items-center justify-between text-cyan-400">
             <Building2 className="h-4 w-4" />
-            <span className="font-mono font-bold text-xl">18,500</span>
+            <span className="font-mono text-xl font-bold">18,500</span>
           </div>
-          <span className="text-xs font-mono text-slate-400">Total Shelter Capacity</span>
+          <span className="font-mono text-xs text-slate-400">
+            Total Shelter Capacity
+          </span>
         </div>
 
-        <div className="p-4 rounded-xl border border-slate-800 bg-slate-950 space-y-1">
+        <div className="space-y-1 rounded-xl border border-slate-800 bg-slate-950 p-4">
           <div className="flex items-center justify-between text-amber-400">
             <TrendingUp className="h-4 w-4" />
-            <span className="font-mono font-bold text-xl">45,000</span>
+            <span className="font-mono text-xl font-bold">45,000</span>
           </div>
-          <span className="text-xs font-mono text-slate-400">SMS Alerts Dispatched</span>
+          <span className="font-mono text-xs text-slate-400">
+            SMS Alerts Dispatched
+          </span>
         </div>
       </div>
 
       {/* Interactive Charts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* 1. Rainfall Trends & TFT Forecast */}
         <AnalyticsCard
           title="1. Rainfall Trends & TFT 24h Forecast"

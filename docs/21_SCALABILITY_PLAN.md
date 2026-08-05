@@ -9,20 +9,20 @@ graph TD
     Users((100K+ Users)) --> Route53[Route53 DNS]
     Route53 --> CF[CloudFront CDN]
     Route53 --> ALB[Application Load Balancer]
-    
+
     CF --> S3Static[S3 Static Assets]
-    
+
     ALB --> API_ASG[ECS API Auto-Scaling Group]
-    
+
     API_ASG --> L3Cache[(Redis L3 Cache)]
     API_ASG --> PgBouncer[PgBouncer Pooler]
-    
+
     PgBouncer --> DB_Primary[(RDS Primary - Write)]
     PgBouncer --> DB_Replica[(RDS Replicas - Read)]
-    
+
     API_ASG --> SQS[SQS Queues]
     SQS --> Worker_ASG[Celery Worker Auto-Scaling]
-    
+
     Worker_ASG --> SageMaker[SageMaker AI Endpoints]
 ```
 
@@ -51,7 +51,7 @@ graph TD
 
 - **L1 (Client/Browser)**: Static assets and SPA bundles cached aggressively via `Cache-Control` headers (1 year TTL).
 - **L2 (CDN)**: Public API responses (e.g., general city flood risk) cached at the CloudFront edge nodes (5-minute TTL).
-- **L3 (Application/Redis)**: 
+- **L3 (Application/Redis)**:
   - Risk scores: 5 min TTL
   - Weather forecasts: 15 min TTL
   - Shelter lists: 1 min TTL
@@ -61,7 +61,7 @@ graph TD
 ## 6. AI Model Scaling
 
 - **Decoupled Architecture**: AI models are not embedded in the web API. They run as separate Celery tasks or managed SageMaker endpoints.
-- **Compute Matrix**: 
+- **Compute Matrix**:
   - CPU: Lightweight models (XGBoost tabular predictions).
   - GPU: Heavy models (YOLOv11 vision, BLIP-2 VQA, Whisper audio).
 - **Batching**: Non-critical predictions (e.g., hourly general risk updates) use batch inference.

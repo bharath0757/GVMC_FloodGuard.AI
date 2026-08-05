@@ -1,14 +1,14 @@
 <div align="center">
   <img src="https://via.placeholder.com/200x200?text=HackYatra+Logo" alt="HackYatra Logo" width="200" height="200">
-  
-  # HackYatra 🚀
-  
-  **Empowering Student Innovators to Solve Real-World Civic Challenges at Scale.**
-  
-  [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg?style=for-the-badge)](https://github.com/GVMC/HackYatra/actions)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-  [![Contributors](https://img.shields.io/github/contributors/GVMC/HackYatra?style=for-the-badge)](https://github.com/GVMC/HackYatra/graphs/contributors)
-  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](#contributing)
+
+# HackYatra 🚀
+
+**Empowering Student Innovators to Solve Real-World Civic Challenges at Scale.**
+
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg?style=for-the-badge)](https://github.com/GVMC/HackYatra/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Contributors](https://img.shields.io/github/contributors/GVMC/HackYatra?style=for-the-badge)](https://github.com/GVMC/HackYatra/graphs/contributors)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](#contributing)
 </div>
 
 ---
@@ -84,12 +84,12 @@ graph TD
     API --> BE1[FastAPI Auth Service]
     API --> BE2[FastAPI Core Service]
     API --> BE3[FastAPI AI Service]
-    
+
     BE1 --> DB[(PostgreSQL)]
     BE2 --> DB[(PostgreSQL)]
     BE2 --> Cache[(Redis Cache)]
     BE3 --> AI_Models[AI Inference Engine]
-    
+
     subgraph Data Layer
         DB
         Cache
@@ -112,12 +112,14 @@ Follow these steps to set up the HackYatra platform locally for development.
 ### Installation
 
 **1. Clone the repository:**
+
 ```bash
 git clone https://github.com/GVMC/HackYatra.git
 cd HackYatra
 ```
 
 **2. Backend Setup (FastAPI):**
+
 ```bash
 cd backend
 python -m venv venv
@@ -126,15 +128,18 @@ pip install -r requirements.txt
 alembic upgrade head      # Run database migrations
 uvicorn main:app --reload
 ```
-*The backend will be available at `http://localhost:8000`*
+
+_The backend will be available at `http://localhost:8000`_
 
 **3. Frontend Setup (Next.js):**
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*The frontend will be available at `http://localhost:3000`*
+
+_The frontend will be available at `http://localhost:3000`_
 
 ---
 
@@ -143,6 +148,7 @@ npm run dev
 Create `.env` files in both `frontend` and `backend` directories based on the `.env.example` provided.
 
 **Backend (`backend/.env`):**
+
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/hackyatra
 REDIS_URL=redis://localhost:6379/0
@@ -152,6 +158,7 @@ CORS_ORIGINS=http://localhost:3000
 ```
 
 **Frontend (`frontend/.env.local`):**
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
@@ -202,7 +209,7 @@ Once the backend is running locally, you can access the interactive API document
 
 ## 🤝 Contributing
 
-We welcome contributions from the community to make HackYatra better! 
+We welcome contributions from the community to make HackYatra better!
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -223,6 +230,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## 👥 Team & Contact
 
 **HackYatra Core Team**
+
 - [Name/Role] - [@TwitterHandle] - email@example.com
 - [Name/Role] - [@TwitterHandle] - email@example.com
 

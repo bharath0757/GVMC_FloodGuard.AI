@@ -84,24 +84,27 @@
   }
   body {
     @apply bg-background text-foreground antialiased selection:bg-cyan-500/20 selection:text-cyan-300;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family:
+      'Inter',
+      system-ui,
+      -apple-system,
+      sans-serif;
   }
-  
+
   html {
     scroll-behavior: smooth;
   }
 
   *:focus-visible {
-    @apply outline-none ring-2 ring-cyan-500/80 ring-offset-2 ring-offset-background;
+    @apply ring-offset-background outline-none ring-2 ring-cyan-500/80 ring-offset-2;
   }
 }
 
 /* Glass morphism utility */
 .glass {
-  @apply bg-slate-900/80 backdrop-blur-md border border-slate-800/80;
+  @apply border border-slate-800/80 bg-slate-900/80 backdrop-blur-md;
 }
 
 .eoc-glass-card {
-  @apply bg-slate-950/70 border border-slate-800/80 backdrop-blur-md rounded-xl shadow-xl hover:border-slate-700/80 transition-all duration-200;
+  @apply rounded-xl border border-slate-800/80 bg-slate-950/70 shadow-xl backdrop-blur-md transition-all duration-200 hover:border-slate-700/80;
 }
-

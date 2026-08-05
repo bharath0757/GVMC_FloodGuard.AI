@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, Button, Input, Select, useToast } from '@floodguard/ui';
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  Button,
+  Input,
+  Select,
+  useToast,
+} from '@floodguard/ui';
 import { useCreateReport } from '@/hooks/use-api-queries';
 import { MOCK_WARDS } from '@/data/mockData';
 
@@ -8,7 +18,10 @@ interface SubmitReportModalProps {
   onClose: () => void;
 }
 
-export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({ isOpen, onClose }) => {
+export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const createReportMutation = useCreateReport();
   const { toast } = useToast();
 
@@ -33,7 +46,8 @@ export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({ isOpen, on
 
       toast({
         title: 'Report Submitted to Database',
-        message: 'Your crowdsourced flood report has been registered in PostgreSQL DB.',
+        message:
+          'Your crowdsourced flood report has been registered in PostgreSQL DB.',
         type: 'success',
       });
       onClose();
@@ -52,13 +66,14 @@ export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({ isOpen, on
       <DialogHeader>
         <DialogTitle>Submit Crowdsourced Flood Incident Report</DialogTitle>
         <DialogDescription>
-          Report active waterlogging or hazards to the GVMC Flood Command Center database.
+          Report active waterlogging or hazards to the GVMC Flood Command Center
+          database.
         </DialogDescription>
       </DialogHeader>
 
       <form onSubmit={handleSubmit} className="space-y-4 py-2 text-xs">
         <div>
-          <label className="block font-semibold mb-1">Report Title</label>
+          <label className="mb-1 block font-semibold">Report Title</label>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -69,8 +84,11 @@ export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({ isOpen, on
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block font-semibold mb-1">Municipal Ward</label>
-            <Select value={wardName} onChange={(e) => setWardName(e.target.value)}>
+            <label className="mb-1 block font-semibold">Municipal Ward</label>
+            <Select
+              value={wardName}
+              onChange={(e) => setWardName(e.target.value)}
+            >
               {MOCK_WARDS.map((w) => (
                 <option key={w.id} value={w.name}>
                   {w.name} (Ward #{w.number})
@@ -80,8 +98,11 @@ export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({ isOpen, on
           </div>
 
           <div>
-            <label className="block font-semibold mb-1">Severity Level</label>
-            <Select value={severity} onChange={(e) => setSeverity(e.target.value)}>
+            <label className="mb-1 block font-semibold">Severity Level</label>
+            <Select
+              value={severity}
+              onChange={(e) => setSeverity(e.target.value)}
+            >
               <option value="Low">Low (Water on curbs)</option>
               <option value="Medium">Medium (Roads covered)</option>
               <option value="High">High (Knee-deep water)</option>
@@ -91,7 +112,9 @@ export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({ isOpen, on
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Estimated Water Depth (cm)</label>
+          <label className="mb-1 block font-semibold">
+            Estimated Water Depth (cm)
+          </label>
           <Input
             type="number"
             value={waterDepthCm}
@@ -102,12 +125,14 @@ export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({ isOpen, on
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Detailed Description</label>
+          <label className="mb-1 block font-semibold">
+            Detailed Description
+          </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="w-full rounded-md border border-border bg-background p-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            className="border-border bg-background text-foreground focus:ring-primary w-full rounded-md border p-2 focus:outline-none focus:ring-2"
             placeholder="Provide landmark details, trapped vehicles, or power line hazards..."
             required
           />
@@ -118,7 +143,11 @@ export const SubmitReportModal: React.FC<SubmitReportModalProps> = ({ isOpen, on
             Cancel
           </Button>
 
-          <Button type="submit" variant="danger" isLoading={createReportMutation.isPending}>
+          <Button
+            type="submit"
+            variant="danger"
+            isLoading={createReportMutation.isPending}
+          >
             Submit Report to DB
           </Button>
         </DialogFooter>

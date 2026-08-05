@@ -16,7 +16,11 @@ export const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
 }) => {
   return (
     <div className={className}>
-      <MapContainer selectedWardId={selectedWardId} onSelectWard={onSelectWard} height={height} />
+      <MapContainer
+        selectedWardId={selectedWardId}
+        onSelectWard={onSelectWard}
+        height={height}
+      />
     </div>
   );
 };

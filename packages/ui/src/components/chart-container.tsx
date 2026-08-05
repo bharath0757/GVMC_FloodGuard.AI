@@ -5,7 +5,7 @@ import { BarChart2, AlertCircle } from 'lucide-react';
 
 /**
  * Storybook & Component Documentation: ChartContainer
- * 
+ *
  * **Purpose:** Responsive container for chart visualizations (Recharts, ChartJS, etc.) with unified loading/empty/error states.
  * **Usage:** `<ChartContainer isLoading={loading} isEmpty={data.length === 0}>...<ResponsiveContainer>...</ChartContainer>`
  * **Accessibility Notes:** Provides alt text / summary view for screen readers when data charts cannot be parsed visually.
@@ -32,32 +32,37 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 }) => {
   return (
     <div
-      className={cn('relative w-full flex flex-col justify-center items-center rounded-lg bg-background/50 p-2', className)}
+      className={cn(
+        'bg-background/50 relative flex w-full flex-col items-center justify-center rounded-lg p-2',
+        className,
+      )}
       style={{ height: typeof height === 'number' ? `${height}px` : height }}
       {...props}
     >
       {isLoading && (
-        <div className="w-full h-full flex flex-col space-y-3 p-4">
+        <div className="flex h-full w-full flex-col space-y-3 p-4">
           <Skeleton className="h-6 w-1/3" />
           <Skeleton className="h-full w-full rounded-lg" />
         </div>
       )}
 
       {!isLoading && error && (
-        <div className="flex flex-col items-center justify-center p-6 text-center text-destructive">
-          <AlertCircle className="h-8 w-8 mb-2 opacity-80" />
+        <div className="text-destructive flex flex-col items-center justify-center p-6 text-center">
+          <AlertCircle className="mb-2 h-8 w-8 opacity-80" />
           <p className="text-sm font-medium">{error}</p>
         </div>
       )}
 
       {!isLoading && !error && isEmpty && (
-        <div className="flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
-          <BarChart2 className="h-8 w-8 mb-2 opacity-40" />
+        <div className="text-muted-foreground flex flex-col items-center justify-center p-6 text-center">
+          <BarChart2 className="mb-2 h-8 w-8 opacity-40" />
           <p className="text-sm font-medium">{emptyMessage}</p>
         </div>
       )}
 
-      {!isLoading && !error && !isEmpty && <div className="w-full h-full">{children}</div>}
+      {!isLoading && !error && !isEmpty && (
+        <div className="h-full w-full">{children}</div>
+      )}
     </div>
   );
 };

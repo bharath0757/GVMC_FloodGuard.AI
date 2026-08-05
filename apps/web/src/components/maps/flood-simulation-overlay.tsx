@@ -10,12 +10,20 @@ interface FloodSimOverlayProps {
 }
 
 // ─── Convert lat/lng → canvas pixel (matches Leaflet map projection) ─────────
-function latLngToPoint(map: L.Map, lat: number, lng: number): { x: number; y: number } {
+function latLngToPoint(
+  map: L.Map,
+  lat: number,
+  lng: number,
+): { x: number; y: number } {
   const pt = map.latLngToContainerPoint([lat, lng]);
   return { x: pt.x, y: pt.y };
 }
 
-export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState, active }) => {
+export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({
+  map,
+  simState,
+  active,
+}) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const rafRef = React.useRef<number>(0);
 
@@ -30,8 +38,12 @@ export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState,
     };
     resize();
     map.on('resize', resize);
-    map.on('move', () => { /* will re-draw next RAF */ });
-    return () => { map.off('resize', resize); };
+    map.on('move', () => {
+      /* will re-draw next RAF */
+    });
+    return () => {
+      map.off('resize', resize);
+    };
   }, [map]);
 
   // ─── RAF draw loop ──────────────────────────────────────────────────────
@@ -39,7 +51,13 @@ export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState,
     if (!canvasRef.current || !map || !active) {
       if (canvasRef.current) {
         const ctx = canvasRef.current.getContext('2d');
-        if (ctx) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        if (ctx)
+          ctx.clearRect(
+            0,
+            0,
+            canvasRef.current.width,
+            canvasRef.current.height,
+          );
       }
       return;
     }
@@ -93,7 +111,14 @@ export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState,
         const pt = latLngToPoint(map, rz.lat, rz.lng);
         const w = Math.max(4, rz.width);
         ctx.save();
-        const grad = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, w * 2.5);
+        const grad = ctx.createRadialGradient(
+          pt.x,
+          pt.y,
+          0,
+          pt.x,
+          pt.y,
+          w * 2.5,
+        );
         grad.addColorStop(0, `rgba(33,150,243,${0.45 * rz.intensity})`);
         grad.addColorStop(1, 'rgba(33,150,243,0)');
         ctx.fillStyle = grad;
@@ -107,7 +132,11 @@ export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState,
           ctx.textAlign = 'center';
           ctx.shadowColor = 'rgba(0,0,0,0.9)';
           ctx.shadowBlur = 3;
-          ctx.fillText(rz.intensity > 0.65 ? '🔴 FLOODED' : '🟡 WARNING', pt.x, pt.y - w - 2);
+          ctx.fillText(
+            rz.intensity > 0.65 ? '🔴 FLOODED' : '🟡 WARNING',
+            pt.x,
+            pt.y - w - 2,
+          );
         }
         ctx.restore();
       });
@@ -122,7 +151,14 @@ export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState,
 
         ctx.save();
         // Outer glow ring
-        const grad = ctx.createRadialGradient(pt.x, pt.y, r * 0.2, pt.x, pt.y, r);
+        const grad = ctx.createRadialGradient(
+          pt.x,
+          pt.y,
+          r * 0.2,
+          pt.x,
+          pt.y,
+          r,
+        );
         grad.addColorStop(0, `rgba(239,68,68,${0.6 * op.intensity * pulse})`);
         grad.addColorStop(0.6, `rgba(249,115,22,${0.3 * op.intensity})`);
         grad.addColorStop(1, 'rgba(239,68,68,0)');
@@ -146,7 +182,14 @@ export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState,
 
         if (p.type === 'flow') {
           // Small blue teardrop
-          const grad = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, p.radius);
+          const grad = ctx.createRadialGradient(
+            pt.x,
+            pt.y,
+            0,
+            pt.x,
+            pt.y,
+            p.radius,
+          );
           grad.addColorStop(0, `rgba(147,210,255,${p.alpha})`);
           grad.addColorStop(1, `rgba(59,130,246,0)`);
           ctx.beginPath();
@@ -155,7 +198,14 @@ export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState,
           ctx.fill();
         } else if (p.type === 'pool') {
           // Translucent expanding pool
-          const grad = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, p.radius);
+          const grad = ctx.createRadialGradient(
+            pt.x,
+            pt.y,
+            0,
+            pt.x,
+            pt.y,
+            p.radius,
+          );
           grad.addColorStop(0, `rgba(33,150,243,${p.alpha * 0.7})`);
           grad.addColorStop(1, `rgba(33,150,243,0)`);
           ctx.beginPath();
@@ -179,7 +229,9 @@ export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState,
     };
 
     rafRef.current = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(rafRef.current); };
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+    };
   }, [map, simState, active]);
 
   if (!active) return null;
@@ -187,7 +239,7 @@ export const FloodSimOverlay: React.FC<FloodSimOverlayProps> = ({ map, simState,
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 pointer-events-none z-10"
+      className="pointer-events-none absolute inset-0 z-10"
       style={{ mixBlendMode: 'screen' }}
     />
   );

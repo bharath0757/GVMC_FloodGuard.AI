@@ -56,27 +56,27 @@ graph TD
     MobApp --> CDN
     CDN --> WAF
     WAF --> ALB
-    
+
     ALB --> Auth
     ALB --> Risk
     ALB --> Predict
     ALB --> Evac
     ALB --> Voice
-    
+
     Auth --> DB
     Risk --> DB
     Predict --> DB
-    
+
     Auth --> Cache
     Risk --> Cache
-    
+
     Risk --> MQ
     Predict --> MQ
-    
+
     MQ --> Torch
     MQ --> XG
     MQ --> CV
-    
+
     Risk --> Weather
     Evac --> Maps
     Auth --> SMS
@@ -100,11 +100,11 @@ sequenceDiagram
     Service->>DB: Save status=PENDING
     Service->>Task: Enqueue image processing task
     API-->>UI: Return 202 Accepted (taskId)
-    
+
     Task->>Model: YOLOv11 & BLIP-2 Inference
     Model-->>Task: Extracted objects & text
     Task->>DB: Update status=COMPLETED, save insights
-    
+
     Task->>API: Publish WebSocket Event
     API-->>UI: WebSocket Update (New Insights)
 ```
@@ -172,21 +172,25 @@ flowchart TD
 ## 10. Architecture Decision Records (ADRs)
 
 ### ADR 1: Modular Monolith over Microservices
+
 - **Context**: Rapid MVP development while preparing for 100K users.
 - **Decision**: Use a single FastAPI application with strictly bounded context modules.
 - **Rationale**: Avoids network overhead and operational complexity of microservices, while enforcing clean interfaces that can be split later.
 
 ### ADR 2: FastAPI over Django
+
 - **Context**: Need high-concurrency async support for WebSockets and ML serving.
 - **Decision**: FastAPI.
 - **Rationale**: Native `asyncio` support, Pydantic validation, excellent performance, and built-in OpenAPI docs.
 
 ### ADR 3: PostgreSQL + PostGIS over MongoDB
+
 - **Context**: Heavy geospatial querying and complex relationships (routes, shelters, risk zones).
 - **Decision**: PostgreSQL with PostGIS extension.
 - **Rationale**: Unmatched spatial querying capabilities, ACID compliance, and maturity in the GIS space.
 
 ### ADR 4: Celery over Native Async for Tasks
+
 - **Context**: Need to run YOLOv11 and PyTorch inferences.
 - **Decision**: Celery with Redis broker.
 - **Rationale**: Native async blocks the event loop for CPU-bound ML tasks. Celery offloads this to separate worker processes, allowing independent scaling of ML workers.

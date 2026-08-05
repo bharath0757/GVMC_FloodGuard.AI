@@ -10,33 +10,44 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
-  ({ className, collapsed = false, onToggleCollapse, brandLogo, brandName = 'FloodGuard AI', children, ...props }, ref) => {
+  (
+    {
+      className,
+      collapsed = false,
+      onToggleCollapse,
+      brandLogo,
+      brandName = 'FloodGuard AI',
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <aside
         ref={ref}
         className={cn(
-          'relative flex flex-col h-screen border-r border-slate-800/90 bg-slate-950/95 text-slate-100 transition-all duration-300 select-none z-30 shadow-2xl backdrop-blur-xl shrink-0',
+          'relative z-30 flex h-screen shrink-0 select-none flex-col border-r border-slate-800/90 bg-slate-950/95 text-slate-100 shadow-2xl backdrop-blur-xl transition-all duration-300',
           collapsed ? 'w-16' : 'w-64',
-          className
+          className,
         )}
         {...props}
       >
         {/* Header */}
-        <div className="flex h-16 items-center justify-between px-4 border-b border-slate-800/80">
+        <div className="flex h-16 items-center justify-between border-b border-slate-800/80 px-4">
           <div className="flex items-center space-x-3 overflow-hidden">
             {brandLogo ? (
               <div className="shrink-0">{brandLogo}</div>
             ) : (
-              <div className="h-8 w-8 rounded-lg bg-cyan-600 flex items-center justify-center text-white font-extrabold text-lg shrink-0 shadow-md">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-600 text-lg font-extrabold text-white shadow-md">
                 F
               </div>
             )}
             {!collapsed && (
               <div className="truncate">
-                <span className="font-extrabold text-base tracking-tight text-white block">
+                <span className="block text-base font-extrabold tracking-tight text-white">
                   {brandName}
                 </span>
-                <span className="text-[10px] text-cyan-400 font-mono block tracking-wider uppercase">
+                <span className="block font-mono text-[10px] uppercase tracking-wider text-cyan-400">
                   EOC Operations
                 </span>
               </div>
@@ -45,7 +56,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           {onToggleCollapse && !collapsed && (
             <button
               onClick={onToggleCollapse}
-              className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+              className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
               aria-label="Collapse sidebar"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -54,14 +65,16 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         </div>
 
         {/* Content / Nav */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">{children}</div>
+        <div className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+          {children}
+        </div>
 
         {/* Footer / Toggle when collapsed */}
         {onToggleCollapse && collapsed && (
-          <div className="p-3 border-t border-slate-800 flex justify-center">
+          <div className="flex justify-center border-t border-slate-800 p-3">
             <button
               onClick={onToggleCollapse}
-              className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+              className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
               aria-label="Expand sidebar"
             >
               <ChevronRight className="h-4 w-4" />
@@ -70,13 +83,14 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         )}
       </aside>
     );
-  }
+  },
 );
 Sidebar.displayName = 'Sidebar';
 
-const SidebarNav: React.FC<React.HTMLAttributes<HTMLElement>> = ({ className, ...props }) => (
-  <nav className={cn('space-y-1.5', className)} {...props} />
-);
+const SidebarNav: React.FC<React.HTMLAttributes<HTMLElement>> = ({
+  className,
+  ...props
+}) => <nav className={cn('space-y-1.5', className)} {...props} />;
 
 export interface SidebarNavItemProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   icon?: React.ReactNode;
@@ -87,38 +101,62 @@ export interface SidebarNavItemProps extends React.AnchorHTMLAttributes<HTMLAnch
 }
 
 const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItemProps>(
-  ({ className, icon, label, active = false, badge, collapsed = false, ...props }, ref) => {
+  (
+    {
+      className,
+      icon,
+      label,
+      active = false,
+      badge,
+      collapsed = false,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <a
         ref={ref}
         className={cn(
-          'flex items-center space-x-3 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border',
+          'flex cursor-pointer items-center space-x-3 rounded-xl border px-3 py-2.5 text-xs font-medium transition-all duration-150',
           active
-            ? 'bg-cyan-950/70 border-cyan-500/50 text-white font-bold shadow-lg shadow-cyan-950/50 text-cyan-300'
-            : 'border-transparent text-slate-400 hover:bg-slate-900/80 hover:text-white hover:border-slate-800',
+            ? 'border-cyan-500/50 bg-cyan-950/70 font-bold text-cyan-300 text-white shadow-lg shadow-cyan-950/50'
+            : 'border-transparent text-slate-400 hover:border-slate-800 hover:bg-slate-900/80 hover:text-white',
           collapsed && 'justify-center px-0',
-          className
+          className,
         )}
         title={collapsed ? label : undefined}
         {...props}
       >
-        {icon && <span className={cn('shrink-0', active ? 'text-cyan-400' : 'text-slate-400')}>{icon}</span>}
-        {!collapsed && <span className="truncate flex-1 font-sans">{label}</span>}
+        {icon && (
+          <span
+            className={cn(
+              'shrink-0',
+              active ? 'text-cyan-400' : 'text-slate-400',
+            )}
+          >
+            {icon}
+          </span>
+        )}
+        {!collapsed && (
+          <span className="flex-1 truncate font-sans">{label}</span>
+        )}
         {!collapsed && badge && <span className="shrink-0">{badge}</span>}
       </a>
     );
-  }
+  },
 );
 SidebarNavItem.displayName = 'SidebarNavItem';
 
-const SidebarSectionTitle: React.FC<{ title: string; collapsed?: boolean }> = ({ title, collapsed }) => {
+const SidebarSectionTitle: React.FC<{ title: string; collapsed?: boolean }> = ({
+  title,
+  collapsed,
+}) => {
   if (collapsed) return null;
   return (
-    <div className="px-3 pt-4 pb-1.5 text-[9px] font-bold uppercase tracking-widest text-slate-500 font-mono">
+    <div className="px-3 pb-1.5 pt-4 font-mono text-[9px] font-bold uppercase tracking-widest text-slate-500">
       {title}
     </div>
   );
 };
 
 export { Sidebar, SidebarNav, SidebarNavItem, SidebarSectionTitle };
-

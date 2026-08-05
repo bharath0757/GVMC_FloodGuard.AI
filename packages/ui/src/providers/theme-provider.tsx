@@ -26,7 +26,8 @@ const initialState: ThemeProviderState = {
   toggleEmergencyMode: () => null,
 };
 
-export const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
+export const ThemeProviderContext =
+  React.createContext<ThemeProviderState>(initialState);
 
 /**
  * FloodGuard Theme Provider
@@ -41,7 +42,10 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(
-    () => (typeof window !== 'undefined' ? (localStorage.getItem(storageKey) as Theme) : undefined) || defaultTheme
+    () =>
+      (typeof window !== 'undefined'
+        ? (localStorage.getItem(storageKey) as Theme)
+        : undefined) || defaultTheme,
   );
   const [mode, setModeState] = React.useState<ThemeMode>(defaultMode);
 
@@ -55,7 +59,10 @@ export function ThemeProvider({
     }
 
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
+        ? 'dark'
+        : 'light';
       root.classList.add(systemTheme);
       return;
     }
@@ -68,7 +75,7 @@ export function ThemeProvider({
       localStorage.setItem(storageKey, newTheme);
       setThemeState(newTheme);
     },
-    [storageKey]
+    [storageKey],
   );
 
   const setMode = React.useCallback((newMode: ThemeMode) => {
@@ -87,7 +94,7 @@ export function ThemeProvider({
       setMode,
       toggleEmergencyMode,
     }),
-    [theme, mode, setTheme, setMode, toggleEmergencyMode]
+    [theme, mode, setTheme, setMode, toggleEmergencyMode],
   );
 
   return (

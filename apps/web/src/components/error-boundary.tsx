@@ -1,7 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 
-
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -49,30 +48,30 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#0F172A] p-4">
-          <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-8 text-center flex flex-col items-center">
-            <div className="h-16 w-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-6">
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-[#0F172A]">
+          <div className="flex w-full max-w-md flex-col items-center rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xl dark:border-slate-800 dark:bg-slate-900">
+            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
               <AlertTriangle className="h-8 w-8 text-red-600 dark:text-red-500" />
             </div>
-            
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+
+            <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">
               Something went wrong
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mb-8">
+            <p className="mb-8 text-slate-500 dark:text-slate-400">
               An unexpected error occurred in FloodGuard AI.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full mb-6">
+            <div className="mb-6 flex w-full flex-col gap-4 sm:flex-row">
               <button
                 onClick={this.handleReset}
-                className="flex-1 flex items-center justify-center gap-2 bg-[#1E3A5F] hover:bg-[#152a46] text-white px-4 py-2.5 rounded-lg transition-colors font-medium"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1E3A5F] px-4 py-2.5 font-medium text-white transition-colors hover:bg-[#152a46]"
               >
                 <RefreshCw className="h-4 w-4" />
                 Try Again
               </button>
               <button
                 onClick={this.handleGoHome}
-                className="flex-1 flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white px-4 py-2.5 rounded-lg transition-colors font-medium"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-slate-100 px-4 py-2.5 font-medium text-slate-900 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
               >
                 <Home className="h-4 w-4" />
                 Go Home
@@ -81,16 +80,22 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {import.meta.env.DEV && this.state.error && (
               <div className="w-full text-left">
-                <button 
-                  onClick={() => this.setState(prev => ({ isDetailsOpen: !prev.isDetailsOpen }))}
-                  className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                <button
+                  onClick={() =>
+                    this.setState((prev) => ({
+                      isDetailsOpen: !prev.isDetailsOpen,
+                    }))
+                  }
+                  className="text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
                 >
                   {this.state.isDetailsOpen ? 'Hide' : 'Show'} error details
                 </button>
-                
+
                 {this.state.isDetailsOpen && (
-                  <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-950 rounded-lg overflow-auto max-h-48 text-xs font-mono text-slate-800 dark:text-slate-300">
-                    <p className="font-bold mb-2 text-red-600 dark:text-red-400">{this.state.error.toString()}</p>
+                  <div className="mt-4 max-h-48 overflow-auto rounded-lg bg-slate-100 p-4 font-mono text-xs text-slate-800 dark:bg-slate-950 dark:text-slate-300">
+                    <p className="mb-2 font-bold text-red-600 dark:text-red-400">
+                      {this.state.error.toString()}
+                    </p>
                     <pre>{this.state.errorInfo?.componentStack}</pre>
                   </div>
                 )}

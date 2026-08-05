@@ -3,7 +3,11 @@ import { apiClient } from '@/lib/api-client';
 
 export interface NotificationItem {
   id: string;
-  notification_type: 'high_risk_prediction' | 'verified_report' | 'shelter_capacity_warning' | 'critical_emergency';
+  notification_type:
+    | 'high_risk_prediction'
+    | 'verified_report'
+    | 'shelter_capacity_warning'
+    | 'critical_emergency';
   title: string;
   message: string;
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
@@ -64,7 +68,8 @@ const MOCK_NOTIFICATIONS: NotificationItem[] = [
     id: 'n1',
     notification_type: 'high_risk_prediction',
     title: '🚨 Critical Flood Risk Warning: Ward 14 (Gajuwaka)',
-    message: 'XGBoost model predicts 88.2 risk score with 68.2mm/h rainfall. Immediate evacuation advisory active.',
+    message:
+      'XGBoost model predicts 88.2 risk score with 68.2mm/h rainfall. Immediate evacuation advisory active.',
     severity: 'Critical',
     is_read: false,
     created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
@@ -73,7 +78,8 @@ const MOCK_NOTIFICATIONS: NotificationItem[] = [
     id: 'n2',
     notification_type: 'verified_report',
     title: '✅ Citizen Flood Report Verified',
-    message: 'Municipal authority verified flood report at Gajuwaka Main Road. Assigned priority P0.',
+    message:
+      'Municipal authority verified flood report at Gajuwaka Main Road. Assigned priority P0.',
     severity: 'High',
     is_read: false,
     created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
@@ -82,7 +88,8 @@ const MOCK_NOTIFICATIONS: NotificationItem[] = [
     id: 'n3',
     notification_type: 'shelter_capacity_warning',
     title: '⚠️ Shelter Capacity Warning',
-    message: 'Gajuwaka Sports Stadium reached 79% occupancy. Secondary shelter AU Complex opened.',
+    message:
+      'Gajuwaka Sports Stadium reached 79% occupancy. Secondary shelter AU Complex opened.',
     severity: 'Medium',
     is_read: true,
     created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
@@ -90,7 +97,11 @@ const MOCK_NOTIFICATIONS: NotificationItem[] = [
 ];
 
 export const useNotifications = () =>
-  useQuery<{ total_notifications: number; unread_count: number; notifications: NotificationItem[] }>({
+  useQuery<{
+    total_notifications: number;
+    unread_count: number;
+    notifications: NotificationItem[];
+  }>({
     queryKey: ['notifications'],
     queryFn: async () => {
       try {
@@ -117,11 +128,27 @@ export const useAssistantSuggestions = () =>
       } catch {
         return {
           suggestions: [
-            { label: 'Is Gajuwaka safe?', query: 'Is Gajuwaka safe right now?' },
-            { label: 'What is Ward 14 flood risk?', query: 'What is Ward 14 flood risk score?' },
-            { label: 'Nearest shelter with medical team', query: 'Which shelter should I use with medical aid near MVP Colony?' },
-            { label: 'Which roads should I avoid?', query: 'Which roads should I avoid in Ward 14?' },
-            { label: 'Emergency precautions', query: 'What precautions should I take during Stage 3 cyclone?' },
+            {
+              label: 'Is Gajuwaka safe?',
+              query: 'Is Gajuwaka safe right now?',
+            },
+            {
+              label: 'What is Ward 14 flood risk?',
+              query: 'What is Ward 14 flood risk score?',
+            },
+            {
+              label: 'Nearest shelter with medical team',
+              query:
+                'Which shelter should I use with medical aid near MVP Colony?',
+            },
+            {
+              label: 'Which roads should I avoid?',
+              query: 'Which roads should I avoid in Ward 14?',
+            },
+            {
+              label: 'Emergency precautions',
+              query: 'What precautions should I take during Stage 3 cyclone?',
+            },
           ],
         };
       }
@@ -130,7 +157,11 @@ export const useAssistantSuggestions = () =>
   });
 
 export const useAssistantQuery = () =>
-  useMutation<AssistantResponse, Error, { query: string; lat?: number; lng?: number }>({
+  useMutation<
+    AssistantResponse,
+    Error,
+    { query: string; lat?: number; lng?: number }
+  >({
     mutationFn: async ({ query, lat, lng }) => {
       const res = await apiClient.post('/assistant/query', {
         query,
@@ -157,12 +188,16 @@ export const useMyReports = () =>
 
 export const useVerifyReport = () => {
   const queryClient = useQueryClient();
-  return useMutation<DetailedReport, Error, {
-    report_id: string;
-    status: 'Verified' | 'Rejected';
-    priority?: string;
-    internal_notes?: string;
-  }>({
+  return useMutation<
+    DetailedReport,
+    Error,
+    {
+      report_id: string;
+      status: 'Verified' | 'Rejected';
+      priority?: string;
+      internal_notes?: string;
+    }
+  >({
     mutationFn: async ({ report_id, status, priority, internal_notes }) => {
       const res = await apiClient.patch(`/reports/${report_id}/verify`, {
         status,
@@ -180,11 +215,15 @@ export const useVerifyReport = () => {
 
 export const useResolveReport = () => {
   const queryClient = useQueryClient();
-  return useMutation<DetailedReport, Error, {
-    report_id: string;
-    resolution_status: 'In Progress' | 'Resolved';
-    internal_notes?: string;
-  }>({
+  return useMutation<
+    DetailedReport,
+    Error,
+    {
+      report_id: string;
+      resolution_status: 'In Progress' | 'Resolved';
+      internal_notes?: string;
+    }
+  >({
     mutationFn: async ({ report_id, resolution_status, internal_notes }) => {
       const res = await apiClient.patch(`/reports/${report_id}/resolve`, {
         resolution_status,

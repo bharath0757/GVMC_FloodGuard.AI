@@ -84,12 +84,12 @@ quadrantChart
     title Feature Prioritization (Impact vs. Effort)
     x-axis Low Effort --> High Effort
     y-axis Low Impact --> High Impact
-    
+
     quadrant-1 High Impact / High Effort
     quadrant-2 High Impact / Low Effort
     quadrant-3 Low Impact / Low Effort
     quadrant-4 Low Impact / High Effort
-    
+
     "Mobile App (Offline)" : [0.7, 0.8]
     "IoT Sensors" : [0.4, 0.9]
     "WhatsApp Bot" : [0.2, 0.8]

@@ -2,7 +2,10 @@ import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, Sparkles, X } from 'lucide-react';
 import { Button, Badge } from '@floodguard/ui';
-import { useAssistantQuery, useAssistantSuggestions } from '@/hooks/use-citizen-queries';
+import {
+  useAssistantQuery,
+  useAssistantSuggestions,
+} from '@/hooks/use-citizen-queries';
 
 interface Message {
   id: string;
@@ -13,7 +16,10 @@ interface Message {
   timestamp: string;
 }
 
-export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
+export const FloodAssistantWidget: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+}> = ({ isOpen, onClose }) => {
   const { data: suggestionsData } = useAssistantSuggestions();
   const assistantMutation = useAssistantQuery();
 
@@ -23,7 +29,10 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
       id: 'msg-welcome',
       sender: 'assistant',
       text: '👋 **Hello! I am FloodGuard AI Assistant.**\nConnected live to Visakhapatnam GVMC telemetry & XGBoost models.\n\nAsk me anything about area safety, nearest shelters, road blockages, or emergency precautions!',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
     },
   ]);
 
@@ -46,7 +55,10 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
       id: `user-${Date.now()}`,
       sender: 'user',
       text: queryText,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -62,7 +74,10 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
             text: data.response_text,
             cards: data.cards,
             actions: data.suggested_actions,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
           };
           setMessages((prev) => [...prev, assistantMsg]);
         },
@@ -71,11 +86,14 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
             id: `err-${Date.now()}`,
             sender: 'assistant',
             text: '⚠️ Unable to reach AI Assistant server. Please verify your connection.',
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
           };
           setMessages((prev) => [...prev, errorMsg]);
         },
-      }
+      },
     );
   };
 
@@ -83,48 +101,49 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="w-full max-w-2xl h-[650px] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+          className="flex h-[650px] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl"
         >
           {/* Top Bar */}
-          <div className="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+          <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950 p-4">
             <div className="flex items-center space-x-3">
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-teal-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-teal-500/20">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-teal-500 to-cyan-500 shadow-lg shadow-teal-500/20">
                 <Bot className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-white flex items-center gap-1.5">
-                  FloodGuard AI Assistant <Sparkles className="h-3.5 w-3.5 text-teal-400" />
+                <h3 className="flex items-center gap-1.5 text-sm font-bold text-white">
+                  FloodGuard AI Assistant{' '}
+                  <Sparkles className="h-3.5 w-3.5 text-teal-400" />
                 </h3>
-                <span className="text-[10px] font-mono text-slate-400">
+                <span className="font-mono text-[10px] text-slate-400">
                   Visakhapatnam Telemetry • XGBoost & A* Connected
                 </span>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+              className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-950/40">
+          <div className="flex-1 space-y-4 overflow-y-auto bg-slate-950/40 p-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl p-3.5 text-xs font-mono leading-relaxed shadow-sm ${
+                  className={`max-w-[85%] rounded-2xl p-3.5 font-mono text-xs leading-relaxed shadow-sm ${
                     msg.sender === 'user'
-                      ? 'bg-teal-600 text-white rounded-tr-none'
-                      : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-tl-none whitespace-pre-line'
+                      ? 'rounded-tr-none bg-teal-600 text-white'
+                      : 'whitespace-pre-line rounded-tl-none border border-slate-800 bg-slate-900 text-slate-200'
                   }`}
                 >
                   {msg.text}
@@ -138,21 +157,49 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
                         risk_score?: number;
                         risk_category?: string;
                         alert_color?: string;
-                        primary_shelter?: { name?: string; available_capacity?: number };
+                        primary_shelter?: {
+                          name?: string;
+                          available_capacity?: number;
+                        };
                       };
                       return (
-                        <div key={idx} className="p-3 rounded-xl border border-teal-500/30 bg-teal-950/20 text-xs font-mono">
-                          <span className="text-[10px] uppercase font-bold text-teal-400 block mb-1">{card.title}</span>
+                        <div
+                          key={idx}
+                          className="rounded-xl border border-teal-500/30 bg-teal-950/20 p-3 font-mono text-xs"
+                        >
+                          <span className="mb-1 block text-[10px] font-bold uppercase text-teal-400">
+                            {card.title}
+                          </span>
                           {card.type === 'risk_card' && (
                             <div className="space-y-1 text-slate-300">
-                              <div>Score: <span className="font-bold text-red-400">{d.risk_score}/100</span> ({d.risk_category})</div>
-                              <div>Alert Level: <Badge variant="destructive">{d.alert_color}</Badge></div>
+                              <div>
+                                Score:{' '}
+                                <span className="font-bold text-red-400">
+                                  {d.risk_score}/100
+                                </span>{' '}
+                                ({d.risk_category})
+                              </div>
+                              <div>
+                                Alert Level:{' '}
+                                <Badge variant="destructive">
+                                  {d.alert_color}
+                                </Badge>
+                              </div>
                             </div>
                           )}
                           {card.type === 'shelter_card' && (
                             <div className="space-y-1 text-slate-300">
-                              <div>Primary: <span className="font-bold text-emerald-400">{d.primary_shelter?.name}</span></div>
-                              <div>Available: {d.primary_shelter?.available_capacity} free spaces</div>
+                              <div>
+                                Primary:{' '}
+                                <span className="font-bold text-emerald-400">
+                                  {d.primary_shelter?.name}
+                                </span>
+                              </div>
+                              <div>
+                                Available:{' '}
+                                {d.primary_shelter?.available_capacity} free
+                                spaces
+                              </div>
                             </div>
                           )}
                         </div>
@@ -163,12 +210,12 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
 
                 {/* Suggested Action Chips */}
                 {msg.actions && msg.actions.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1.5 max-w-[85%]">
+                  <div className="mt-2 flex max-w-[85%] flex-wrap gap-1.5">
                     {msg.actions.map((act, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleSend(act.query)}
-                        className="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-teal-300 text-[10px] font-mono border border-slate-700 transition-colors"
+                        className="rounded-full border border-slate-700 bg-slate-800 px-2.5 py-1 font-mono text-[10px] text-teal-300 transition-colors hover:bg-slate-700"
                       >
                         {act.label} →
                       </button>
@@ -176,14 +223,18 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
                   </div>
                 )}
 
-                <span className="text-[9px] font-mono text-slate-500 mt-1 px-1">{msg.timestamp}</span>
+                <span className="mt-1 px-1 font-mono text-[9px] text-slate-500">
+                  {msg.timestamp}
+                </span>
               </div>
             ))}
 
             {assistantMutation.isPending && (
-              <div className="flex items-center space-x-2 text-xs font-mono text-teal-400 bg-slate-900 border border-slate-800 p-3 rounded-xl w-fit">
+              <div className="flex w-fit items-center space-x-2 rounded-xl border border-slate-800 bg-slate-900 p-3 font-mono text-xs text-teal-400">
                 <Sparkles className="h-4 w-4 animate-spin" />
-                <span>Analysing flood telemetry & computing recommendations...</span>
+                <span>
+                  Analysing flood telemetry & computing recommendations...
+                </span>
               </div>
             )}
 
@@ -191,13 +242,15 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
           </div>
 
           {/* Quick Suggestion Chips */}
-          <div className="p-2 bg-slate-950 border-t border-slate-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            <span className="text-[10px] font-mono text-slate-400 px-2 shrink-0">Quick Queries:</span>
+          <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto border-t border-slate-800 bg-slate-950 p-2">
+            <span className="shrink-0 px-2 font-mono text-[10px] text-slate-400">
+              Quick Queries:
+            </span>
             {(suggestionsData?.suggestions || []).map((sugg, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSend(sugg.query)}
-                className="shrink-0 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-[10px] font-mono border border-slate-800 whitespace-nowrap transition-colors"
+                className="shrink-0 whitespace-nowrap rounded-lg border border-slate-800 bg-slate-900 px-2.5 py-1 font-mono text-[10px] text-slate-300 transition-colors hover:bg-slate-800"
               >
                 {sugg.label}
               </button>
@@ -210,14 +263,14 @@ export const FloodAssistantWidget: React.FC<{ isOpen: boolean; onClose: () => vo
               e.preventDefault();
               handleSend(inputQuery);
             }}
-            className="p-3 bg-slate-900 border-t border-slate-800 flex items-center space-x-2"
+            className="flex items-center space-x-2 border-t border-slate-800 bg-slate-900 p-3"
           >
             <input
               type="text"
               value={inputQuery}
               onChange={(e) => setInputQuery(e.target.value)}
               placeholder="Ask about flood risks, shelters, or safety..."
-              className="flex-1 h-10 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-mono text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="h-10 flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 font-mono text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             />
             <Button
               type="submit"

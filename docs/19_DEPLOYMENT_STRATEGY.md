@@ -7,23 +7,23 @@ This document describes the deployment architecture and processes for bringing F
 ```mermaid
 architecture-beta
     group aws(AWS Cloud)[AWS Cloud]
-    
+
     group vpc(VPC - Region)[VPC] in aws
-    
+
     group public(Public Subnets)[Public Subnets] in vpc
     service alb(ALB)[Application Load Balancer] in public
     service nat(NAT Gateway)[NAT Gateway] in public
-    
+
     group private(Private Subnets)[Private Subnets] in vpc
     service ecs_api(ECS Fargate)[FastAPI Backend] in private
     service ecs_worker(ECS Fargate)[Celery Workers] in private
     service rds(RDS Multi-AZ)[PostgreSQL + PostGIS] in private
     service redis(ElastiCache)[Redis Cluster] in private
-    
+
     service cf(CloudFront)[CloudFront CDN] in aws
     service s3(S3)[S3 Buckets] in aws
     service sagemaker(SageMaker)[AI Endpoints] in aws
-    
+
     alb --> ecs_api
     ecs_api --> rds
     ecs_api --> redis
@@ -37,8 +37,8 @@ architecture-beta
 - **VPC**: Deployed across 2 Availability Zones (AZs) for high availability. Contains public and private subnets.
 - **ALB (Application Load Balancer)**: Handles SSL termination via ACM. Uses path-based routing: `/api/*` goes to the backend target group, while static requests go to CloudFront.
 - **ECS Fargate**: Serverless container execution.
-  - *Backend Service*: Auto-scaling 2-10 tasks.
-  - *Celery Workers*: Auto-scaling 2-20 tasks based on queue depth.
+  - _Backend Service_: Auto-scaling 2-10 tasks.
+  - _Celery Workers_: Auto-scaling 2-20 tasks based on queue depth.
 - **RDS PostgreSQL**: Multi-AZ deployment for failover. Uses version 16+ with PostGIS. Read replicas are provisioned for analytics.
 - **ElastiCache Redis**: Cluster mode enabled, 2 nodes across AZs for session state and Celery brokering.
 - **S3**: Stores static frontend assets (served via CloudFront), user uploads (images, reports), model artifacts, and database backups.
@@ -55,12 +55,14 @@ architecture-beta
 ## 4. Deployment Process
 
 ### Strategies
+
 - **Backend (API)**: Blue-Green deployment using AWS CodeDeploy and ECS. Traffic is shifted only when the new version passes health checks, ensuring zero downtime.
 - **Workers**: Rolling updates. Old workers finish their current tasks before terminating, while new workers spin up to consume the queue.
 - **Frontend**: S3 sync followed by a CloudFront cache invalidation (`/*`).
 - **Database Migrations**: Alembic migrations run as a pre-deployment step. **Rule:** All migrations must be backward-compatible (e.g., add column, never rename/drop in a single deploy).
 
 ### Deployment Checklist
+
 1. Ensure all CI checks pass.
 2. Verify backup of production database.
 3. Apply database migrations.

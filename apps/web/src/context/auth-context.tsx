@@ -15,13 +15,20 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, fullName: string, role?: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    fullName: string,
+    role?: string,
+  ) => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = React.useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('floodguard_user');
     return saved ? JSON.parse(saved) : null;
@@ -32,8 +39,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const res = await apiClient.post('/auth/login', { email, password });
-      const { access_token, refresh_token, user_id, full_name, role } = res.data;
-      const profile: UserProfile = { id: user_id, email, full_name, role, language_pref: 'en' };
+      const { access_token, refresh_token, user_id, full_name, role } =
+        res.data;
+      const profile: UserProfile = {
+        id: user_id,
+        email,
+        full_name,
+        role,
+        language_pref: 'en',
+      };
 
       localStorage.setItem('floodguard_access_token', access_token);
       localStorage.setItem('floodguard_refresh_token', refresh_token);
@@ -44,7 +58,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (email: string, password: string, fullName: string, role = 'citizen') => {
+  const register = async (
+    email: string,
+    password: string,
+    fullName: string,
+    role = 'citizen',
+  ) => {
     setIsLoading(true);
     try {
       const res = await apiClient.post('/auth/register', {
@@ -54,7 +73,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role,
       });
       const { access_token, refresh_token, user_id } = res.data;
-      const profile: UserProfile = { id: user_id, email, full_name: fullName, role: role as UserProfile['role'], language_pref: 'en' };
+      const profile: UserProfile = {
+        id: user_id,
+        email,
+        full_name: fullName,
+        role: role as UserProfile['role'],
+        language_pref: 'en',
+      };
 
       localStorage.setItem('floodguard_access_token', access_token);
       localStorage.setItem('floodguard_refresh_token', refresh_token);

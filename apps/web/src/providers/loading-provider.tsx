@@ -27,16 +27,20 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.8 }}
-              className="flex flex-col items-center gap-4 rounded-xl bg-slate-900/90 p-8 shadow-2xl border border-slate-800"
+              className="flex flex-col items-center gap-4 rounded-xl border border-slate-800 bg-slate-900/90 p-8 shadow-2xl"
             >
               <Loader2 className="h-12 w-12 animate-spin text-[#0D9488]" />
               <div className="flex flex-col items-center gap-2">
-                <span className="text-xl font-semibold text-white tracking-tight">FloodGuard AI</span>
-                <span className="text-sm text-slate-400 animate-pulse">Processing request...</span>
+                <span className="text-xl font-semibold tracking-tight text-white">
+                  FloodGuard AI
+                </span>
+                <span className="animate-pulse text-sm text-slate-400">
+                  Processing request...
+                </span>
               </div>
             </motion.div>
           </motion.div>

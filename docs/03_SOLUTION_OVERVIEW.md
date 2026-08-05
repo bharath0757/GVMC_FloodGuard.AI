@@ -1,6 +1,7 @@
 # Solution Overview: FloodGuard AI
 
 ## 1. Platform Vision
+
 FloodGuard AI is envisioned as a comprehensive, end-to-end intelligence ecosystem that anticipates urban flooding before it occurs, guides citizens safely through the crisis, and empowers authorities with unparalleled situational awareness. It transforms disparate data streams into actionable, life-saving intelligence.
 
 ## 2. High-Level Architecture
@@ -69,17 +70,19 @@ graph TD
 11. **Role-based Authentication:** Secure, segmented access ensuring Citizens see relevant guidance, Government Officers access command tools, and Admins manage system configurations.
 
 ## 4. Data Flow Overview
+
 Data enters the platform from external APIs (weather, tides) and crowdsourced citizen reports. The FastAPI backend orchestrates these inputs, passing time-series data to the TFT models and images to the Vision models via Celery asynchronous task queues. The resulting predictions and classifications are stored in PostGIS. The Graph Neural Network then recalculates safe routes based on this updated spatial data. Finally, these insights are pushed via WebSockets to the React frontend, updating the Digital Twin and dashboards in real-time.
 
 ## 5. User Journey Maps
 
 ### Citizen Journey
+
 ```mermaid
 sequenceDiagram
     participant Citizen
     participant App
     participant AI Engine
-    
+
     Citizen->>App: Opens App (Voice Command: "I need help")
     App->>AI Engine: Process Voice (Whisper)
     AI Engine-->>App: Intent: Evacuation needed
@@ -92,12 +95,13 @@ sequenceDiagram
 ```
 
 ### Government Officer Journey
+
 ```mermaid
 sequenceDiagram
     participant Officer
     participant Dashboard
     participant AI Engine
-    
+
     Officer->>Dashboard: Logs in to Command Center
     Dashboard->>AI Engine: Fetch Risk Scores & Predictions
     AI Engine-->>Dashboard: High risk in Zone A (TFT Prediction)
@@ -109,12 +113,14 @@ sequenceDiagram
 ```
 
 ## 6. Key Innovations & Differentiators
+
 - **Hyper-Local Precision:** Moving beyond city-wide alerts to street-level, actionable intelligence using TFTs.
-- **Dynamic Routing:** Unlike Google Maps which may not quickly reflect flood blockages, our GNN actively routes *away* from water.
+- **Dynamic Routing:** Unlike Google Maps which may not quickly reflect flood blockages, our GNN actively routes _away_ from water.
 - **Verified Crowd Intelligence:** Automated AI verification (YOLO+BLIP) of citizen reports prevents spam and accelerates response without human bottlenecks.
 - **Accessibility First:** The multilingual voice assistant ensures the most vulnerable populations can access the platform seamlessly.
 
 ## 7. Platform Principles
+
 - **Real-Time:** Minimal latency between data ingestion and insight generation.
 - **Predictive:** Focus on anticipation rather than reaction.
 - **Inclusive:** Accessible to all demographics regardless of language or tech-literacy.
@@ -122,6 +128,7 @@ sequenceDiagram
 - **Open-Data:** Built on open standards (GeoJSON, OSM) to facilitate collaboration.
 
 ## 8. Success Criteria
+
 - Successful prediction of flood events with >85% accuracy at the neighborhood level.
 - Processing and verification of citizen reports within 5 seconds.
 - Maintaining 99.9% uptime during peak storm events.

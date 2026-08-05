@@ -38,14 +38,14 @@ graph TD
     App --> Router
     App --> Store
     App --> QueryCache
-    
+
     Router --> Pages
     Pages --> UI Component Library
-    
+
     Pages --> API
     Pages --> WS
     Pages --> MapBox
-    
+
     API --> PWA
     WS --> PWA
 ```
@@ -77,22 +77,22 @@ Our routing structure is segregated by user personas and access levels:
 ```mermaid
 flowchart LR
     Component[React Component]
-    
+
     subgraph "Client State (Zustand)"
         AuthStore[authStore]
         MapStore[mapStore]
         UIStore[uiStore]
     end
-    
+
     subgraph "Server State (TanStack Query)"
         QueryCache[(Query Cache)]
         Mutations[Mutations]
     end
-    
+
     subgraph "URL State"
         Router[URL Params / Search]
     end
-    
+
     Component <--> Client State
     Component <--> Server State
     Component <--> URL State
@@ -122,6 +122,7 @@ flowchart LR
 ## 7. 3D Digital Twin Architecture
 
 For advanced government planning and simulation:
+
 - **CesiumJS:** Integrated for accurate global terrain and large-scale geographic visualization.
 - **Three.js & React-Three-Fiber:** Used for rendering custom 3D objects (e.g., building extrusions, simulated water levels) declaratively within React.
 - **Performance Budget:** We target 60fps using Level of Detail (LOD) systems, geometry instancing, and strict WebGL memory management.

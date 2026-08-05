@@ -4,10 +4,10 @@ import { Eye, EyeOff } from 'lucide-react';
 
 /**
  * Storybook & Component Documentation: Inputs Suite (Input, Textarea, PasswordInput, Select)
- * 
+ *
  * **Purpose:** Accessible form controls for citizen crowd reporting, search parameters, and gov admin configuration.
  * **Usage:** `<FormLabel>Ward Number</FormLabel><Input placeholder="e.g. Ward 14" error="Invalid ward" />`
- * **Accessibility Notes:** 
+ * **Accessibility Notes:**
  * - Includes proper focus rings, `aria-invalid`, `aria-describedby` linkage.
  * - Min 44px height touch area on mobile screens.
  */
@@ -19,22 +19,33 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type = 'text', error, leftIcon, rightIcon, disabled, ...props }, ref) => {
+  (
+    {
+      className,
+      type = 'text',
+      error,
+      leftIcon,
+      rightIcon,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <div className="relative w-full">
         {leftIcon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
+          <div className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
             {leftIcon}
           </div>
         )}
         <input
           type={type}
           className={cn(
-            'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+            'border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
             leftIcon && 'pl-10',
             rightIcon && 'pr-10',
             error && 'border-destructive focus-visible:ring-destructive',
-            className
+            className,
           )}
           ref={ref}
           disabled={disabled}
@@ -42,13 +53,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {rightIcon && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+          <div className="text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2">
             {rightIcon}
           </div>
         )}
       </div>
     );
-  }
+  },
 );
 Input.displayName = 'Input';
 
@@ -61,9 +72,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <textarea
         className={cn(
-          'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+          'border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
           error && 'border-destructive focus-visible:ring-destructive',
-          className
+          className,
         )}
         ref={ref}
         disabled={disabled}
@@ -71,33 +82,34 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Textarea.displayName = 'Textarea';
 
-const PasswordInput = React.forwardRef<HTMLInputElement, Omit<InputProps, 'type'>>(
-  ({ className, ...props }, ref) => {
-    const [show, setShow] = React.useState(false);
-    return (
-      <Input
-        type={show ? 'text' : 'password'}
-        ref={ref}
-        className={className}
-        rightIcon={
-          <button
-            type="button"
-            onClick={() => setShow(!show)}
-            className="focus:outline-none opacity-70 hover:opacity-100"
-            aria-label={show ? 'Hide password' : 'Show password'}
-          >
-            {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-        }
-        {...props}
-      />
-    );
-  }
-);
+const PasswordInput = React.forwardRef<
+  HTMLInputElement,
+  Omit<InputProps, 'type'>
+>(({ className, ...props }, ref) => {
+  const [show, setShow] = React.useState(false);
+  return (
+    <Input
+      type={show ? 'text' : 'password'}
+      ref={ref}
+      className={className}
+      rightIcon={
+        <button
+          type="button"
+          onClick={() => setShow(!show)}
+          className="opacity-70 hover:opacity-100 focus:outline-none"
+          aria-label={show ? 'Hide password' : 'Show password'}
+        >
+          {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      }
+      {...props}
+    />
+  );
+});
 PasswordInput.displayName = 'PasswordInput';
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -109,9 +121,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <select
         className={cn(
-          'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+          'border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
           error && 'border-destructive focus-visible:ring-destructive',
-          className
+          className,
         )}
         ref={ref}
         disabled={disabled}
@@ -121,20 +133,49 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {children}
       </select>
     );
-  }
+  },
 );
 Select.displayName = 'Select';
 
-const FormLabel: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({ className, ...props }) => (
-  <label className={cn('block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5', className)} {...props} />
+const FormLabel: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({
+  className,
+  ...props
+}) => (
+  <label
+    className={cn(
+      'text-muted-foreground mb-1.5 block text-xs font-semibold uppercase tracking-wider',
+      className,
+    )}
+    {...props}
+  />
 );
 
-const FormHelperText: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({ className, ...props }) => (
-  <p className={cn('text-xs text-muted-foreground mt-1', className)} {...props} />
+const FormHelperText: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
+  className,
+  ...props
+}) => (
+  <p
+    className={cn('text-muted-foreground mt-1 text-xs', className)}
+    {...props}
+  />
 );
 
-const FormError: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({ className, ...props }) => (
-  <p className={cn('text-xs font-medium text-destructive mt-1', className)} {...props} />
+const FormError: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
+  className,
+  ...props
+}) => (
+  <p
+    className={cn('text-destructive mt-1 text-xs font-medium', className)}
+    {...props}
+  />
 );
 
-export { Input, Textarea, PasswordInput, Select, FormLabel, FormHelperText, FormError };
+export {
+  Input,
+  Textarea,
+  PasswordInput,
+  Select,
+  FormLabel,
+  FormHelperText,
+  FormError,
+};

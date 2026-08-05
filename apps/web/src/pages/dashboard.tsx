@@ -39,7 +39,13 @@ import {
 } from '@/data/mockData';
 
 import { useAuth } from '@/context/auth-context';
-import { useShelters, useReports, useAlerts, useWeather, useRiskZones } from '@/hooks/use-api-queries';
+import {
+  useShelters,
+  useReports,
+  useAlerts,
+  useWeather,
+  useRiskZones,
+} from '@/hooks/use-api-queries';
 import { AuthModal } from '@/components/auth-modal';
 import { SubmitReportModal } from '@/components/submit-report-modal';
 import { MapPlaceholder } from '@/components/map-placeholder';
@@ -91,7 +97,17 @@ export const DashboardPage: React.FC = () => {
   const { data: weather } = useWeather();
   const { data: wards = [] } = useRiskZones();
 
-  const [activeTab, setActiveTab] = React.useState<'overview' | 'map' | 'command' | 'shelters' | 'reports' | 'analytics' | 'ai' | 'citizen' | 'government'>('overview');
+  const [activeTab, setActiveTab] = React.useState<
+    | 'overview'
+    | 'map'
+    | 'command'
+    | 'shelters'
+    | 'reports'
+    | 'analytics'
+    | 'ai'
+    | 'citizen'
+    | 'government'
+  >('overview');
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedWardId, setSelectedWardId] = React.useState('w14');
@@ -101,14 +117,48 @@ export const DashboardPage: React.FC = () => {
   const [reportModalOpen, setReportModalOpen] = React.useState(false);
   const [assistantModalOpen, setAssistantModalOpen] = React.useState(false);
 
-  const rawSelectedWard = (wards as unknown as Array<WardData & { ward_number?: number; ward_name?: string; risk_category?: string; water_level_cm?: number; rainfall_mm_hr?: number; elevation_meters?: number }>).find((w) => w.id === selectedWardId || w.number === 14 || w.ward_number === 14) || (wards[0] as unknown as WardData & { ward_number?: number; ward_name?: string; risk_category?: string; water_level_cm?: number; rainfall_mm_hr?: number; elevation_meters?: number }) || {};
+  const rawSelectedWard =
+    (
+      wards as unknown as Array<
+        WardData & {
+          ward_number?: number;
+          ward_name?: string;
+          risk_category?: string;
+          water_level_cm?: number;
+          rainfall_mm_hr?: number;
+          elevation_meters?: number;
+        }
+      >
+    ).find(
+      (w) => w.id === selectedWardId || w.number === 14 || w.ward_number === 14,
+    ) ||
+    (wards[0] as unknown as WardData & {
+      ward_number?: number;
+      ward_name?: string;
+      risk_category?: string;
+      water_level_cm?: number;
+      rainfall_mm_hr?: number;
+      elevation_meters?: number;
+    }) ||
+    {};
   const selectedWard = {
-    name: rawSelectedWard.name || rawSelectedWard.ward_name || 'Gajuwaka Industrial Zone',
+    name:
+      rawSelectedWard.name ||
+      rawSelectedWard.ward_name ||
+      'Gajuwaka Industrial Zone',
     number: rawSelectedWard.number || rawSelectedWard.ward_number || 14,
-    riskCategory: rawSelectedWard.riskCategory || rawSelectedWard.risk_category || 'Critical',
-    waterLevelCm: rawSelectedWard.waterLevelCm ?? rawSelectedWard.water_level_cm ?? 68,
-    rainfallMmHr: rawSelectedWard.rainfallMmHr ?? rawSelectedWard.rainfall_mm_hr ?? 54.2,
-    elevationMeters: rawSelectedWard.elevationMeters ?? rawSelectedWard.elevation_meters ?? 3.2,
+    riskCategory:
+      rawSelectedWard.riskCategory ||
+      rawSelectedWard.risk_category ||
+      'Critical',
+    waterLevelCm:
+      rawSelectedWard.waterLevelCm ?? rawSelectedWard.water_level_cm ?? 68,
+    rainfallMmHr:
+      rawSelectedWard.rainfallMmHr ?? rawSelectedWard.rainfall_mm_hr ?? 54.2,
+    elevationMeters:
+      rawSelectedWard.elevationMeters ??
+      rawSelectedWard.elevation_meters ??
+      3.2,
     population: rawSelectedWard.population || 84000,
   };
 
@@ -129,10 +179,16 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
+    <div className="bg-background text-foreground flex h-screen w-full overflow-hidden">
       {/* Auth Modal & Submit Report Modal */}
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
-      <SubmitReportModal isOpen={reportModalOpen} onClose={() => setReportModalOpen(false)} />
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
+      <SubmitReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+      />
 
       {/* 1. SIDEBAR */}
       <Sidebar
@@ -143,11 +199,14 @@ export const DashboardPage: React.FC = () => {
           <img
             src="/logo.png"
             alt="FloodGuard Logo"
-            className="h-8 w-auto object-contain rounded-md bg-slate-900/80 p-0.5 border border-slate-700/50"
+            className="h-8 w-auto rounded-md border border-slate-700/50 bg-slate-900/80 object-contain p-0.5"
           />
         }
       >
-        <SidebarSectionTitle title="Command Center" collapsed={sidebarCollapsed} />
+        <SidebarSectionTitle
+          title="Command Center"
+          collapsed={sidebarCollapsed}
+        />
         <SidebarNav>
           <SidebarNavItem
             icon={<Activity className="h-4 w-4" />}
@@ -222,7 +281,7 @@ export const DashboardPage: React.FC = () => {
       </Sidebar>
 
       {/* MAIN CONTAINER */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className="flex h-full flex-1 flex-col overflow-hidden">
         {/* 2. TOP NAVBAR */}
         <Navbar
           brandName="Visakhapatnam Command Center"
@@ -232,7 +291,7 @@ export const DashboardPage: React.FC = () => {
           leftSlot={
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="md:hidden p-2 rounded-md hover:bg-muted"
+              className="hover:bg-muted rounded-md p-2 md:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -256,7 +315,7 @@ export const DashboardPage: React.FC = () => {
               </Button>
 
               {/* Search Bar Input */}
-              <div className="hidden sm:block w-56">
+              <div className="hidden w-56 sm:block">
                 <SearchBar
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -272,7 +331,11 @@ export const DashboardPage: React.FC = () => {
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                 aria-label="Toggle theme"
               >
-                {theme === 'dark' ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
+                {theme === 'dark' ? (
+                  <Sun className="h-4 w-4 text-amber-400" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
               </Button>
 
               {/* Notification Dropdown Trigger */}
@@ -285,20 +348,35 @@ export const DashboardPage: React.FC = () => {
                   aria-label="Notifications"
                 >
                   <Bell className="h-4 w-4" />
-                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 animate-ping" />
+                  <span className="absolute right-1 top-1 h-2 w-2 animate-ping rounded-full bg-red-500" />
                 </Button>
 
                 {notificationsOpen && (
-                  <div className="absolute right-0 mt-2 w-80 rounded-xl border border-border bg-card p-4 shadow-2xl z-50 animate-in fade-in-50">
-                    <div className="flex items-center justify-between border-b border-border pb-2 mb-3">
-                      <span className="font-bold text-xs">Emergency Broadcasts (DB)</span>
-                      <Badge variant="destructive">{alerts.length} Active</Badge>
+                  <div className="border-border bg-card animate-in fade-in-50 absolute right-0 z-50 mt-2 w-80 rounded-xl border p-4 shadow-2xl">
+                    <div className="border-border mb-3 flex items-center justify-between border-b pb-2">
+                      <span className="text-xs font-bold">
+                        Emergency Broadcasts (DB)
+                      </span>
+                      <Badge variant="destructive">
+                        {alerts.length} Active
+                      </Badge>
                     </div>
                     <div className="space-y-2 text-xs">
-                      {(alerts as unknown as Array<AlertData & { message?: string }>).map((alt) => (
-                        <div key={alt.id || alt.title} className="p-2 rounded bg-muted/50 border border-border/60">
-                          <div className="font-semibold text-red-500">{alt.title}</div>
-                          <div className="text-muted-foreground mt-0.5">{alt.message}</div>
+                      {(
+                        alerts as unknown as Array<
+                          AlertData & { message?: string }
+                        >
+                      ).map((alt) => (
+                        <div
+                          key={alt.id || alt.title}
+                          className="bg-muted/50 border-border/60 rounded border p-2"
+                        >
+                          <div className="font-semibold text-red-500">
+                            {alt.title}
+                          </div>
+                          <div className="text-muted-foreground mt-0.5">
+                            {alt.message}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -311,26 +389,32 @@ export const DashboardPage: React.FC = () => {
                 <div className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="flex items-center space-x-2 p-1.5 rounded-lg border border-border bg-card hover:bg-muted transition-colors"
+                    className="border-border bg-card hover:bg-muted flex items-center space-x-2 rounded-lg border p-1.5 transition-colors"
                   >
-                    <div className="h-7 w-7 rounded-full bg-teal-600 flex items-center justify-center text-white text-xs font-bold uppercase">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-teal-600 text-xs font-bold uppercase text-white">
                       {user.full_name.substring(0, 2)}
                     </div>
-                    <div className="hidden lg:block text-left text-xs">
-                      <div className="font-bold text-foreground leading-tight">{user.full_name}</div>
-                      <div className="text-[10px] text-teal-400 capitalize">{user.role} Account</div>
+                    <div className="hidden text-left text-xs lg:block">
+                      <div className="text-foreground font-bold leading-tight">
+                        {user.full_name}
+                      </div>
+                      <div className="text-[10px] capitalize text-teal-400">
+                        {user.role} Account
+                      </div>
                     </div>
                   </button>
 
                   {profileOpen && (
-                    <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border bg-card p-2 shadow-2xl z-50 animate-in fade-in-50 text-xs">
-                      <div className="p-2 border-b border-border mb-1">
+                    <div className="border-border bg-card animate-in fade-in-50 absolute right-0 z-50 mt-2 w-56 rounded-xl border p-2 text-xs shadow-2xl">
+                      <div className="border-border mb-1 border-b p-2">
                         <div className="font-bold">{user.full_name}</div>
-                        <div className="text-muted-foreground">{user.email}</div>
+                        <div className="text-muted-foreground">
+                          {user.email}
+                        </div>
                       </div>
                       <button
                         onClick={logout}
-                        className="w-full text-left p-2 rounded hover:bg-muted text-red-400 flex items-center space-x-2"
+                        className="hover:bg-muted flex w-full items-center space-x-2 rounded p-2 text-left text-red-400"
                       >
                         <LogOut className="h-3.5 w-3.5" />
                         <span>Sign Out</span>
@@ -339,7 +423,12 @@ export const DashboardPage: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <Button variant="primary" size="sm" onClick={() => setAuthModalOpen(true)} leftIcon={<LogIn className="h-4 w-4" />}>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => setAuthModalOpen(true)}
+                  leftIcon={<LogIn className="h-4 w-4" />}
+                >
                   Sign In
                 </Button>
               )}
@@ -348,22 +437,25 @@ export const DashboardPage: React.FC = () => {
         />
 
         {/* 3. DASHBOARD BODY SPLIT */}
-        <div className="flex-1 flex overflow-hidden">
-          <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+        <div className="flex flex-1 overflow-hidden">
+          <main className="flex-1 space-y-6 overflow-y-auto p-4 sm:p-6">
             {/* Emergency Alert Callout Banner */}
             {mode === 'emergency' && (
               <Alert variant="emergency">
-                <AlertTitle className="text-base font-extrabold flex items-center">
-                  <AlertTriangle className="mr-2 h-5 w-5" /> CRITICAL EMERGENCY BROADCAST ACTIVATED FOR GVMC
+                <AlertTitle className="flex items-center text-base font-extrabold">
+                  <AlertTriangle className="mr-2 h-5 w-5" /> CRITICAL EMERGENCY
+                  BROADCAST ACTIVATED FOR GVMC
                 </AlertTitle>
-                <AlertDescription className="text-sm mt-1">
-                  Flash flood warning issued for Wards 14 (Gajuwaka) and 8 (One Town). All disaster response units dispatched. Non-essential traffic prohibited on coastal roads.
+                <AlertDescription className="mt-1 text-sm">
+                  Flash flood warning issued for Wards 14 (Gajuwaka) and 8 (One
+                  Town). All disaster response units dispatched. Non-essential
+                  traffic prohibited on coastal roads.
                 </AlertDescription>
               </Alert>
             )}
 
             {/* TOP KPI STATS ROW */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <StatisticsCard
                 title="Overall City Flood Risk"
                 value={`${MOCK_CITY_OVERVIEW.overallRiskScore} / 100`}
@@ -402,43 +494,77 @@ export const DashboardPage: React.FC = () => {
             </div>
 
             {/* MAIN TAB SWITCHER */}
-            <Tabs defaultValue="overview" value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3 overflow-x-auto">
+            <Tabs
+              defaultValue="overview"
+              value={activeTab}
+              onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+            >
+              <div className="flex items-center justify-between overflow-x-auto border-b border-slate-800 pb-3">
                 <TabsList>
-                  <TabsTrigger value="overview" icon={<Activity className="h-4 w-4" />}>
+                  <TabsTrigger
+                    value="overview"
+                    icon={<Activity className="h-4 w-4" />}
+                  >
                     Overview
                   </TabsTrigger>
-                  <TabsTrigger value="command" icon={<Shield className="h-4 w-4 text-red-400" />}>
+                  <TabsTrigger
+                    value="command"
+                    icon={<Shield className="h-4 w-4 text-red-400" />}
+                  >
                     Command Center
                   </TabsTrigger>
                   <TabsTrigger value="map" icon={<Map className="h-4 w-4" />}>
                     GIS Map
                   </TabsTrigger>
-                  <TabsTrigger value="shelters" icon={<Building2 className="h-4 w-4" />}>
+                  <TabsTrigger
+                    value="shelters"
+                    icon={<Building2 className="h-4 w-4" />}
+                  >
                     Shelters ({shelters.length})
                   </TabsTrigger>
-                  <TabsTrigger value="reports" icon={<Camera className="h-4 w-4" />}>
+                  <TabsTrigger
+                    value="reports"
+                    icon={<Camera className="h-4 w-4" />}
+                  >
                     Crowd Reports ({reports.length})
                   </TabsTrigger>
-                  <TabsTrigger value="analytics" icon={<BarChart3 className="h-4 w-4" />}>
+                  <TabsTrigger
+                    value="analytics"
+                    icon={<BarChart3 className="h-4 w-4" />}
+                  >
                     TFT Analytics
                   </TabsTrigger>
                   <TabsTrigger value="ai" icon={<Brain className="h-4 w-4" />}>
                     AI Engine
                   </TabsTrigger>
-                  <TabsTrigger value="citizen" icon={<Bot className="h-4 w-4" />}>
+                  <TabsTrigger
+                    value="citizen"
+                    icon={<Bot className="h-4 w-4" />}
+                  >
                     Citizen Portal
                   </TabsTrigger>
-                  <TabsTrigger value="government" icon={<UserCheck className="h-4 w-4" />}>
+                  <TabsTrigger
+                    value="government"
+                    icon={<UserCheck className="h-4 w-4" />}
+                  >
                     Gov Verification
                   </TabsTrigger>
                 </TabsList>
 
-                <div className="hidden xl:flex items-center space-x-2">
-                  <Button variant="outline" size="sm" onClick={() => setReportModalOpen(true)} leftIcon={<PlusCircle className="h-3.5 w-3.5" />}>
+                <div className="hidden items-center space-x-2 xl:flex">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setReportModalOpen(true)}
+                    leftIcon={<PlusCircle className="h-3.5 w-3.5" />}
+                  >
                     New DB Report
                   </Button>
-                  <Button variant="outline" size="sm" leftIcon={<Download className="h-3.5 w-3.5" />}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    leftIcon={<Download className="h-3.5 w-3.5" />}
+                  >
                     Export Report
                   </Button>
                 </div>
@@ -449,16 +575,21 @@ export const DashboardPage: React.FC = () => {
                 <div className="grid grid-cols-1 gap-6">
                   {/* Interactive Map Card */}
                   <Card className="border-slate-800 bg-slate-900/60 shadow-2xl">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-slate-800">
+                    <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800 pb-2">
                       <div>
-                        <CardTitle className="text-base font-extrabold text-white flex items-center gap-2">
-                          <Map className="h-4 w-4 text-cyan-400" /> Live GIS Spatial Risk Map
+                        <CardTitle className="flex items-center gap-2 text-base font-extrabold text-white">
+                          <Map className="h-4 w-4 text-cyan-400" /> Live GIS
+                          Spatial Risk Map
                         </CardTitle>
                         <CardDescription className="text-xs text-slate-400">
-                          Visakhapatnam Wards • Realtime Water Depth & AI TFT Prediction Overlay
+                          Visakhapatnam Wards • Realtime Water Depth & AI TFT
+                          Prediction Overlay
                         </CardDescription>
                       </div>
-                      <Badge variant="risk_critical" className="font-mono text-[10px]">
+                      <Badge
+                        variant="risk_critical"
+                        className="font-mono text-[10px]"
+                      >
                         LIVE GIS STREAM
                       </Badge>
                     </CardHeader>
@@ -473,22 +604,48 @@ export const DashboardPage: React.FC = () => {
 
                   {/* Ward Selected Inspector */}
                   <Card className="border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-slate-900/90 to-slate-900/90 shadow-xl">
-                    <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <CardContent className="flex flex-col items-start justify-between gap-4 p-4 sm:flex-row sm:items-center">
                       <div>
                         <div className="flex items-center space-x-2">
-                          <span className="text-xs font-mono font-bold uppercase text-cyan-400">
+                          <span className="font-mono text-xs font-bold uppercase text-cyan-400">
                             SELECTED WARD #{selectedWard.number}
                           </span>
-                          <Badge variant={selectedWard.riskCategory === 'Critical' ? 'risk_critical' : 'warning'}>
+                          <Badge
+                            variant={
+                              selectedWard.riskCategory === 'Critical'
+                                ? 'risk_critical'
+                                : 'warning'
+                            }
+                          >
                             {selectedWard.riskCategory} Risk
                           </Badge>
                         </div>
-                        <h4 className="text-xl font-extrabold text-white mt-0.5">{selectedWard.name}</h4>
-                        <div className="text-xs text-slate-300 mt-2 flex flex-wrap gap-4 font-mono">
-                          <span>Water Level: <strong className="text-red-400">{selectedWard.waterLevelCm} cm</strong></span>
-                          <span>Rainfall: <strong className="text-cyan-400">{selectedWard.rainfallMmHr} mm/h</strong></span>
-                          <span>Elevation: <strong>{selectedWard.elevationMeters}m</strong></span>
-                          <span>Population: <strong>{selectedWard.population.toLocaleString()}</strong></span>
+                        <h4 className="mt-0.5 text-xl font-extrabold text-white">
+                          {selectedWard.name}
+                        </h4>
+                        <div className="mt-2 flex flex-wrap gap-4 font-mono text-xs text-slate-300">
+                          <span>
+                            Water Level:{' '}
+                            <strong className="text-red-400">
+                              {selectedWard.waterLevelCm} cm
+                            </strong>
+                          </span>
+                          <span>
+                            Rainfall:{' '}
+                            <strong className="text-cyan-400">
+                              {selectedWard.rainfallMmHr} mm/h
+                            </strong>
+                          </span>
+                          <span>
+                            Elevation:{' '}
+                            <strong>{selectedWard.elevationMeters}m</strong>
+                          </span>
+                          <span>
+                            Population:{' '}
+                            <strong>
+                              {selectedWard.population.toLocaleString()}
+                            </strong>
+                          </span>
                         </div>
                       </div>
 
@@ -511,12 +668,18 @@ export const DashboardPage: React.FC = () => {
                 </div>
 
                 {/* BOTTOM ROW CHARTS */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <AnalyticsCard title="Rainfall Trend & TFT Forecast (24h)" description="Historical observed rainfall vs TFT neural prediction horizon">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <AnalyticsCard
+                    title="Rainfall Trend & TFT Forecast (24h)"
+                    description="Historical observed rainfall vs TFT neural prediction horizon"
+                  >
                     <RainfallChart />
                   </AnalyticsCard>
 
-                  <AnalyticsCard title="Ward Risk Distribution Breakdown" description="Categorization of all 15 GVMC wards by flood severity score">
+                  <AnalyticsCard
+                    title="Ward Risk Distribution Breakdown"
+                    description="Categorization of all 15 GVMC wards by flood severity score"
+                  >
                     <RiskDistributionChart />
                   </AnalyticsCard>
                 </div>
@@ -526,8 +689,12 @@ export const DashboardPage: React.FC = () => {
               <TabsContent value="map">
                 <Card className="border-slate-800 bg-slate-900/60 shadow-2xl">
                   <CardHeader className="border-b border-slate-800">
-                    <CardTitle className="text-white">Full Screen GIS Command Map</CardTitle>
-                    <CardDescription className="text-slate-400">Multi-layer geospatial visualization for Visakhapatnam</CardDescription>
+                    <CardTitle className="text-white">
+                      Full Screen GIS Command Map
+                    </CardTitle>
+                    <CardDescription className="text-slate-400">
+                      Multi-layer geospatial visualization for Visakhapatnam
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-4">
                     <MapPlaceholder height="680px" />
@@ -537,12 +704,17 @@ export const DashboardPage: React.FC = () => {
 
               {/* TAB 3: SHELTERS */}
               <TabsContent value="shelters" className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                   <div className="lg:col-span-2">
                     <Card className="border-slate-800 bg-slate-900/60 shadow-xl">
                       <CardHeader className="border-b border-slate-800">
-                        <CardTitle className="text-white">Active Relief Shelters Directory (PostgreSQL DB)</CardTitle>
-                        <CardDescription className="text-slate-400">Live capacity, medical amenities, and emergency contacts</CardDescription>
+                        <CardTitle className="text-white">
+                          Active Relief Shelters Directory (PostgreSQL DB)
+                        </CardTitle>
+                        <CardDescription className="text-slate-400">
+                          Live capacity, medical amenities, and emergency
+                          contacts
+                        </CardDescription>
                       </CardHeader>
                       <CardContent className="pt-4">
                         <Table>
@@ -556,23 +728,47 @@ export const DashboardPage: React.FC = () => {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {(shelters as unknown as Array<ShelterData & { ward_name?: string; current_occupancy?: number; contact_phone?: string; is_accessible?: boolean }>).map((sh) => (
+                            {(
+                              shelters as unknown as Array<
+                                ShelterData & {
+                                  ward_name?: string;
+                                  current_occupancy?: number;
+                                  contact_phone?: string;
+                                  is_accessible?: boolean;
+                                }
+                              >
+                            ).map((sh) => (
                               <TableRow key={sh.id}>
                                 <TableCell className="font-semibold text-white">
                                   {sh.name}
-                                  <span className="block text-[10px] text-slate-400 font-normal">{sh.address}</span>
+                                  <span className="block text-[10px] font-normal text-slate-400">
+                                    {sh.address}
+                                  </span>
                                 </TableCell>
-                                <TableCell className="text-slate-300">{sh.ward_name || sh.wardName}</TableCell>
+                                <TableCell className="text-slate-300">
+                                  {sh.ward_name || sh.wardName}
+                                </TableCell>
                                 <TableCell className="font-mono text-cyan-300">
-                                  {sh.current_occupancy ?? sh.currentOccupancy ?? 0} / {sh.capacity}
+                                  {sh.current_occupancy ??
+                                    sh.currentOccupancy ??
+                                    0}{' '}
+                                  / {sh.capacity}
                                 </TableCell>
                                 <TableCell>
-                                  <Badge variant={sh.status === 'Near Capacity' ? 'warning' : 'safe'}>
+                                  <Badge
+                                    variant={
+                                      sh.status === 'Near Capacity'
+                                        ? 'warning'
+                                        : 'safe'
+                                    }
+                                  >
                                     {sh.status || 'Open'}
                                   </Badge>
                                 </TableCell>
                                 <TableCell>
-                                  <Button size="sm" variant="outline">Directions</Button>
+                                  <Button size="sm" variant="outline">
+                                    Directions
+                                  </Button>
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -583,7 +779,10 @@ export const DashboardPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <AnalyticsCard title="Shelter Capacity Allocation" description="Occupancy rate per shelter">
+                    <AnalyticsCard
+                      title="Shelter Capacity Allocation"
+                      description="Occupancy rate per shelter"
+                    >
                       <ShelterCapacityChart />
                     </AnalyticsCard>
                   </div>
@@ -595,10 +794,20 @@ export const DashboardPage: React.FC = () => {
                 <Card className="border-slate-800 bg-slate-900/60 shadow-xl">
                   <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800">
                     <div>
-                      <CardTitle className="text-white">Crowd Report Verification Queue (PostgreSQL DB)</CardTitle>
-                      <CardDescription className="text-slate-400">AI-Assisted Photo Verification (YOLOv11 + BLIP-2 Vision Models)</CardDescription>
+                      <CardTitle className="text-white">
+                        Crowd Report Verification Queue (PostgreSQL DB)
+                      </CardTitle>
+                      <CardDescription className="text-slate-400">
+                        AI-Assisted Photo Verification (YOLOv11 + BLIP-2 Vision
+                        Models)
+                      </CardDescription>
                     </div>
-                    <Button variant="danger" size="sm" onClick={() => setReportModalOpen(true)} leftIcon={<PlusCircle className="h-4 w-4" />}>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => setReportModalOpen(true)}
+                      leftIcon={<PlusCircle className="h-4 w-4" />}
+                    >
                       Submit Report
                     </Button>
                   </CardHeader>
@@ -615,31 +824,55 @@ export const DashboardPage: React.FC = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {(reports as unknown as Array<CrowdReportData & { reporter_name?: string; ward_name?: string; water_depth_cm?: number; created_at?: string; ai_labels?: string[]; ai_confidence?: number }>).map((rep) => (
+                        {(
+                          reports as unknown as Array<
+                            CrowdReportData & {
+                              reporter_name?: string;
+                              ward_name?: string;
+                              water_depth_cm?: number;
+                              created_at?: string;
+                              ai_labels?: string[];
+                              ai_confidence?: number;
+                            }
+                          >
+                        ).map((rep) => (
                           <TableRow key={rep.id}>
                             <TableCell className="font-semibold text-white">
                               {rep.title}
-                              <span className="block text-[10px] text-slate-400 font-normal">{rep.description}</span>
+                              <span className="block text-[10px] font-normal text-slate-400">
+                                {rep.description}
+                              </span>
                             </TableCell>
                             <TableCell className="text-slate-300">
-                              {rep.reporter_name || rep.reporterName || 'Anonymous Citizen'}
-                              <span className="block text-[10px] text-slate-400">{rep.ward_name || rep.wardName}</span>
+                              {rep.reporter_name ||
+                                rep.reporterName ||
+                                'Anonymous Citizen'}
+                              <span className="block text-[10px] text-slate-400">
+                                {rep.ward_name || rep.wardName}
+                              </span>
                             </TableCell>
                             <TableCell className="font-mono font-bold text-red-400">
                               {rep.water_depth_cm ?? rep.waterDepthEst} cm
                             </TableCell>
                             <TableCell>
-                              <span className="text-xs font-mono text-cyan-300 block">
-                                {Array.isArray(rep.ai_labels) ? rep.ai_labels.join(', ') : rep.ai_labels || 'Submerged Road'}
+                              <span className="block font-mono text-xs text-cyan-300">
+                                {Array.isArray(rep.ai_labels)
+                                  ? rep.ai_labels.join(', ')
+                                  : rep.ai_labels || 'Submerged Road'}
                               </span>
-                              <span className="text-[10px] text-slate-400 font-mono">
-                                Conf: {Math.round((rep.ai_confidence || 0.92) * 100)}%
+                              <span className="font-mono text-[10px] text-slate-400">
+                                Conf:{' '}
+                                {Math.round((rep.ai_confidence || 0.92) * 100)}%
                               </span>
                             </TableCell>
                             <TableCell>
                               <Badge
                                 variant={
-                                  rep.status === 'Verified' ? 'safe' : rep.status === 'Rejected' ? 'destructive' : 'warning'
+                                  rep.status === 'Verified'
+                                    ? 'safe'
+                                    : rep.status === 'Rejected'
+                                      ? 'destructive'
+                                      : 'warning'
                                 }
                               >
                                 {rep.status}
@@ -652,7 +885,9 @@ export const DashboardPage: React.FC = () => {
                                     size="sm"
                                     variant="safe"
                                     onClick={() => handleVerifyReport(rep.id)}
-                                    leftIcon={<CheckCircle2 className="h-3.5 w-3.5" />}
+                                    leftIcon={
+                                      <CheckCircle2 className="h-3.5 w-3.5" />
+                                    }
                                   >
                                     Verify
                                   </Button>
@@ -660,13 +895,17 @@ export const DashboardPage: React.FC = () => {
                                     size="sm"
                                     variant="danger"
                                     onClick={() => handleRejectReport(rep.id)}
-                                    leftIcon={<XCircle className="h-3.5 w-3.5" />}
+                                    leftIcon={
+                                      <XCircle className="h-3.5 w-3.5" />
+                                    }
                                   >
                                     Reject
                                   </Button>
                                 </div>
                               ) : (
-                                <span className="text-xs text-slate-400 italic">Processed</span>
+                                <span className="text-xs italic text-slate-400">
+                                  Processed
+                                </span>
                               )}
                             </TableCell>
                           </TableRow>
@@ -732,4 +971,3 @@ export const DashboardPage: React.FC = () => {
     </div>
   );
 };
-

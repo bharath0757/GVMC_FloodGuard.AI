@@ -1,6 +1,6 @@
 /**
  * FloodGuard AI - Color Design Tokens
- * 
+ *
  * Deep Blue (#1E3A5F) for trust, stability, and emergency authority.
  * Teal (#0D9488) for environmental monitoring and water systems.
  * Red/Amber/Green for critical alert levels and risk status.

@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, Button, Input, Select, useToast } from '@floodguard/ui';
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  Button,
+  Input,
+  Select,
+  useToast,
+} from '@floodguard/ui';
 import { useAuth } from '@/context/auth-context';
 
 interface AuthModalProps {
@@ -40,7 +50,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       const errorObj = err as { response?: { data?: { detail?: string } } };
       toast({
         title: 'Authentication Failed',
-        message: errorObj.response?.data?.detail || 'Invalid credentials or request error.',
+        message:
+          errorObj.response?.data?.detail ||
+          'Invalid credentials or request error.',
         type: 'error',
       });
     }
@@ -49,17 +61,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
       <DialogHeader>
-        <div className="flex items-center space-x-3 mb-2">
+        <div className="mb-2 flex items-center space-x-3">
           <img
             src="/logo.png"
             alt="FloodGuard Logo"
-            className="h-10 w-auto object-contain rounded-lg border border-slate-700 bg-slate-900 p-1 shrink-0"
+            className="h-10 w-auto shrink-0 rounded-lg border border-slate-700 bg-slate-900 object-contain p-1"
           />
           <div>
             <DialogTitle className="text-base font-bold">
-              {mode === 'login' ? 'Sign In to FloodGuard AI' : 'Register Citizen / Officer Account'}
+              {mode === 'login'
+                ? 'Sign In to FloodGuard AI'
+                : 'Register Citizen / Officer Account'}
             </DialogTitle>
-            <span className="text-[10px] font-mono text-teal-400 block uppercase">
+            <span className="block font-mono text-[10px] uppercase text-teal-400">
               GVMC Visakhapatnam • Predictive Data Platform
             </span>
           </div>
@@ -74,7 +88,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       <form onSubmit={handleSubmit} className="space-y-4 py-2">
         {mode === 'register' && (
           <div>
-            <label className="block text-xs font-semibold mb-1">Full Name</label>
+            <label className="mb-1 block text-xs font-semibold">
+              Full Name
+            </label>
             <Input
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -85,7 +101,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         )}
 
         <div>
-          <label className="block text-xs font-semibold mb-1">Email Address</label>
+          <label className="mb-1 block text-xs font-semibold">
+            Email Address
+          </label>
           <Input
             type="email"
             value={email}
@@ -96,7 +114,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold mb-1">Password</label>
+          <label className="mb-1 block text-xs font-semibold">Password</label>
           <Input
             type="password"
             value={password}
@@ -108,21 +126,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
         {mode === 'register' && (
           <div>
-            <label className="block text-xs font-semibold mb-1">Account Role</label>
-            <Select value={role} onChange={(e) => setRole(e.target.value as 'citizen' | 'government')}>
+            <label className="mb-1 block text-xs font-semibold">
+              Account Role
+            </label>
+            <Select
+              value={role}
+              onChange={(e) =>
+                setRole(e.target.value as 'citizen' | 'government')
+              }
+            >
               <option value="citizen">Citizen User</option>
               <option value="government">Government Authority / Officer</option>
             </Select>
           </div>
         )}
 
-        <DialogFooter className="pt-4 flex items-center justify-between">
+        <DialogFooter className="flex items-center justify-between pt-4">
           <button
             type="button"
             onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
             className="text-xs text-teal-400 hover:underline"
           >
-            {mode === 'login' ? "Don't have an account? Register" : 'Already registered? Login'}
+            {mode === 'login'
+              ? "Don't have an account? Register"
+              : 'Already registered? Login'}
           </button>
 
           <div className="flex space-x-2">

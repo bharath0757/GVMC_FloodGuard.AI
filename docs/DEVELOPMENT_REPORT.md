@@ -23,11 +23,11 @@ apps/web/src/components/maps/
 
 ## 2. GeoJSON API Summary
 
-| Method | Endpoint | Geometry Type | GeoJSON Properties |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/v1/gis/shelters` | `Point` (`[lng, lat]`) | `id`, `name`, `ward_name`, `address`, `capacity`, `current_occupancy`, `available_capacity`, `contact_phone`, `is_accessible`, `status`, `amenities` |
-| `GET` | `/api/v1/gis/reports` | `Point` (`[lng, lat]`) | `id`, `title`, `reporter_name`, `ward_name`, `description`, `severity`, `status`, `water_depth_cm`, `image_url`, `ai_confidence` |
-| `GET` | `/api/v1/gis/risk-zones` | `Polygon` (`[[[lng, lat], ...]]`) | `id`, `ward_number`, `ward_name`, `risk_score`, `risk_category`, `population`, `elevation_meters`, `water_level_cm`, `rainfall_mm_hr`, `active_alerts_count` |
+| Method | Endpoint                 | Geometry Type                     | GeoJSON Properties                                                                                                                                           |
+| :----- | :----------------------- | :-------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/api/v1/gis/shelters`   | `Point` (`[lng, lat]`)            | `id`, `name`, `ward_name`, `address`, `capacity`, `current_occupancy`, `available_capacity`, `contact_phone`, `is_accessible`, `status`, `amenities`         |
+| `GET`  | `/api/v1/gis/reports`    | `Point` (`[lng, lat]`)            | `id`, `title`, `reporter_name`, `ward_name`, `description`, `severity`, `status`, `water_depth_cm`, `image_url`, `ai_confidence`                             |
+| `GET`  | `/api/v1/gis/risk-zones` | `Polygon` (`[[[lng, lat], ...]]`) | `id`, `ward_number`, `ward_name`, `risk_score`, `risk_category`, `population`, `elevation_meters`, `water_level_cm`, `rainfall_mm_hr`, `active_alerts_count` |
 
 ---
 
@@ -93,7 +93,7 @@ CREATE TABLE risk_zones (
 graph TD
     MapContainer["MapContainer (Base Canvas Engine)"] --> BaseStyles["Base Map Styles (Dark, Streets, Satellite, Light)"]
     MapContainer --> LayerManager["LayerManager (Toggle Overlays)"]
-    
+
     LayerManager --> RiskLayer["RiskZone Layer (Polygon)"]
     LayerManager --> ShelterLayer["Shelter Layer (Point)"]
     LayerManager --> ReportLayer["FloodReport Layer (Point + Cluster)"]

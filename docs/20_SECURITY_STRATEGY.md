@@ -9,14 +9,14 @@ graph TD
     Internet((Internet)) --> WAF[AWS WAF]
     WAF --> Shield[AWS Shield DDoS]
     Shield --> ALB[Application Load Balancer]
-    
+
     subgraph VPC [VPC - Private Subnets]
         ALB --> ECS[ECS Fargate Tasks]
         ECS --> SecurityGroups[Strict Security Groups]
         SecurityGroups --> RDS[(RDS PostgreSQL)]
         SecurityGroups --> Redis[(ElastiCache Redis)]
     end
-    
+
     ECS --> IAM[IAM Task Roles]
     IAM --> S3[S3 Secure Buckets]
     IAM --> SecretsMgr[AWS Secrets Manager]
@@ -40,13 +40,13 @@ graph TD
 
 ## 4. Application Security (OWASP Top 10)
 
-| Risk | Mitigation Strategy | Implementation |
-|------|---------------------|----------------|
-| Broken Access Control | Default deny, explicit route decorators | FastAPI Depends(verify_role) |
-| Cryptographic Failures | Strong defaults, no custom crypto | bcrypt, AES-256, TLS 1.3 |
-| Injection | ORM usage, strict validation | SQLAlchemy, Pydantic schemas |
-| Insecure Design | Threat modeling, secure defaults | Architecture reviews |
-| Security Misconfiguration| IaC, automated audits | Terraform, AWS Security Hub |
+| Risk                      | Mitigation Strategy                     | Implementation               |
+| ------------------------- | --------------------------------------- | ---------------------------- |
+| Broken Access Control     | Default deny, explicit route decorators | FastAPI Depends(verify_role) |
+| Cryptographic Failures    | Strong defaults, no custom crypto       | bcrypt, AES-256, TLS 1.3     |
+| Injection                 | ORM usage, strict validation            | SQLAlchemy, Pydantic schemas |
+| Insecure Design           | Threat modeling, secure defaults        | Architecture reviews         |
+| Security Misconfiguration | IaC, automated audits                   | Terraform, AWS Security Hub  |
 
 - **XSS & CSRF**: Handled by React frontend encoding and strict CORS/CSP headers. CSRF tokens for state-changing endpoints if cookies are used.
 - **Rate Limiting**: Applied per IP and per user role using Redis to prevent abuse.

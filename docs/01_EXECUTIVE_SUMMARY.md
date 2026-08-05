@@ -4,13 +4,17 @@
 **Vision:** To build an inclusive, hyper-local, AI-driven flood intelligence ecosystem that protects lives, secures infrastructure, and transforms disaster response from reactive to predictive across Indian smart cities.
 
 ## 1. The Challenge: Urban Flooding in Coastal India
+
 Indian coastal cities face an escalating crisis driven by climate change, rising sea levels, and rapid, often unplanned urbanization. Visakhapatnam (Vizag), falling under the Greater Visakhapatnam Municipal Corporation (GVMC), is particularly vulnerable. With a population of over 2 million at risk, the city regularly battles devastating cyclones (such as Hudhud, Titli, and Michaung) alongside severe annual monsoon flooding. The combination of intense rainfall, inadequate drainage systems, and the city's unique topography creates acute bottlenecks where water accumulates rapidly, causing immense disruption, economic loss, and threatening lives.
 
 ## 2. The Solution: Transforming Disaster Management
+
 Current flood management systems are predominantly reactive, siloed, and manual. FloodGuard AI revolutionizes this approach by providing a unified, AI-powered Flood Intelligence Platform. By harnessing the power of Edge AI, predictive modeling, and geospatial analytics, FloodGuard AI shifts the paradigm from post-disaster recovery to pre-emptive action. We equip authorities and citizens with actionable insights, ensuring timely evacuations, optimized resource allocation, and continuous situational awareness.
 
 ## 3. Key Platform Capabilities
+
 FloodGuard AI delivers comprehensive disaster management through 11 interconnected modules:
+
 1. **AI Flood Risk Scoring:** Real-time vulnerability assessment of neighborhoods using historical data, topography, and live weather inputs.
 2. **Street-level Flood Prediction:** Highly localized, granular forecasting powered by Temporal Fusion Transformers (TFT).
 3. **Smart Evacuation Route Planning:** Dynamic, safe-path generation leveraging Graph Neural Networks (GNN) to avoid flooded zones.
@@ -24,25 +28,31 @@ FloodGuard AI delivers comprehensive disaster management through 11 interconnect
 11. **Role-based Authentication:** Secure, tailored access portals for Citizens, Government Officers, and System Administrators.
 
 ## 4. Target Stakeholders
+
 - **Citizens:** Vulnerable populations seeking early warnings, safe evacuation routes, and emergency assistance.
 - **Government Officers (GVMC/NDMA):** Decision-makers needing real-time dashboards, predictive analytics, and resource management tools.
 - **Disaster Management Authorities / First Responders:** Field teams requiring optimal routing, real-time ground truth, and coordinated response capabilities.
 
 ## 5. Expected Impact Metrics
+
 Deployment of FloodGuard AI aims to achieve:
+
 - **Response Time Reduction:** Decrease emergency response times by up to 40% through optimized routing and pre-emptive alerts.
 - **Lives Saved:** Significantly reduce fatalities and injuries by providing hyper-local, multilingual early warnings.
 - **Economic Loss Prevention:** Mitigate infrastructure damage and business disruption by enabling proactive asset protection.
 - **Resource Optimization:** Improve the efficiency of relief material distribution and shelter capacity management by 50%.
 
 ## 6. Technology Differentiators
+
 - **Edge AI & Computer Vision:** On-device processing of crowd-sourced images ensures rapid verification even in low-bandwidth scenarios.
 - **Immersive Digital Twin:** 3D visualizations offer unprecedented clarity for planning and real-time monitoring compared to traditional 2D maps.
 - **Crowd Intelligence:** Blending official meteorological data with real-time, verified citizen reports creates a highly accurate, dynamic ground truth.
 - **Inclusive Design:** Multilingual, voice-first interfaces break down language and literacy barriers in critical moments.
 
 ## 7. Investment & Resource Summary
+
 To achieve an MVP deployment in Visakhapatnam and scale to 10+ cities, the project requires strategic investment in:
+
 - **Cloud Infrastructure:** Scalable AWS deployments (EKS, RDS, ElastiCache) to handle traffic spikes during weather events.
 - **AI/ML Compute:** GPU resources for training and deploying advanced deep learning models (TFT, GNN, YOLOv11).
 - **Engineering Talent:** A specialized team of Full-Stack Developers, Data Scientists, and GIS Experts.

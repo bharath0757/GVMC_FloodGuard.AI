@@ -17,7 +17,9 @@ interface ToastContextType {
   dismiss: (id: string) => void;
 }
 
-const ToastContext = React.createContext<ToastContextType | undefined>(undefined);
+const ToastContext = React.createContext<ToastContextType | undefined>(
+  undefined,
+);
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<Toast[]>([]);
@@ -26,7 +28,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     ({ title, message, type = 'info', duration = 5000 }: Omit<Toast, 'id'>) => {
       const id = Math.random().toString(36).substring(2, 9);
       const newToast: Toast = { id, title, message, type, duration };
-      
+
       setToasts((prev) => [...prev, newToast]);
 
       if (duration > 0) {
@@ -35,7 +37,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         }, duration);
       }
     },
-    []
+    [],
   );
 
   const dismiss = React.useCallback((id: string) => {
@@ -45,7 +47,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast, dismiss }}>
       {children}
-      <div className="fixed bottom-0 right-0 z-50 flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px] gap-2">
+      <div className="fixed bottom-0 right-0 z-50 flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]">
         {toasts.map((t) => (
           <ToastItem key={t.id} toast={t} onDismiss={() => dismiss(t.id)} />
         ))}
@@ -54,7 +56,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
+function ToastItem({
+  toast,
+  onDismiss,
+}: {
+  toast: Toast;
+  onDismiss: () => void;
+}) {
   const typeClasses = {
     success: 'bg-safe text-safe-foreground border-safe',
     error: 'bg-destructive text-destructive-foreground border-destructive',
@@ -67,17 +75,19 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
       className={cn(
         'pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-4 pr-8 shadow-lg transition-all',
         'animate-in slide-in-from-bottom-5 fade-in-90',
-        typeClasses[toast.type]
+        typeClasses[toast.type],
       )}
       role="alert"
     >
       <div className="flex w-full flex-col gap-1">
-        {toast.title && <div className="text-sm font-semibold">{toast.title}</div>}
+        {toast.title && (
+          <div className="text-sm font-semibold">{toast.title}</div>
+        )}
         <div className="text-sm opacity-90">{toast.message}</div>
       </div>
       <button
         onClick={onDismiss}
-        className="absolute right-2 top-2 rounded-md p-1 text-inherit opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring"
+        className="focus:ring-ring absolute right-2 top-2 rounded-md p-1 text-inherit opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2"
       >
         <X className="h-4 w-4" />
       </button>

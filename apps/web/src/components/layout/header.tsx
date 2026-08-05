@@ -15,12 +15,12 @@ export function Header({ showSidebarToggle }: HeaderProps) {
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/80">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-4">
           {showSidebarToggle && (
             <button
-              className="md:hidden rounded-md p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="rounded-md p-2 text-slate-500 hover:bg-slate-100 md:hidden dark:hover:bg-slate-800"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <Menu className="h-5 w-5" />
@@ -30,18 +30,18 @@ export function Header({ showSidebarToggle }: HeaderProps) {
             <img
               src="/logo.png"
               alt="FloodGuard Logo"
-              className="h-8 w-auto object-contain rounded-lg border border-slate-700/50 bg-slate-900/80 p-0.5"
+              className="h-8 w-auto rounded-lg border border-slate-700/50 bg-slate-900/80 object-contain p-0.5"
             />
-            <span className="font-bold text-lg tracking-tight hidden sm:inline-block">
+            <span className="hidden text-lg font-bold tracking-tight sm:inline-block">
               FloodGuard AI 🌊
             </span>
           </Link>
         </div>
 
-        <nav className="hidden md:flex items-center gap-6">
-          <Link 
-            to="/" 
-            className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-[#0D9488] transition-colors"
+        <nav className="hidden items-center gap-6 md:flex">
+          <Link
+            to="/"
+            className="text-sm font-medium text-slate-600 transition-colors hover:text-[#0D9488] dark:text-slate-300"
           >
             Home
           </Link>
@@ -50,7 +50,7 @@ export function Header({ showSidebarToggle }: HeaderProps) {
         <div className="flex items-center gap-2">
           <button
             onClick={toggleTheme}
-            className="rounded-md p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+            className="rounded-md p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
             aria-label="Toggle theme"
           >
             {theme === 'dark' ? (
@@ -61,7 +61,7 @@ export function Header({ showSidebarToggle }: HeaderProps) {
           </button>
           {!showSidebarToggle && (
             <button
-              className="md:hidden rounded-md p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="rounded-md p-2 text-slate-500 hover:bg-slate-100 md:hidden dark:hover:bg-slate-800"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <Menu className="h-5 w-5" />
@@ -76,12 +76,12 @@ export function Header({ showSidebarToggle }: HeaderProps) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+            className="overflow-hidden border-t border-slate-200 bg-white md:hidden dark:border-slate-800 dark:bg-slate-900"
           >
-            <nav className="flex flex-col p-4 gap-4">
-              <Link 
-                to="/" 
-                className="text-sm font-medium p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+            <nav className="flex flex-col gap-4 p-4">
+              <Link
+                to="/"
+                className="rounded-md p-2 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Home

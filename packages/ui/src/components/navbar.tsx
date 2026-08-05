@@ -14,16 +14,19 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
-  ({
-    className,
-    brandName = 'FloodGuard AI',
-    brandSub = 'Visakhapatnam Command Center • Stage 3 Cyclone Warning',
-    isEmergency = false,
-    onToggleEmergency,
-    rightActions,
-    leftSlot,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      brandName = 'FloodGuard AI',
+      brandSub = 'Visakhapatnam Command Center • Stage 3 Cyclone Warning',
+      isEmergency = false,
+      onToggleEmergency,
+      rightActions,
+      leftSlot,
+      ...props
+    },
+    ref,
+  ) => {
     const [currentTime, setCurrentTime] = React.useState<string>('');
 
     React.useEffect(() => {
@@ -47,9 +50,9 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       <header
         ref={ref}
         className={cn(
-          'sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-slate-800/90 bg-slate-950/90 px-4 sm:px-6 backdrop-blur-xl transition-all shadow-xl',
+          'sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-slate-800/90 bg-slate-950/90 px-4 shadow-xl backdrop-blur-xl transition-all sm:px-6',
           isEmergency && 'border-red-600/60 bg-red-950/40 shadow-red-950/50',
-          className
+          className,
         )}
         {...props}
       >
@@ -58,15 +61,18 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           <div className="flex items-center space-x-3">
             <div>
               <div className="flex items-center space-x-2.5">
-                <span className="font-extrabold text-base tracking-tight text-white font-sans">
+                <span className="font-sans text-base font-extrabold tracking-tight text-white">
                   {brandName}
                 </span>
-                <Badge variant={isEmergency ? 'risk_critical' : 'safe'} className="font-mono text-[10px] tracking-wider uppercase px-2 py-0.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-current animate-ping mr-1" />
+                <Badge
+                  variant={isEmergency ? 'risk_critical' : 'safe'}
+                  className="px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider"
+                >
+                  <span className="mr-1 h-1.5 w-1.5 animate-ping rounded-full bg-current" />
                   {isEmergency ? 'CRITICAL EMERGENCY' : 'SYSTEM OPERATIONAL'}
                 </Badge>
               </div>
-              <span className="text-[11px] text-slate-400 font-mono hidden sm:block">
+              <span className="hidden font-mono text-[11px] text-slate-400 sm:block">
                 {brandSub}
               </span>
             </div>
@@ -74,8 +80,8 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         </div>
 
         {/* Center Live Clock */}
-        <div className="hidden lg:flex items-center space-x-2 px-3 py-1 rounded-md bg-slate-900/90 border border-slate-800 text-xs font-mono text-cyan-300">
-          <Clock className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />
+        <div className="hidden items-center space-x-2 rounded-md border border-slate-800 bg-slate-900/90 px-3 py-1 font-mono text-xs text-cyan-300 lg:flex">
+          <Clock className="h-3.5 w-3.5 animate-pulse text-cyan-400" />
           <span>{currentTime || '18:20:00 IST'}</span>
           <span className="text-slate-500">•</span>
           <span className="text-slate-400">GVMC EOC-1</span>
@@ -97,9 +103,8 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         </div>
       </header>
     );
-  }
+  },
 );
 Navbar.displayName = 'Navbar';
 
 export { Navbar };
-

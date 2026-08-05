@@ -5,27 +5,38 @@ import { ChartContainer } from '@floodguard/ui';
 export const RiskDistributionChart: React.FC = () => {
   return (
     <ChartContainer height={260}>
-      <div className="flex flex-col h-full justify-between pt-2">
+      <div className="flex h-full flex-col justify-between pt-2">
         {/* Risk Percentage Bar Stack */}
-        <div className="w-full flex h-6 rounded-lg overflow-hidden border border-border">
+        <div className="border-border flex h-6 w-full overflow-hidden rounded-lg border">
           {MOCK_RISK_DISTRIBUTION.map((item) => (
             <div
               key={item.category}
               className="h-full transition-all hover:brightness-110"
-              style={{ width: `${item.percentage}%`, backgroundColor: item.color }}
+              style={{
+                width: `${item.percentage}%`,
+                backgroundColor: item.color,
+              }}
               title={`${item.category}: ${item.count} Wards (${item.percentage}%)`}
             />
           ))}
         </div>
 
         {/* Legend Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4">
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {MOCK_RISK_DISTRIBUTION.map((item) => (
-            <div key={item.category} className="flex items-center space-x-2 p-2 rounded bg-muted/40 border border-border/50">
-              <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+            <div
+              key={item.category}
+              className="bg-muted/40 border-border/50 flex items-center space-x-2 rounded border p-2"
+            >
+              <span
+                className="h-3 w-3 shrink-0 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
               <div>
-                <div className="text-xs font-semibold text-foreground">{item.category}</div>
-                <div className="text-[10px] text-muted-foreground font-mono">
+                <div className="text-foreground text-xs font-semibold">
+                  {item.category}
+                </div>
+                <div className="text-muted-foreground font-mono text-[10px]">
                   {item.count} Wards ({item.percentage}%)
                 </div>
               </div>
